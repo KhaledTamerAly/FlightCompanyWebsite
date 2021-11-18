@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const excelToJson = require('convert-excel-to-json');
 const result = excelToJson({
-    sourceFile: '../Project Requirements.xlsx'
+    sourceFile: './Project Requirements.xlsx'
 }); 
 
 const db = require('../config/keys').mongoURL;
