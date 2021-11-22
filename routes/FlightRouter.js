@@ -16,10 +16,13 @@ mongoose.connect(db)
 const Flights = require('../tables/Flights');
 
 //Routes
-router.get('/', (req,res)=>{
-    
-});
 
+
+router.delete('/:id', (req,res)=> {
+    Flights.findByIdAndDelete(req.params.id)
+    .then((flight)=>console.log('Deleted flight ' + flight.flightNumber +' successfully'))
+    .catch(err => console.log(err));
+});
 
 
 //functions
@@ -78,6 +81,7 @@ function populateTable()
 
 /** Called once to fill table, not needed anymore. Keep just in case of
 reusing its code **/
+
 //populateTable();
 
 //Exports
