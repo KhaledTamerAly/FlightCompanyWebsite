@@ -8,7 +8,6 @@ function App() {
 
   function deleteFlight()
   {
-    console.log("test");
     setIsDeleted(true);
   }
 
