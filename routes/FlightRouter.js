@@ -26,6 +26,23 @@ router.delete('/:id', (req,res)=> {
 
 
 //functions
+function isValidDate(date) {
+    return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
+}
+Date.prototype.addHours = function(h) {
+    this.setTime(this.getTime() + (h*60*60*1000));
+    return this;
+  }
+function convertUTCDateToLocalDate(date) {
+    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+
+    newDate.addHours(hours - offset+2);
+
+    return newDate;   
+}
 function getRndInteger(min, max) 
 {
     return (Math.floor(Math.random() * (max - min) ) + min)+"";
@@ -41,7 +58,7 @@ function populateTable()
         var rowValues = Object.values(row);    
         var from = rowValues[0];
         var to = rowValues[1];
-        var date = rowValues[2];
+        var date = convertUTCDateToLocalDate(new Date(rowValues[2]));
         var firstClassSeats;
         var econClassSeats;
         var busClassSeats;
