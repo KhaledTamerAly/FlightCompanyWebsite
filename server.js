@@ -15,14 +15,14 @@ mongoose.connect(db)
 
 //Get flight table
 const Flights = require('./tables/Flights');
-//Routes
-app.use('/flights',flightRouter);
+app.use('/flights',flightRouter.router);
 
+
+
+//Routes
 app.get('/', (req,res)=>{
     Flights.find({}).then((flight)=>res.json(flight));
 });
-
-
 
 
 //Run server

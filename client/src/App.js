@@ -1,6 +1,6 @@
 import './App.css';
+import React, { Component ,  useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { useState } from 'react';
 import Webpages from './webpages';
 
 function App() {

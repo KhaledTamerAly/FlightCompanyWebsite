@@ -4,21 +4,18 @@ import { Button,UncontrolledPopover,PopoverBody,PopoverHeader } from 'reactstrap
 
 function DeleteButton(props)
 {
-    function deleteFlight(props)
+    function deleteFlight(idToDelete)
     {
-        var url = '/flights/' + props.id;
-        axios
-            .delete(url)
+        var url = '/flights/' + idToDelete;
+         axios
+             .delete(url)
             .then(()=> console.log("deleted..."));
         props.onDelete();
     }
-
-    if(props.remove)
-        return;
     return (
     <div className="text-center">
     <Button
-            id="UncontrolledPopover"
+            id={"UncontrolledPopover" + props.i}
             type="button"
             color="danger"
     >
@@ -26,7 +23,7 @@ function DeleteButton(props)
     </Button>
     <UncontrolledPopover
             placement="right"
-            target="UncontrolledPopover"
+            target={"UncontrolledPopover" + props.i}
             trigger="legacy"
     >
         <PopoverHeader>
@@ -48,7 +45,7 @@ function DeleteButton(props)
                 id="deleteConfirm"
                 type="button"
                 color="danger"
-                onClick = {()=>deleteFlight(props)}
+                onClick = {()=>deleteFlight(props.idOfFlight)}
             >
             Delete, I am sure.
             </Button>

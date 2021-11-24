@@ -1,11 +1,11 @@
 import React from "react";
+import Search from '../components/Search'
 
 function Admin()
 {
     return (
         <div>
-            <h1>Admin webpage</h1>
-            <p>Admin</p>
+            <Search />
         </div>
     );
 }
