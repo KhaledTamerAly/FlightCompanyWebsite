@@ -13,10 +13,7 @@ mongoose.connect(db)
     .catch(err=> console.log(err));
 
 //Routes
-app.use('/flights',flightRouter);
-
-
-
+app.use('/flights',flightRouter.router);
 
 //Run server
 const port = process.env.PORT || 5000;
