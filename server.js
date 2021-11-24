@@ -12,8 +12,15 @@ mongoose.connect(db)
     .then(()=> console.log('MongoDB connected...'))
     .catch(err=> console.log(err));
 
+
+//Get flight table
+const Flights = require('./tables/Flights');
 //Routes
 app.use('/flights',flightRouter);
+
+app.get('/', (req,res)=>{
+    Flights.find({}).then((flight)=>res.json(flight));
+});
 
 
 
