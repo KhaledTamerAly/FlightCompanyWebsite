@@ -82,8 +82,7 @@ componentDidMount()
 {
     this.updateStates();
 }
-  async userInput(event) {
-
+async userInput(event) {
     var matches = [];
     var selArrT, selDepT,selDepD, selRetD, selArrFN, selDepFN;
     selArrT =this.state.selectedArrivalTerminal;
@@ -117,9 +116,7 @@ componentDidMount()
               });
     }
 }
-deletedFlight() {
-  console.log('hi');
-}
+
   render() {
     
     return (
