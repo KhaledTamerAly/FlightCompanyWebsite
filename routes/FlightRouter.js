@@ -133,6 +133,12 @@ router.post('/matches',(req,res)=>{
     });
 })
 
+router.delete('/:id', (req,res)=> {
+    Flights.findByIdAndDelete(req.params.id)
+    .then((flight)=>console.log('Deleted flight ' + flight.flightNumber +' successfully'))
+    .catch(err => console.log(err));
+});
+
 
 //functions
 function getRndInteger(min, max) 
@@ -206,6 +212,7 @@ function convertUTCDateToLocalDate(date) {
 
 /** Called once to fill table, not needed anymore. Keep just in case of
 reusing its code **/
+
 //populateTable();
 
 //Exports
