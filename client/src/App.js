@@ -1,11 +1,12 @@
 import './App.css';
-import DeleteButton from './components/AdminCRUD';
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { useState } from 'react';
+import React from 'react';
+import FormComponent from './components/FormComponent' ;
+
 
 function App() {
-  
-  return;
+  return (
+    <FormComponent/>
+    );
 }
 
 export default App;

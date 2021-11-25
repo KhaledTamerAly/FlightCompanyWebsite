@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const flightRouter = require('./routes/FlightRouter');
+const userRouter = require('./routes/UserRouter');
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ mongoose.connect(db)
 
 //Routes
 app.use('/flights',flightRouter);
+app.use('/users',userRouter);
 
 
 
