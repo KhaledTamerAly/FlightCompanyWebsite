@@ -1,12 +1,14 @@
 import './App.css';
-import React from 'react';
-import FormComponent from './components/FormComponent' ;
-
+import React, { Component ,  useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Webpages from './webpages';
 
 function App() {
   return (
-    <FormComponent/>
-    );
+    <div>
+     <Webpages />
+     </div>
+  );
 }
 
 export default App;

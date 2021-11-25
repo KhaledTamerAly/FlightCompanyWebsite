@@ -13,11 +13,19 @@ mongoose.connect(db)
     .then(()=> console.log('MongoDB connected...'))
     .catch(err=> console.log(err));
 
-//Routes
-app.use('/flights',flightRouter);
+
 app.use('/users',userRouter);
 
+//Get flight table
+const Flights = require('./tables/Flights');
+app.use('/flights',flightRouter.router);
 
+
+
+//Routes
+app.get('/', (req,res)=>{
+    Flights.find({}).then((flight)=>res.json(flight));
+});
 
 
 //Run server
