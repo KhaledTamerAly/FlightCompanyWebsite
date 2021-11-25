@@ -20,7 +20,7 @@ function CardPanel(props)
             className="mb-2 text-muted"
             tag="h6"
           >
-            {props.subtitle}
+            
           </CardSubtitle>
           <CardText>
             {props.content}
