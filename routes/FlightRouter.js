@@ -263,6 +263,42 @@ function convertUTCDateToLocalDate(date) {
 
     return newDate;   
 }
+
+router.post ("/link",async (req,res)=> {
+    const { errors, isValid } = validateFlightInput(req.body);
+// Check validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+    Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
+        if (flight) {
+          return res.status(400).json({ flightNumber: "Flight Number already exists" });
+        }
+    });
+    const dateSample = new Date();
+    const flightNumber = req.body.flightNumber;
+    var departureTime = new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
+    var arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
+    departureTime.setHours(departureTime.getHours()+1);
+    arrivalTime.setHours(arrivalTime.getHours()+1);
+    const noOfEconSeats = req.body.noOfEconSeats;
+    const noOfBusinessSeats = req.body.noOfBusinessSeats;
+    const noOfFirstSeats = req.body.noOfFirstSeats;
+    const flightDate = new Date(Date.parse(req.body.flightDate));
+    const arrivalTerminal = req.body.arrivalTerminal;
+    const departureTerminal = req.body.departureTerminal;
+    const flight= new Flights({flightNumber:flightNumber, arrivalTerminal:arrivalTerminal, departureTerminal:departureTerminal,
+    flightDate:flightDate, departureTime:departureTime, arrivalTime:arrivalTime, 
+    noOfEconSeats:noOfEconSeats, noOfBusinessSeats:noOfBusinessSeats, noOfFirstSeats:noOfFirstSeats});
+    try{
+        console.log(flight);
+        await flight.save();
+        res.send("ok");
+    }catch(err){
+        res.send("err");
+    }
+});
+
 //Calling functions
 
 /** Called once to fill table, not needed anymore. Keep just in case of
