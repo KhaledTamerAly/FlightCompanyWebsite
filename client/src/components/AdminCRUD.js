@@ -47,7 +47,7 @@ function DeleteButton(props)
                 color="danger"
                 onClick = {()=>deleteFlight(props.idOfFlight)}
             >
-            Delete, I am sure.
+            {props.idOfFlight}
             </Button>
             </div>
     </UncontrolledPopover>    

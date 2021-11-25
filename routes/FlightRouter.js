@@ -136,7 +136,11 @@ router.post('/matches',(req,res)=>{
       res.json(match);
     });
 })
-
+router.delete('/:id', (req,res)=> {
+    Flights.findByIdAndDelete(req.params.id)
+    .then((flight)=>console.log('Deleted flight ' + flight.flightNumber +' successfully'))
+    .catch(err => console.log(err));
+});
 
 
 //functions
