@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
 
 function FormComponent (props){
 
@@ -16,9 +17,14 @@ function FormComponent (props){
   const [errors,setErrors]= useState({});
 
 
+  const navigate = useNavigate();
+
+  function goToAdmin() {
+      navigate('/admin')
+    }
 
   let onSubmit=(event) =>{
-      event.preventDefault();
+    
   const newFlight={
     flightNumber:flightNumber,
     departureTerminal:departureTerminal,
@@ -33,8 +39,20 @@ function FormComponent (props){
   console.log(newFlight);
 
   const api={};
-  axios.put('/flights/619e4033adcb1e5c388022e2',newFlight,{headers: api});
+  var path='/flights/';
+
+  if (props.add){
+    path+='link';
+    axios.post(path,newFlight,{headers: api});
+  }
+  else{
+    path+=props.id;
+    axios.put(path,newFlight,{headers: api});
+    event.preventDefault();
+    
+  }
   console.log("axios tmam")
+  
 }
   
     return (<Form noValidate onSubmit={onSubmit}>
@@ -108,7 +126,7 @@ function FormComponent (props){
         </FormGroup>
         <FormGroup>
           <Label for="arrivalTime">
-            Departure Time
+            Arrival Time
             </Label>
             <Input
             id="arrivalTime"
@@ -158,12 +176,9 @@ function FormComponent (props){
             type="noOfFirstSeats"
           />
         </FormGroup>
-        <Button
-        type="submit"
-        >
-          Submit
-        </Button>
-      </Form>);
+        <Button  color= "success" type="submit"> Submit </Button>
+        <Button color="primary" type="button" onClick={goToAdmin}> Home page </Button>
+        </Form>);
 }
 
 export default FormComponent;
