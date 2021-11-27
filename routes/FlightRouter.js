@@ -218,7 +218,7 @@ Date.prototype.addHours = function(h) {
     this.setTime(this.getTime() + (h*60*60*1000));
     return this;
   }
-  router.put('/:id', async(req,res) => {
+router.put('/:id', async(req,res) => {
     const { errors, isValid } = validateFlightInput(req.body);
     // Check validation
         if (!isValid) {
