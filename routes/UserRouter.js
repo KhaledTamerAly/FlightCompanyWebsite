@@ -10,7 +10,7 @@ mongoose.connect(db)
 const Users = require('../tables/Users');
 
 function addAdmin (){
-    const admin = new Users({fName: "Youssef",lName: "Bassiouny", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "youssef",password: "osama",email:"youssef@osamaTours.com",userType: ["Admin"]});
+    const admin = new Users({fName: "Administrator",lName: " ", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "administrator",password: "osama",email:"admin@osamaTours.com",userType: ["Admin"]});
     try{
         admin.save();
        console.log("ok");
@@ -19,7 +19,7 @@ function addAdmin (){
     }
 };
 
-//addAdmin();
+addAdmin();
 
 
 module.exports = router;

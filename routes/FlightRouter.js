@@ -296,7 +296,7 @@ router.post ("/link",async (req,res)=> {
     const noOfEconSeats = req.body.noOfEconSeats;
     const noOfBusinessSeats = req.body.noOfBusinessSeats;
     const noOfFirstSeats = req.body.noOfFirstSeats;
-    const flightDate = "";
+    var flightDate = "";
     if(!isEmpty(req.body.flightDate))
         flightDate=new Date(Date.parse(req.body.flightDate));
     const arrivalTerminal = req.body.arrivalTerminal;
