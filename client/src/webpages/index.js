@@ -7,6 +7,7 @@ import {
 import Home from './home';
 import Admin from './admin';
 import Login from './login';
+import EditFlightPage from './editFlightPage';
 function Webpages()
 {
     return(
@@ -15,6 +16,7 @@ function Webpages()
             <Route exact path="/" element= {<Home/>} />
             <Route path = "/admin" element = {<Admin/>} />
             <Route path = "/login" element = {<Login />} />
+            <Route path = "/editFlight" element = {<EditFlightPage />} />
         </Routes>
         </Router>
     );

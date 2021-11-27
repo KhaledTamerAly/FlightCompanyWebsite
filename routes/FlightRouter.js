@@ -91,7 +91,7 @@ router.post('/matches',(req,res)=>{
     }
   });
 
-  router.get('/matches', (req,res) =>{
+router.get('/matches', (req,res) =>{
       
     var query = [{}];
     var searchObject = {const:""};
@@ -218,15 +218,15 @@ Date.prototype.addHours = function(h) {
     this.setTime(this.getTime() + (h*60*60*1000));
     return this;
   }
-  router.put('/:id', async(req,res) => {
+router.put('/:id', async(req,res) => {
     const { errors, isValid } = validateFlightInput(req.body);
     // Check validation
         if (!isValid) {
-            return res.status(400).json(errors);
+            return res.json(errors);
         }
         Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
             if (flight) {
-              return res.status(400).json({ flightNumber: "Flight Number already exists" });
+              return res.json({ flightNumber: "Flight Number already exists" });
             }
         });
     const dateSample = new Date();
