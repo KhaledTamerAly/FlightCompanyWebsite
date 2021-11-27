@@ -23,6 +23,9 @@ function FormComponent (props){
       navigate('/admin')
     }
 
+    function goToAddFlight(){
+      navigate('/editFlight', { state:{isAdd:true}, replace:false })
+  }
   let onSubmit=(event) =>{
     
   const newFlight={
@@ -44,12 +47,14 @@ function FormComponent (props){
   if (props.add){
     path+='link';
     axios.post(path,newFlight,{headers: api});
+    event.preventDefault();
+    window.location.reload();
   }
   else{
     path+=props.id;
     axios.put(path,newFlight,{headers: api});
     event.preventDefault();
-    
+    goToAdmin();
   }
   console.log("axios tmam")
   
