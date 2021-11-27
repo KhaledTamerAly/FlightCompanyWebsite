@@ -15,6 +15,7 @@ mongoose.connect(db)
 
 //importing Table flights
 const Flights = require('../tables/Flights');
+const isEmpty = require('is-empty');
 
 var selDepT;
 var selArrT;
@@ -219,11 +220,7 @@ Date.prototype.addHours = function(h) {
     return this;
   }
 router.put('/:id', async(req,res) => {
-    const { errors, isValid } = validateFlightInput(req.body);
-    // Check validation
-        if (!isValid) {
-            return res.json(errors);
-        }
+    
         Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
             if (flight) {
               return res.json({ flightNumber: "Flight Number already exists" });
@@ -231,27 +228,30 @@ router.put('/:id', async(req,res) => {
         });
     const dateSample = new Date();
     const flightNumber = req.body.flightNumber;
-    var departureTime = new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
-    var arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
-    departureTime.setHours(departureTime.getHours()+1);
-    arrivalTime.setHours(arrivalTime.getHours()+1);
     const noOfEconSeats = req.body.noOfEconSeats;
     const noOfBusinessSeats = req.body.noOfBusinessSeats;
     const noOfFirstSeats = req.body.noOfFirstSeats;
-    const flightDate = new Date(Date.parse(req.body.flightDate));
     const arrivalTerminal = req.body.arrivalTerminal;
     const departureTerminal = req.body.departureTerminal;
     Flights.findById(req.params.id)
     .then(flight => {
-        flight.flightNumber = flightNumber;
-        flight.arrivalTerminal = arrivalTerminal;
-        flight.departureTerminal = departureTerminal;
-        flight.arrivalTime = arrivalTime;
-        flight.departureTime = departureTime;
-        flight.noOfBusinessSeats = noOfBusinessSeats;
-        flight.noOfEconSeats = noOfEconSeats;
-        flight.noOfFirstSeats = noOfFirstSeats;
-        flight.flightDate = flightDate;
+        flight.flightNumber = isEmpty(flightNumber) ? flight.flightNumber : flightNumber;
+        flight.arrivalTerminal = isEmpty(arrivalTerminal) ? flight.arrivalTerminal : arrivalTerminal;
+        flight.departureTerminal = isEmpty(departureTerminal) ? flight.departureTerminal : departureTerminal
+        if(!isEmpty(req.body.arrivalTime)){
+            flight.arrivalTime=new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
+            flight.arrivalTime.setHours(arrivalTime.getHours()+1);
+        }
+        if(!isEmpty(req.body.departureTime)){
+            flight.departureTime=new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
+            flight.departureTime.setHours(departureTime.getHours()+1);
+        }
+        flight.noOfBusinessSeats = isEmpty(noOfBusinessSeats) ? flight.noOfBusinessSeats : noOfBusinessSeats;
+        flight.noOfEconSeats = isEmpty(noOfEconSeats) ? flight.noOfEconSeats : noOfEconSeats;
+        flight.noOfFirstSeats = isEmpty(noOfFirstSeats) ? flight.noOfFirstSeats : noOfFirstSeats;
+        if(!isEmpty(req.body.flightDate)){
+            flight.flightDate=new Date(Date.parse(req.body.flightDate));
+        }
         flight.save();
         res.json({success: true});
     })
@@ -269,26 +269,36 @@ function convertUTCDateToLocalDate(date) {
 }
 
 router.post ("/link",async (req,res)=> {
-    const { errors, isValid } = validateFlightInput(req.body);
-// Check validation
-    if (!isValid) {
-        return res.status(400).json(errors);
-    }
+//     const { errors, isValid } = validateFlightInput(req.body);
+// // Check validation
+//     if (!isValid) {
+//         return res.status(400).json(errors);
+//     }
     Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
         if (flight) {
           return res.status(400).json({ flightNumber: "Flight Number already exists" });
         }
     });
     const dateSample = new Date();
+    var departureTime="";
+    var arrivalTime="";
+    if(!isEmpty(req.body.arrivalTime)){
+        arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
+        arrivalTime.setHours(arrivalTime.getHours()+1);
+    }
+    if(!isEmpty(req.body.departureTime)){
+        departureTime = new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
+        departureTime.setHours(departureTime.getHours()+1);
+    }
     const flightNumber = req.body.flightNumber;
-    var departureTime = new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
-    var arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
-    departureTime.setHours(departureTime.getHours()+1);
-    arrivalTime.setHours(arrivalTime.getHours()+1);
+    // arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
+    // arrivalTime.setHours(arrivalTime.getHours()+1);
     const noOfEconSeats = req.body.noOfEconSeats;
     const noOfBusinessSeats = req.body.noOfBusinessSeats;
     const noOfFirstSeats = req.body.noOfFirstSeats;
-    const flightDate = new Date(Date.parse(req.body.flightDate));
+    const flightDate = "";
+    if(!isEmpty(req.body.flightDate))
+        flightDate=new Date(Date.parse(req.body.flightDate));
     const arrivalTerminal = req.body.arrivalTerminal;
     const departureTerminal = req.body.departureTerminal;
     const flight= new Flights({flightNumber:flightNumber, arrivalTerminal:arrivalTerminal, departureTerminal:departureTerminal,

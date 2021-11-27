@@ -6,7 +6,6 @@ import FormComponent from '../components/FormComponent';
 function AddFlight(){
     return(
         <div>
-            hi this is add
             <FormComponent add = {true} />
             
         </div>
@@ -16,7 +15,6 @@ function UpdateFlight(props)
 {
     return(
         <div>
-            hi this is update
             <FormComponent add = {false} id={props.id} />
         </div>
     );
