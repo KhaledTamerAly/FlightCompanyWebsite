@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const flightRouter = require('./routes/FlightRouter');
+const userRouter = require('./routes/UserRouter');
 
 const app = express();
 app.use(express.json());
@@ -12,10 +13,19 @@ mongoose.connect(db)
     .then(()=> console.log('MongoDB connected...'))
     .catch(err=> console.log(err));
 
+
+app.use('/users',userRouter);
+
+//Get flight table
+const Flights = require('./tables/Flights');
+app.use('/flights',flightRouter.router);
+
+
+
 //Routes
-app.use('/flights',flightRouter);
-
-
+app.get('/', (req,res)=>{
+    Flights.find({}).then((flight)=>res.json(flight));
+});
 
 
 //Run server

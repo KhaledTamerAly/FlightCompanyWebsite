@@ -1,11 +1,14 @@
 import './App.css';
-import DeleteButton from './components/AdminCRUD';
+import React, { Component ,  useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { useState } from 'react';
+import Webpages from './webpages';
 
 function App() {
-  
-  return;
+  return (
+    <div>
+     <Webpages />
+     </div>
+  );
 }
 
 export default App;
