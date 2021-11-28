@@ -5,6 +5,7 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import CardPanel from "./CardPanel";
+import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
 
 class Search extends Component {
 
@@ -19,7 +20,9 @@ class Search extends Component {
     selectedDepDate: null,
     selectedReturnDate: null,
     selectedDepFlightNumber:null,
-    flightToBeListed: []
+    flightToBeListed: [],
+    arrivalTime : null,
+    departureTime : null
   };
 
 
@@ -84,14 +87,16 @@ componentDidMount()
 }
 async userInput(event) {
     var matches = [];
-    var selArrT, selDepT,selDepD, selRetD, selArrFN, selDepFN;
+    var selArrT, selDepT,selDepD, selRetD, selArrFN, selDepFN, selDepTime, selArrTime;
     selArrT =this.state.selectedArrivalTerminal;
     selDepT =this.state.selectedDepartureTerminal;
     selDepD = this.state.selectedDepDate;
     selRetD = this.state.selectedReturnDate;
     selDepFN = this.state.selectedDepFlightNumber;
+    selDepTime = this.state.departureTime;
+    selArrTime = this.state.arrivalTime;
 
-    if(selDepD == null && selArrT == null && selDepT == null && selRetD == null && selArrFN ==null &&selDepFN==null)
+    if(selDepD == null && selArrT == null && selDepT == null && selRetD == null && selArrFN ==null &&selDepFN==null && selDepTime==null && selArrTime==null)
     {
         this.setState({flightToBeListed: this.state.flights});
       return;
@@ -103,15 +108,19 @@ async userInput(event) {
         selectedDepartureTerminal: ( (selDepT==null) ? null: selDepT.value),
         selectedDepDate: ( (selDepD==null) ? null: this.state.selectedDepDate),
         selectedReturnDate: ( (selRetD==null) ? null: this.state.selectedReturnDate),
-        selectedDepFlightNumber: ( (selDepFN==null) ? null: selDepFN.value)
+        selectedDepFlightNumber: ( (selDepFN==null) ? null: selDepFN.value),
+        selectedArrTime: ( (selArrTime==null) ? null: selArrTime),
+        selectedDepTime: ( (selDepTime==null) ? null: selDepTime)
       }
         const api = {};
+        console.log(body);
         axios.post('/flights/matches', body, {headers: api});
 
         axios.get('/flights/matches')
               .then(res =>{
                   matches = res.data;
                   this.setState({selectedDepDate:null})
+                  this.setState({selectedReturnDat:null})
                   this.setState({flightToBeListed: res.data});
               });
     }
@@ -157,6 +166,30 @@ async userInput(event) {
                   placeholderText="Choose Arrival Date"
                   dateFormat = 'yyyy/MM/dd'
                 />
+                <FormGroup>
+          <Label for="departureTime">
+            Departure Time
+            </Label>
+            <Input
+            id="departureTime"
+            value={this.state.departureTime}
+            onChange={(event)=> this.setState({departureTime:event.target.value})}
+            name="departureTime"
+            type="time"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="arrivalTime">
+            Arrival Time
+            </Label>
+            <Input
+            id="arrivalTime"
+            value ={this.state.arrivalTime}
+            onChange={(event)=> this.setState({arrivalTime:event.target.value})}
+            name="arrivalTime"
+            type="time"
+          />
+        </FormGroup>
       <b>Selected Departure Terminal is {this.state.selectedDepartureTerminal?.label ?? "NOT SELECTED"}</b> 
       <br/>
       <b>Selected Arrival Terminal is {this.state.selectedArrivalTerminal?.label ?? "NOT SELECTED"}</b>

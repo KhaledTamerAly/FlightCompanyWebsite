@@ -21,6 +21,8 @@ var selDepT;
 var selArrT;
 var selDepFN;
 var selArrFN;
+var selArrTime;
+var selDepTime;
 
 var selectedDepDateStart = null;
 var selectedDepDateEnd = null;
@@ -58,6 +60,8 @@ router.post('/matches',(req,res)=>{
     selDepT = null;
     selDepFN = null;
     selArrFN = null;
+    selArrTime = null;
+    selDepTime = null;
     selectedDepDateStart = null;
     selectedDepDateEnd = null;
     selectedReturnDateStart = null;
@@ -68,23 +72,39 @@ router.post('/matches',(req,res)=>{
     selDepT = req.body.selectedDepartureTerminal;
     selDepFN = req.body.selectedDepFlightNumber;
     selArrFN = req.body.selectedArrFlightNumber;
-
+    selArrTime = req.body.selectedArrTime;
+    selDepTime = req.body.selectedDepTime;
+    
     if(req.body.selectedDepDate != null)
     {
         
     selectedDepDateStart = new Date(req.body.selectedDepDate);
     selectedDepDateStart = convertUTCDateToLocalDate(selectedDepDateStart);
-    selectedDepDateStart.setUTCHours(0, 0, 0, 0);
-
+    if(selDepTime!= null)
+    {
+        var hours = parseInt(selDepTime.toString().substring(0,2));
+        var min = parseInt(selDepTime.toString().substring(3));
+        selectedDepDateStart.setUTCHours(hours, min, 0, 0);
+    }
+    else
+        selectedDepDateStart.setUTCHours(0, 0, 0, 0);
+    }
     selectedDepDateEnd = new Date(req.body.selectedDepDate);
     selectedDepDateEnd = convertUTCDateToLocalDate(selectedDepDateEnd);
     selectedDepDateEnd.setUTCHours(23, 59, 59, 999);
-    }
+
     if(req.body.selectedReturnDate != null)
     {
     selectedReturnDateStart = new Date(req.body.selectedReturnDate);
     selectedReturnDateStart = convertUTCDateToLocalDate(selectedReturnDateStart);
-    selectedReturnDateStart.setUTCHours(0, 0, 0, 0);
+    if(selArrTime!= null)
+    {
+        var hours = parseInt(selArrTime.toString().substr(0,1));
+        var min = parseInt(selArrTime.toString().substr(2,4));
+        selectedReturnDateStart.setUTCHours(hours, min, 0, 0);
+    }
+    else
+        selectedReturnDateStart.setUTCHours(0, 0, 0, 0);
     
     selectedReturnDateEnd = new Date(req.body.selectedReturnDate);
     selectedReturnDateEnd = convertUTCDateToLocalDate(selectedReturnDateEnd);
@@ -104,7 +124,10 @@ router.get('/matches', (req,res) =>{
         searchObject.arrivalTerminal = selArrT;
 
     if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
-        searchObject.flightDate = {$gte: selectedDepDateStart, $lt: selectedDepDateEnd};
+        {
+            console.log('h')
+            searchObject.flightDate = {$gte: selectedDepDateStart, $lt: selectedDepDateEnd};
+        }
 
     var returnFlight = {const:""};
     if(selDepT !=null)
