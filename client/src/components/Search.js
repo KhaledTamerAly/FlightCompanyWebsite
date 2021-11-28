@@ -168,7 +168,7 @@ async userInput(event) {
                 />
                 <FormGroup>
           <Label for="departureTime">
-            Departure Time
+            Departure Time (Please select a date also)
             </Label>
             <Input
             id="departureTime"
@@ -180,7 +180,7 @@ async userInput(event) {
         </FormGroup>
         <FormGroup>
           <Label for="arrivalTime">
-            Arrival Time
+            Arrival Time (Please select a date also)
             </Label>
             <Input
             id="arrivalTime"

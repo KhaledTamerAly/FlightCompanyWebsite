@@ -9,9 +9,21 @@ function Admin()
     function goToAddFlight(){
         navigate('/editFlight', { state:{isAdd:true}, replace:false })
     }
+    function goToHome()
+    {
+        navigate('/');
+    }
     return (
         <>
         <div>
+        <Button
+                id="backToHome"
+                type="button"
+                color="primary"
+                onClick = {goToHome}
+            >
+            Go Back To Home
+            </Button>
             <Button
                 id="addFlight"
                 type="button"
