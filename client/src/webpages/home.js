@@ -19,6 +19,7 @@ function Home()
             <h1>Welcome to placeholder flights</h1>
             <p></p>
             <Button color="primary" outline onClick={goToAdmin}> Login as Admin </Button>
+            <Button color="primary" outline onClick={()=> navigate('/user')}> Login as User </Button>
             <Button color="success" outline> Register </Button>
         </div>
         <div>
