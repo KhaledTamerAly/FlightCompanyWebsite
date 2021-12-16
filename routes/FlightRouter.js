@@ -110,8 +110,7 @@ router.post('/matches',(req,res)=>{
     selectedReturnDateEnd = convertUTCDateToLocalDate(selectedReturnDateEnd);
     selectedReturnDateEnd.setUTCHours(23, 59, 59, 999);
     }
-  });
-
+});
 router.get('/matches', (req,res) =>{
       
     var query = [{}];
@@ -164,16 +163,119 @@ router.delete('/:id', (req,res)=> {
     .then((flight)=>console.log('Deleted flight ' + flight.flightNumber +' successfully'))
     .catch(err => console.log(err));
 });
+router.put('/reserveSeat', (req,res)=>{
+    var chosenSeats = req.body.chosenSeats;
+    Flights.findOne({flightNumber: req.body.flightNumber}).select('seats').then(seats=>{
+        var updatedSeats = updateSeats(chosenSeats,seats.seats);
+        Flights.findOneAndUpdate({flightNumber: req.body.flightNumber},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
+    });
+}
+);
+router.put('/:id', async(req,res) => {
+    
+    Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
+        if (flight) {
+          return res.json({ flightNumber: "Flight Number already exists" });
+        }
+    });
+const dateSample = new Date();
+const flightNumber = req.body.flightNumber;
+const noOfEconSeats = req.body.noOfEconSeats;
+const noOfBusinessSeats = req.body.noOfBusinessSeats;
+const noOfFirstSeats = req.body.noOfFirstSeats;
+const arrivalTerminal = req.body.arrivalTerminal;
+const departureTerminal = req.body.departureTerminal;
+Flights.findById(req.params.id)
+.then(flight => {
+    flight.flightNumber = isEmpty(flightNumber) ? flight.flightNumber : flightNumber;
+    flight.arrivalTerminal = isEmpty(arrivalTerminal) ? flight.arrivalTerminal : arrivalTerminal;
+    flight.departureTerminal = isEmpty(departureTerminal) ? flight.departureTerminal : departureTerminal
+    if(!isEmpty(req.body.arrivalTime)){
+        flight.arrivalTime=new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
+        flight.arrivalTime.setHours(arrivalTime.getHours()+1);
+    }
+    if(!isEmpty(req.body.departureTime)){
+        flight.departureTime=new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
+        flight.departureTime.setHours(departureTime.getHours()+1);
+    }
+    flight.noOfBusinessSeats = isEmpty(noOfBusinessSeats) ? flight.noOfBusinessSeats : noOfBusinessSeats;
+    flight.noOfEconSeats = isEmpty(noOfEconSeats) ? flight.noOfEconSeats : noOfEconSeats;
+    flight.noOfFirstSeats = isEmpty(noOfFirstSeats) ? flight.noOfFirstSeats : noOfFirstSeats;
+    if(!isEmpty(req.body.flightDate)){
+        flight.flightDate=new Date(Date.parse(req.body.flightDate));
+    }
+    flight.save();
+    res.json({success: true});
+})
+.catch(err => res.status(404).json({success: false}));
+});
+router.post("/link",async (req,res)=> {
+Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
+    if (flight) {
+      return res.status(400).json({ flightNumber: "Flight Number already exists" });
+    }
+});
+const dateSample = new Date();
+var departureTime="";
+var arrivalTime="";
+if(!isEmpty(req.body.arrivalTime)){
+    arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
+    arrivalTime.setHours(arrivalTime.getHours()+1);
+}
+if(!isEmpty(req.body.departureTime)){
+    departureTime = new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
+    departureTime.setHours(departureTime.getHours()+1);
+}
+const flightNumber = req.body.flightNumber;
+// arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
+// arrivalTime.setHours(arrivalTime.getHours()+1);
+const noOfEconSeats = req.body.noOfEconSeats;
+const noOfBusinessSeats = req.body.noOfBusinessSeats;
+const noOfFirstSeats = req.body.noOfFirstSeats;
+const seatMap = generateSeats(noOfFirstSeats,noOfBusinessSeats, noOfEconSeats);
+var flightDate = "";
+if(!isEmpty(req.body.flightDate))
+    flightDate=new Date(Date.parse(req.body.flightDate));
+const arrivalTerminal = req.body.arrivalTerminal;
+const departureTerminal = req.body.departureTerminal;
+const flight= new Flights({flightNumber:flightNumber, arrivalTerminal:arrivalTerminal, departureTerminal:departureTerminal,
+flightDate:flightDate, departureTime:departureTime, arrivalTime:arrivalTime, 
+noOfEconSeats:noOfEconSeats, noOfBusinessSeats:noOfBusinessSeats, noOfFirstSeats:noOfFirstSeats, seats:seatMap});
+try{
+    console.log(flight);
+    await flight.save();
+    res.send("ok");
+}catch(err){
+    res.send("err");
+}
+});
+
 
 
 //functions
+function updateSeats(chosenSeats, allSeats)
+{
+    for(var i =0;i<chosenSeats.length;i++)
+    {
+        var seatToLookFor = chosenSeats[i];
+
+        for(var j =0;j<allSeats.length;j++)
+        {
+            if(seatToLookFor == allSeats[j].seatNumber)
+                {
+                    allSeats[j].isTaken = true;
+                }
+        }
+    }
+    return allSeats;
+}
 function isValidDate(date) {
     return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
 }
 Date.prototype.addHours = function(h) {
     this.setTime(this.getTime() + (h*60*60*1000));
     return this;
-  }
+}
 function convertUTCDateToLocalDate(date) {
     var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
 
@@ -203,6 +305,7 @@ function populateTable()
         var firstClassSeats;
         var econClassSeats;
         var busClassSeats;
+        var seatsOnFlight = [];
         for(var j =i;j<i+3;j++)
         {
             var rowTemp = Object.values(databaseSheet)[j];
@@ -217,6 +320,7 @@ function populateTable()
             else if(cabinType == 'Business')
                 busClassSeats = num;
         }
+        seatsOnFlight = generateSeats(firstClassSeats, busClassSeats, econClassSeats);
         fName += getRndInteger(10,99);
         var newFlight = new Flights({
             flightNumber:fName,
@@ -227,12 +331,83 @@ function populateTable()
             arrivalTime:null,
             noOfEconSeats:econClassSeats,
             noOfBusinessSeats:busClassSeats,
-            noOfFirstSeats:firstClassSeats
+            noOfFirstSeats:firstClassSeats,
+            seats:seatsOnFlight
         })
         count++;
         newFlight.save();
     }
     console.log('Added '+ count +' flights...');
+}
+function generateSeats(first,busi,econ)
+{
+    var seats = [];
+    var rowNum = 1;
+    for(var i =0; i<first;i++)
+    {
+        var seat;
+        if(i % 2 ==0)
+        {
+            seat = 'A'+ rowNum.toString();
+        }
+        else
+        {
+            seat = 'B'+ rowNum.toString();
+            rowNum++;
+        }
+        var newSeat = {seatNumber:seat, isTaken:false };
+        seats.push(newSeat);
+    }
+
+    if(seats.length%2!=0)
+        rowNum++;
+
+    var previousSeatLetter = 'D';
+    for(var i =0; i<busi;i++)
+    {
+        
+        if(previousSeatLetter == 'D')
+        { 
+            if(i!=0)
+                rowNum++;
+            seat = 'A'+ rowNum.toString();
+            previousSeatLetter = 'A';
+            
+        }
+        else
+        {   
+            previousSeatLetter = String.fromCharCode(previousSeatLetter.charCodeAt()+1);
+            seat = previousSeatLetter + rowNum.toString();
+        }
+        
+        var newSeat = {seatNumber:seat, isTaken:false };
+        seats.push(newSeat);
+    }
+
+    if(busi%4!=0)
+        rowNum++;
+    var previousSeatLetter = 'F';
+    for(var i =0; i<econ;i++)
+    {
+        var seat;
+        
+        if(previousSeatLetter == 'F')
+        { 
+            if(i!=0)
+                rowNum++;
+            seat = 'A'+ rowNum.toString();
+            previousSeatLetter = 'A';
+            
+        }
+        else
+        {   
+            previousSeatLetter = String.fromCharCode(previousSeatLetter.charCodeAt()+1);
+            seat = previousSeatLetter + rowNum.toString();
+        }
+        var newSeat = {seatNumber:seat, isTaken:false };
+        seats.push(newSeat);
+    }
+    return seats;
 }
 function isValidDate(date) {
     return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
@@ -240,107 +415,14 @@ function isValidDate(date) {
 Date.prototype.addHours = function(h) {
     this.setTime(this.getTime() + (h*60*60*1000));
     return this;
-  }
-router.put('/:id', async(req,res) => {
-    
-        Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
-            if (flight) {
-              return res.json({ flightNumber: "Flight Number already exists" });
-            }
-        });
-    const dateSample = new Date();
-    const flightNumber = req.body.flightNumber;
-    const noOfEconSeats = req.body.noOfEconSeats;
-    const noOfBusinessSeats = req.body.noOfBusinessSeats;
-    const noOfFirstSeats = req.body.noOfFirstSeats;
-    const arrivalTerminal = req.body.arrivalTerminal;
-    const departureTerminal = req.body.departureTerminal;
-    Flights.findById(req.params.id)
-    .then(flight => {
-        flight.flightNumber = isEmpty(flightNumber) ? flight.flightNumber : flightNumber;
-        flight.arrivalTerminal = isEmpty(arrivalTerminal) ? flight.arrivalTerminal : arrivalTerminal;
-        flight.departureTerminal = isEmpty(departureTerminal) ? flight.departureTerminal : departureTerminal
-        if(!isEmpty(req.body.arrivalTime)){
-            flight.arrivalTime=new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
-            flight.arrivalTime.setHours(arrivalTime.getHours()+1);
-        }
-        if(!isEmpty(req.body.departureTime)){
-            flight.departureTime=new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
-            flight.departureTime.setHours(departureTime.getHours()+1);
-        }
-        flight.noOfBusinessSeats = isEmpty(noOfBusinessSeats) ? flight.noOfBusinessSeats : noOfBusinessSeats;
-        flight.noOfEconSeats = isEmpty(noOfEconSeats) ? flight.noOfEconSeats : noOfEconSeats;
-        flight.noOfFirstSeats = isEmpty(noOfFirstSeats) ? flight.noOfFirstSeats : noOfFirstSeats;
-        if(!isEmpty(req.body.flightDate)){
-            flight.flightDate=new Date(Date.parse(req.body.flightDate));
-        }
-        flight.save();
-        res.json({success: true});
-    })
-    .catch(err => res.status(404).json({success: false}));
-});
-function convertUTCDateToLocalDate(date) {
-    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
-
-    var offset = date.getTimezoneOffset() / 60;
-    var hours = date.getHours();
-
-    newDate.addHours(hours - offset+2);
-
-    return newDate;   
 }
 
-router.post ("/link",async (req,res)=> {
-//     const { errors, isValid } = validateFlightInput(req.body);
-// // Check validation
-//     if (!isValid) {
-//         return res.status(400).json(errors);
-//     }
-    Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
-        if (flight) {
-          return res.status(400).json({ flightNumber: "Flight Number already exists" });
-        }
-    });
-    const dateSample = new Date();
-    var departureTime="";
-    var arrivalTime="";
-    if(!isEmpty(req.body.arrivalTime)){
-        arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
-        arrivalTime.setHours(arrivalTime.getHours()+1);
-    }
-    if(!isEmpty(req.body.departureTime)){
-        departureTime = new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
-        departureTime.setHours(departureTime.getHours()+1);
-    }
-    const flightNumber = req.body.flightNumber;
-    // arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
-    // arrivalTime.setHours(arrivalTime.getHours()+1);
-    const noOfEconSeats = req.body.noOfEconSeats;
-    const noOfBusinessSeats = req.body.noOfBusinessSeats;
-    const noOfFirstSeats = req.body.noOfFirstSeats;
-    var flightDate = "";
-    if(!isEmpty(req.body.flightDate))
-        flightDate=new Date(Date.parse(req.body.flightDate));
-    const arrivalTerminal = req.body.arrivalTerminal;
-    const departureTerminal = req.body.departureTerminal;
-    const flight= new Flights({flightNumber:flightNumber, arrivalTerminal:arrivalTerminal, departureTerminal:departureTerminal,
-    flightDate:flightDate, departureTime:departureTime, arrivalTime:arrivalTime, 
-    noOfEconSeats:noOfEconSeats, noOfBusinessSeats:noOfBusinessSeats, noOfFirstSeats:noOfFirstSeats});
-    try{
-        console.log(flight);
-        await flight.save();
-        res.send("ok");
-    }catch(err){
-        res.send("err");
-    }
-});
 
-//Calling functions
+
 
 /** Called once to fill table, not needed anymore. Keep just in case of
 reusing its code **/
 //populateTable();
-
 //Exports
 module.exports = {
     router

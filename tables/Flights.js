@@ -31,7 +31,8 @@ const flightsSchema = new Schema({
     },
     noOfFirstSeats:{
         type: Number 
-    }
+    },
+    seats: [{seatNumber: String,isTaken: Boolean}]
 });
 
 module.exports = Flights = mongoose.model('flights', flightsSchema);

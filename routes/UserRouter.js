@@ -8,6 +8,36 @@ mongoose.connect(db)
 
 //importing Table Users
 const Users = require('../tables/Users');
+const Reservations = require('../tables/Reservations');
+
+
+//Routes
+router.post("/addReservation",async (req,res) => {
+    var uName = req.body.username;
+    var firstName = req.body.firstName;
+    var lastName = req.body.lastName;
+    var passport = req.body.passport;
+    var uemail = req.body.email;
+    var flightNum = req.body.flightNumber;
+    var seats = req.body.chosenSeats;
+
+    const reservation = new Reservations({
+        username:uName,
+        fName:firstName,
+        lName:lastName,
+        passportNumber: passport,
+        email: uemail,
+        flightNumber: flightNum,
+        chosenSeats: seats
+    });
+    await reservation.save();
+    console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
+});
+
+
+
+
+
 
 function addAdmin ()
 {
