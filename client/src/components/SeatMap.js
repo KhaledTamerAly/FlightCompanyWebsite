@@ -9,7 +9,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
 
-function SeatMap() 
+function SeatMap(props) 
 {
     const [flightSeats,setFlightSeats] = useState([]);
     const [chosenSeats,setChosenSeats] = useState([]);
@@ -17,7 +17,7 @@ function SeatMap()
 
 async function updateStates() 
 {
-    await axios.get('/flights/seatsOf/:id')
+    await axios.get('/flights/seatsOf/'+props.id)
     .then(res =>{
       const allFlights = res.data;
       setFlightSeats(allFlights);
@@ -27,28 +27,33 @@ useEffect(async()=>
 {
     updateStates();
 },[]);
-
-
-
-
     return (
         <div>
                 {
-                    (flightSeats??[]).map((row, i) => {
-                        
+                    (flightSeats??[]).map((row, i) =>
+                    {
                         return (
                             <Box>
                                 <ol>
                                     {
-                                        (row??[]).map((col, j) => {
+                                        (row??[]).map((col, j) => 
+                                        {
+                                            if(col!=null)
+                                            console.log(col.isTaken+ " " + col.seatNumber);
                                             return (
                                                 <FormControl component="fieldset" variant="standard" id={i}>
                                                         <FormGroup>
-                                                            <FormControlLabel
-                                                                control={<Checkbox />}
-                                                                label={(col??{seatNumber:""}).seatNumber ?? ""}
+                                                            {col!=null && col.isTaken && <FormControlLabel
+                                                                disabled
+                                                                control={<Checkbox color="default" disabled checked/>}
+                                                                label={col.seatNumber}
                                                                 labelPlacement="top"
-                                                            />
+                                                            />}
+                                                            {col!=null && !col.isTaken && <FormControlLabel
+                                                                control={<Checkbox color="success"/>}
+                                                                label={col.seatNumber}
+                                                                labelPlacement="top"
+                                                            />}
                                                         </FormGroup>
                                                 </FormControl>
                                             );
@@ -56,8 +61,8 @@ useEffect(async()=>
                                     }
                                 </ol>
                             </Box>
-                                );
-                        })
+                        );
+                    })
                 }
 
         </div>

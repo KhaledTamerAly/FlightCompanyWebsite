@@ -8,6 +8,7 @@ mongoose.connect(db)
 
 //importing Table Users
 const Users = require('../tables/Users');
+const Flights = require('../tables/Flights');
 const Reservations = require('../tables/Reservations');
 
 
@@ -31,8 +32,30 @@ router.post("/addReservation",async (req,res) => {
         chosenSeats: seats
     });
     await reservation.save();
+
+    var chosenSeats = req.body.chosenSeats;
+    await Flights.findOne({flightNumber: req.body.flightNumber}).select('seats').then(seats=>{
+        var updatedSeats = updateSeats(chosenSeats,seats.seats);
+        Flights.findOneAndUpdate({flightNumber: req.body.flightNumber},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
+    });
     console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
 });
+function updateSeats(chosenSeats, allSeats)
+{
+    for(var i =0;i<chosenSeats.length;i++)
+    {
+        var seatToLookFor = chosenSeats[i];
+
+        for(var j =0;j<allSeats.length;j++)
+        {
+            if(seatToLookFor == allSeats[j].seatNumber)
+                {
+                    allSeats[j].isTaken = true;
+                }
+        }
+    }
+    return allSeats;
+}
 function addAdmin ()
 {
     const admin = new Users({fName: "Administrator",lName: " ", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "administrator",password: "osama",email:"admin@osamaTours.com",userType: ["Admin"]});

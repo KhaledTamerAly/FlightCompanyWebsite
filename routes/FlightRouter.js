@@ -34,10 +34,10 @@ var selectedReturnDateEnd = null;
 router.get('/seatsOf/:id',async (req,res)=>{
     var result = {};
     var numberOfSeats = {};
-    await Flights.findOne({ id: req.body.id }).select('seats').then(seats => {
+    await Flights.findById(req.params.id ).select('seats').then(seats => {
         result.seats = seats.seats;
     });
-    await Flights.findOne({ id: req.body.id }).then(flight => {
+    await Flights.findById(req.params.id).then(flight => {
         numberOfSeats.econ = flight.noOfEconSeats;
         numberOfSeats.busi = flight.noOfBusinessSeats;
         numberOfSeats.first = flight.noOfFirstSeats;
@@ -178,14 +178,6 @@ router.delete('/:id', (req,res)=> {
     .then((flight)=>console.log('Deleted flight ' + flight.flightNumber +' successfully'))
     .catch(err => console.log(err));
 });
-router.put('/reserveSeat', (req,res)=>{
-    var chosenSeats = req.body.chosenSeats;
-    Flights.findOne({flightNumber: req.body.flightNumber}).select('seats').then(seats=>{
-        var updatedSeats = updateSeats(chosenSeats,seats.seats);
-        Flights.findOneAndUpdate({flightNumber: req.body.flightNumber},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
-    });
-}
-);
 router.put('/:id', async(req,res) => {
     
     Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {

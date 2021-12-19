@@ -26,7 +26,7 @@ function Home()
         <div>
           {//<EnhancedTable />
           }
-          <SeatMap id="61ba9bae06c919965b9308da" numberOfSeats ={5}  />
+          <SeatMap id="61ba9bae06c919965b9308b5" numberOfSeats ={5}  />
         </div>
         </>
     );
