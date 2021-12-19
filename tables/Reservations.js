@@ -23,8 +23,7 @@ const reservationScheme = new Schema({
         required: true
     },
     flightNumber: {
-        type: String,
-        unique:true
+        type: String
     },
     chosenSeats : {
         type : [String]

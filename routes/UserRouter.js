@@ -33,12 +33,6 @@ router.post("/addReservation",async (req,res) => {
     await reservation.save();
     console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
 });
-
-
-
-
-
-
 function addAdmin ()
 {
     const admin = new Users({fName: "Administrator",lName: " ", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "administrator",password: "osama",email:"admin@osamaTours.com",userType: ["Admin"]});
