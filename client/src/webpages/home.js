@@ -2,8 +2,7 @@ import React from 'react'
 import {useNavigate} from 'react-router-dom';
 import { Button} from 'reactstrap';
 import EnhancedTable from '../components/ScheduleViewer';
-import SeatMap from '../components/SeatMap';
-
+import SeatComponent from '../components/SeatsComponent';
 function Home()
 {
     const navigate = useNavigate();
@@ -24,9 +23,8 @@ function Home()
             <Button color="success" outline> Register </Button>
         </div>
         <div>
-          {//<EnhancedTable />
-          }
-          <SeatMap id="61ba9bae06c919965b9308b5" numberOfSeats ={5}  />
+          <EnhancedTable />
+          <SeatComponent depFlight= "61ba9bae06c919965b9308b5" retFlight="61ba9bae06c919965b9308b5" depFlightNumSeats ={5} retFlightNumSeats={5} depCabinClass="Economy" retCabinClass="First"/>          
         </div>
         </>
     );

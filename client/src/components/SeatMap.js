@@ -13,7 +13,7 @@ function SeatMap(props)
 {
     const [flightSeats,setFlightSeats] = useState([]);
     const [chosenSeats,setChosenSeats] = useState([]);
-
+    const [numberOfSeatsToReservre, setNumberOfSeat] = useState(props.numberOfSeats)
 
 async function updateStates() 
 {
@@ -23,48 +23,73 @@ async function updateStates()
       setFlightSeats(allFlights);
    })
 }
-useEffect(async()=>
-{
-    updateStates();
-},[]);
+    useEffect(async()=>
+    {
+        updateStates();
+    },[]);
+    function handleChange(event, seatNumber)
+    {
+        if(event.target.checked)
+        {
+            if(numberOfSeatsToReservre>0)
+            {
+                props.func(seatNumber,true);
+                setNumberOfSeat(numberOfSeatsToReservre-1);
+            }
+        }
+        else
+        {
+            props.func(seatNumber,false);
+            setNumberOfSeat(numberOfSeatsToReservre+1);
+        }
+    }
     return (
         <div>
-                {
-                    (flightSeats??[]).map((row, i) =>
-                    {
-                        return (
-                            <Box>
-                                <ol>
-                                    {
-                                        (row??[]).map((col, j) => 
-                                        {
-                                            if(col!=null)
-                                            console.log(col.isTaken+ " " + col.seatNumber);
-                                            return (
-                                                <FormControl component="fieldset" variant="standard" id={i}>
-                                                        <FormGroup>
-                                                            {col!=null && col.isTaken && <FormControlLabel
-                                                                disabled
-                                                                control={<Checkbox color="default" disabled checked/>}
-                                                                label={col.seatNumber}
-                                                                labelPlacement="top"
-                                                            />}
-                                                            {col!=null && !col.isTaken && <FormControlLabel
-                                                                control={<Checkbox color="success"/>}
-                                                                label={col.seatNumber}
-                                                                labelPlacement="top"
-                                                            />}
-                                                        </FormGroup>
-                                                </FormControl>
-                                            );
-                                        })
-                                    }
-                                </ol>
-                            </Box>
-                        );
-                    })
-                }
-
+            <h3>Select your prefered seats in your {props.type} flight</h3>
+            <h4>You have {numberOfSeatsToReservre} seats to reserve</h4>
+                {(flightSeats??[]).map((row, i) =>{
+                return (
+                    <Box>
+                        <ol>
+                        {
+                        (row??[]).map((col, j) => 
+                        {
+                            if(col!=null)
+                                return (
+                                        <FormControl component="fieldset" variant="standard" id={i+j}>
+                                        <FormGroup>
+                                        {col!=null && col.isTaken && <FormControlLabel
+                                        id={i+j}
+                                        disabled
+                                        control={<Checkbox color="default" disabled checked/>}
+                                        label={col.seatNumber}
+                                        labelPlacement="top"
+                                        />}
+                                        {col!=null && !col.isTaken && <FormControlLabel
+                                        
+                                        onChange={(event)=>{handleChange(event,col.seatNumber);
+                                            if(event.target.checked)
+                                            {
+                                                col.isClicked = true;
+                                            }
+                                        else{
+                                            col.isClicked = false;
+                                        }}}
+                                        id={i+j}
+                                        control={<Checkbox disabled = {numberOfSeatsToReservre==0 && !col.isClicked}color="success"/>}
+                                        label={col.seatNumber}
+                                        labelPlacement="top"
+                                        />}
+                                        </FormGroup>
+                                        </FormControl>
+                                        );
+                             })
+                        }
+                        </ol>
+                        </Box>
+                );
+                })
+            }
         </div>
     );
 }

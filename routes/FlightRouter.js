@@ -70,6 +70,12 @@ router.get('/',(req,res)=>{
         res.json(flights);
     });   
 })
+router.get('/:id',(req,res)=>{
+    // get all the depterminals
+    Flights.findById(req.params.id).then(flights => {
+        res.json(flights);
+    });   
+})
 router.post('/matches',(req,res)=>{
     selArrT = null;
     selDepT = null;
@@ -308,6 +314,18 @@ function generateSeatArray(flightSeats,numOfSeats)
         }
         var allSeats = [];
         allSeats = resFirstCol.concat(resBusiCol).concat(resEconCol);
+
+        for(var i =0;i<allSeats.length;i++)
+        {
+            for(var j=0;j<allSeats[i].length;j++)
+            {
+                if(allSeats[i][j]!=null && allSeats[i][j]!=undefined)
+                {
+                    allSeats[i][j].isClicked = false;
+                }
+            }
+        }
+        //console.log(allSeats);
         return allSeats;
         
     }
