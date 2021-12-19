@@ -12,6 +12,8 @@ function SeatComponent(props)
     const [isDoneChoosing, setIsDone] = useState(false);
     const [chosenSeatsDep,setChosenSeatsDep] = useState([]);
     const [chosenSeatsRet,setChosenSeatsRet] = useState([]);
+    const [bookingNumberD, setBookingNumberD] = useState("");
+    const [bookingNumberR, setBookingNumberR] = useState("");
 
     function chooseSeatsDep(seatNumber,isAdd)
     {
@@ -53,23 +55,46 @@ function SeatComponent(props)
     {
 
     }
-    function handleClick()
+    async function handleClick()
     {
         if(isChoosingDepSeats)
             setIsChoosingDep(false);
         else
             {
                 //reserve axios
-                setIsDone(true);
+                
+                const bodyDep = { 
+                    username:props.userInfo.username,
+                    firstName: props.userInfo.firstName,
+                    lastName: props.userInfo.lastname,
+                    passport: props.userInfo.passport,
+                    email: props.userInfo.email,
+                    flightNumber: props.depFlight,
+                    chosenSeats: chosenSeatsDep
+                  }
+                    const api = {};
+                    await axios.post('/users/addReservation', bodyDep, {headers: api}).then(res=> setBookingNumberD(res.data));
+
+                const bodyRet = { 
+                    username:props.userInfo.username,
+                    firstName: props.userInfo.firstName,
+                    lastName: props.userInfo.lastname,
+                    passport: props.userInfo.passport,
+                    email: props.userInfo.email,
+                    flightNumber: props.retFlight,
+                    chosenSeats: chosenSeatsRet
+                  }
+                    await axios.post('/users/addReservation', bodyRet, {headers: api}).then(res=>setBookingNumberR(res.data));
+                    setIsDone(true);
             }
     }
     return (
         <div>
             {!isDoneChoosing && isChoosingDepSeats && <SeatMap id={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>}
             {!isDoneChoosing &&!isChoosingDepSeats && <SeatMap id={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>}
-            {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet}/>}
+            {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR}/>}
             {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
-            {isDoneChoosing && <Button color="primary" onClick={exit}> Confirm Reservation </Button>}
+            {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}
     </div>
     );
 }

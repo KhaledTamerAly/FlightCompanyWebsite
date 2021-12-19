@@ -38,7 +38,7 @@ function Summary(props)
           <Typography sx={{ width: '33%', flexShrink: 0 }}>
           Departure Flight
           </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>Flight Number: {flights?.depFlight.flightNumber ?? ""}</Typography>
+          <Typography sx={{ color: 'text.secondary' }}>Flight Number: {flights?.depFlight.flightNumber ?? ""} Booking Number:{props.bookingNumberD}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
@@ -64,6 +64,7 @@ function Summary(props)
           <Typography sx={{ width: '33%', flexShrink: 0 }}>Return Flight</Typography>
           <Typography sx={{ color: 'text.secondary' }}>
           Flight Number: {flights?.retFlight.flightNumber?? ""}
+             Booking Number:{props.bookingNumberR}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>

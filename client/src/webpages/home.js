@@ -13,6 +13,13 @@ function Home()
     function goToLogin() {
         navigate('/login')
       }
+      const userInfo=  {
+        username:"youssef",
+        firstName: "youssef",
+        lastname: "Bassiouny",
+        passport: "A2765",
+        email: "youssef@osamaTours.com"
+      }
     return (
       <>
         <div>
@@ -24,7 +31,7 @@ function Home()
         </div>
         <div>
           <EnhancedTable />
-          <SeatComponent depFlight= "61ba9bae06c919965b9308b5" retFlight="61ba9bae06c919965b9308b5" depFlightNumSeats ={5} retFlightNumSeats={5} depCabinClass="Economy" retCabinClass="First"/>          
+          <SeatComponent depFlight= "61ba9bae06c919965b9308b5" retFlight="61ba9bae06c919965b9308b5" depFlightNumSeats ={5} retFlightNumSeats={5} depCabinClass="Economy" retCabinClass="First" userInfo ={userInfo}/>          
         </div>
         </>
     );
