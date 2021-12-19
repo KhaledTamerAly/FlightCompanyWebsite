@@ -1,16 +1,16 @@
 import React from "react";
 import Navbar from '../components/Navbar';
 
-function User()
+function MyInformation()
 {
     
     return (
         <div>
             <Navbar />
-            <h1>user page</h1>
+            <h1>Information</h1>
         </div>
        
     );
 }
 
-export default User;
+export default MyInformation;

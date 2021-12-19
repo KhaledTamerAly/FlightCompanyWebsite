@@ -21,6 +21,7 @@ import Switch from '@mui/material/Switch';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import { useState, useEffect } from 'react'
 
 
 
@@ -244,11 +245,7 @@ export default function EnhancedTable() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - flights.length) : 0;
 
 
-    axios.get('/flights')
-    .then(res =>{
-      setFlights(res.data);
-    })
-
+    useEffect(()=>{axios.get('/flights').then(res =>{setFlights(res.data)})}, []);
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

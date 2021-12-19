@@ -75,7 +75,6 @@ async updateStates() {
              distinct[i] = elem;
            }
            this.setState({flightNumberOptions: [{label:"_" ,value:null}].concat(distinct)});
-
          });
   
 }

@@ -9,6 +9,8 @@ import Admin from './admin';
 import Login from './login';
 import EditFlightPage from './editFlightPage';
 import User from './user';
+import MyReservations from './myReservations';
+import MyInformation from './myInformation';
 
 function Webpages()
 {
@@ -19,7 +21,9 @@ function Webpages()
             <Route path = "/admin" element = {<Admin/>} />
             <Route path = "/login" element = {<Login />} />
             <Route path = "/user" element = {<User />} />
-            <Route path = "/editFlight" element = {<EditFlightPage />} />
+            <Route path = "/editFlight" element = {<EditFlightPage />} />   
+            <Route path ="/myReservations" element = {<MyReservations />} />
+            <Route path ="/myInformation" element = {<MyInformation />} />
         </Routes>
         </Router>
     );
