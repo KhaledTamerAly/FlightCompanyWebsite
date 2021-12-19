@@ -31,19 +31,20 @@ var selectedReturnDateStart = null;
 var selectedReturnDateEnd = null;
 
 //Routes
-router.get('/seatsOf/:id',(req,res)=>{
-    Flights.findOne({ id: req.body.id }).select('seats').then(seats => {
-        res.json(seats.seats);
-    });
-})
-router.get('/numSeatsOf/:id',async (req,res)=>{
+router.get('/seatsOf/:id',async (req,res)=>{
+    var result = {};
     var numberOfSeats = {};
+    await Flights.findOne({ id: req.body.id }).select('seats').then(seats => {
+        result.seats = seats.seats;
+    });
     await Flights.findOne({ id: req.body.id }).then(flight => {
         numberOfSeats.econ = flight.noOfEconSeats;
         numberOfSeats.busi = flight.noOfBusinessSeats;
         numberOfSeats.first = flight.noOfFirstSeats;
+        result.numberOfSeats = numberOfSeats;
+        result.seats = generateSeatArray(result.seats,result.numberOfSeats);
     });
-    res.json(numberOfSeats);
+    res.json(result.seats);
 })
 router.get('/depts',(req,res)=>{
     Flights.find().distinct('departureTerminal').then(terminals => {
@@ -267,6 +268,57 @@ try{
 
 
 //functions
+function generateSeatArray(flightSeats,numOfSeats)
+    {
+        if(flightSeats == [] || numOfSeats ==[])
+            return [];
+        var seatArray = flightSeats;
+        const numEcon = numOfSeats.econ;
+        const numBusi = numOfSeats.busi;
+        const numFirst = numOfSeats.first;
+
+        var firstClassRows = seatArray.slice(0,numFirst);
+        var busiClassRows = seatArray.slice(numFirst,numBusi+numFirst);
+        var econClassRows = seatArray.slice(numBusi+numFirst);
+
+        var resFirstCol = [];
+        for(var i =0;i<firstClassRows.length;i+=2)
+        {
+            var row = [];
+            for(var j =i;j<i+2;j++)
+            {
+                row.push(firstClassRows[j]);
+            }
+            resFirstCol.push(row);
+        }
+
+        var resBusiCol = [];
+        for(var i =0;i<busiClassRows.length;i+=4)
+        {
+            var row = [];
+            for(var j =i;j<i+4;j++)
+            {
+                row.push(busiClassRows[j]);
+            }
+            resBusiCol.push(row);
+        }
+
+        var resEconCol = [];
+        for(var i =0;i<econClassRows.length;i+=6)
+        {
+            var row = [];
+            for(var j =i;j<i+6;j++)
+            {
+
+                row.push(econClassRows[j]);
+            }
+            resEconCol.push(row);
+        }
+        var allSeats = [];
+        allSeats = resFirstCol.concat(resBusiCol).concat(resEconCol);
+        return allSeats;
+        
+    }
 function updateSeats(chosenSeats, allSeats)
 {
     for(var i =0;i<chosenSeats.length;i++)
