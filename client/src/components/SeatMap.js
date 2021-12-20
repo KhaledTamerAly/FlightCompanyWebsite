@@ -17,11 +17,11 @@ function SeatMap(props)
 
 async function updateStates() 
 {
-    await axios.get('/flights/seatsOf/'+props.id)
-    .then(res =>{
-      const allFlights = res.data;
-      setFlightSeats(allFlights);
-   })
+   const bodyDep = { 
+    flightNumber: props.flightNumber,
+  }
+    const api = {};
+    await axios.post('/flights/seatsOf/', bodyDep, {headers: api}).then(res=> setFlightSeats(res.data));
 }
     useEffect(async()=>
     {

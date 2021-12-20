@@ -20,6 +20,7 @@
     "react-scripts": "^5.0.0",
     "react-seat-picker": "^1.5.3",
     "react-tooltip": "^4.2.21",
+    "reactjs-popup": "^2.0.5",
     "reactstrap": "^9.0.1",
     "redux": "^4.1.2",
     "redux-thunk": "^2.4.0",

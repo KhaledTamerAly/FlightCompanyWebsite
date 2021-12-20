@@ -31,7 +31,7 @@ function Home()
         </div>
         <div>
           <EnhancedTable />
-          <SeatComponent depFlight= "61ba9bae06c919965b9308b5" retFlight="61ba9bae06c919965b9308b5" depFlightNumSeats ={5} retFlightNumSeats={5} depCabinClass="Economy" retCabinClass="First" userInfo ={userInfo}/>          
+          <SeatComponent depFlight= "KT 794" retFlight="KT 794" depFlightNumSeats ={5} retFlightNumSeats={5} depCabinClass="Economy" retCabinClass="First" userInfo ={userInfo}/>          
         </div>
         </>
     );

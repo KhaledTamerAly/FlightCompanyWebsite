@@ -20,6 +20,7 @@ router.post("/addReservation",async (req,res) => {
     var passport = req.body.passport;
     var uemail = req.body.email;
     var flightNum = req.body.flightNumber;
+    var flightID = req.body.flightID;
     var seats = req.body.chosenSeats;
     var bookingNumber= "#"+Math.floor(Math.random() * 99999999);
     console.log(lastName);
@@ -37,9 +38,9 @@ router.post("/addReservation",async (req,res) => {
     await reservation.save();
 
     var chosenSeats = req.body.chosenSeats;
-    await Flights.findById(req.body.flightNumber).select('seats').then(seats=>{
+    await Flights.findOne({flightNumber:flightNum}).select('seats').then(seats=>{
         var updatedSeats = updateSeats(chosenSeats,seats.seats);
-        Flights.findOneAndUpdate(req.body.flightNumber,{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
+        Flights.findOneAndUpdate({flightNumber:flightNum},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
     });
     console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
     res.json(bookingNumber);

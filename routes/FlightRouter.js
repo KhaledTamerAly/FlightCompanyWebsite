@@ -31,13 +31,14 @@ var selectedReturnDateStart = null;
 var selectedReturnDateEnd = null;
 
 //Routes
-router.get('/seatsOf/:id',async (req,res)=>{
+router.post('/seatsOf/',async (req,res)=>{
+    var flightNumber = req.body.flightNumber;
     var result = {};
     var numberOfSeats = {};
-    await Flights.findById(req.params.id ).select('seats').then(seats => {
+    await Flights.findOne({flightNumber:flightNumber}).select('seats').then(seats => {
         result.seats = seats.seats;
     });
-    await Flights.findById(req.params.id).then(flight => {
+    await Flights.findOne({flightNumber:flightNumber}).then(flight => {
         numberOfSeats.econ = flight.noOfEconSeats;
         numberOfSeats.busi = flight.noOfBusinessSeats;
         numberOfSeats.first = flight.noOfFirstSeats;
@@ -67,6 +68,12 @@ router.get('/date', (req,res)=>{
 router.get('/',(req,res)=>{
     // get all the depterminals
     Flights.find({}).then(flights => {
+        res.json(flights);
+    });   
+})
+router.post('/',(req,res)=>{
+    // get all the depterminals
+    Flights.findOne({flightNumber:req.body.flightNumber}).then(flights => {
         res.json(flights);
     });   
 })

@@ -18,10 +18,17 @@ function Summary(props)
 
   useEffect(async()=>{
     var result = {};  
-    await axios.get('flights/'+props.depFlight).then(res=>{
+    var bodyDep = { 
+    flightNumber: props.depFlight,
+  }
+  var bodyRet = { 
+    flightNumber: props.retFlight,
+  }
+    const api = {};
+    await axios.post('flights/',bodyDep,api).then(res=>{
         result.depFlight = res.data;
       })
-    await axios.get('flights/'+props.retFlight).then(res=>{
+    await axios.post('flights/',bodyRet,api).then(res=>{
         result.retFlight = res.data;
       })
       setFlights(result);

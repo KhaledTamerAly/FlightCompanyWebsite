@@ -90,8 +90,8 @@ function SeatComponent(props)
     }
     return (
         <div>
-            {!isDoneChoosing && isChoosingDepSeats && <SeatMap id={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>}
-            {!isDoneChoosing &&!isChoosingDepSeats && <SeatMap id={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>}
+            {!isDoneChoosing && isChoosingDepSeats && <SeatMap flightNumber={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>}
+            {!isDoneChoosing &&!isChoosingDepSeats && <SeatMap flightNumber={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>}
             {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR}/>}
             {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
             {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}
