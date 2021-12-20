@@ -23,6 +23,7 @@ function FormComponent (props){
       navigate('/admin')
     }
 
+
     function goToAddFlight(){
       navigate('/editFlight', { state:{isAdd:true}, replace:false })
   }

@@ -1,6 +1,7 @@
 import React from 'react'
 import {useNavigate} from 'react-router-dom';
 import { Button} from 'reactstrap';
+import GeneralSearch from '../components/GeneralSearch.js';
 import EnhancedTable from '../components/ScheduleViewer';
 
 function Home()
@@ -25,6 +26,9 @@ function Home()
         <div>
           <EnhancedTable />
         </div>
+        <div>
+          <GeneralSearch />
+          </div>
         </>
     );
 }

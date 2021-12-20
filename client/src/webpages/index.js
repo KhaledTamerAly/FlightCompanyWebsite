@@ -20,7 +20,7 @@ function Webpages()
             <Route path = "/login" element = {<Login />} />
             <Route path = "/user" element = {<User />} />
             <Route path = "/editFlight" element = {<EditFlightPage />} />
-        </Routes>
+      </Routes>
         </Router>
     );
 };

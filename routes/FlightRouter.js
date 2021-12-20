@@ -23,6 +23,7 @@ var selDepFN;
 var selArrFN;
 var selArrTime;
 var selDepTime;
+var buildSummary;
 
 var selectedDepDateStart = null;
 var selectedDepDateEnd = null;
@@ -67,6 +68,11 @@ router.post('/matches',(req,res)=>{
     selectedReturnDateStart = null;
     selectedReturnDateEnd = null;
 
+    selectedNumOfPass = null;
+    selectedCabinClass = null;
+
+
+    //getting user input form ddl
 
     selArrT = req.body.selectedArrivalTerminal;
     selDepT = req.body.selectedDepartureTerminal;
@@ -74,6 +80,10 @@ router.post('/matches',(req,res)=>{
     selArrFN = req.body.selectedArrFlightNumber;
     selArrTime = req.body.selectedArrTime;
     selDepTime = req.body.selectedDepTime;
+
+    selNoP = req.body.selectedNumOfPass;
+    selCabClass = req.body.selectedCabinClass;
+
     
     if(req.body.selectedDepDate != null)
     {
@@ -122,17 +132,35 @@ router.get('/matches', (req,res) =>{
         searchObject.departureTerminal = selDepT;
     if(selArrT !=null)
         searchObject.arrivalTerminal = selArrT;
+    if(selCabClass !=null){
+        searchObject.cabinType = selCabClass;
+        if(selNoP !=null)
+        switch(selCabClass){
+            case "Economy": if(selNoP<noOfEconSeats)
+                        searchObject.noOfEconSeats = selNoP;    
+                            break;
+            case "Business": if(selNoP<noOfBusinessSeats)
+                        searchObject.noOfBusinessSeats = selNoP;
+                            break;
+            case "First": if(selNoP<noOfFirstSeats)
+                        searchObject.noOfFirstSeats = selNoP;            
+                            break;
+        }
+    }
 
     if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
         {
             searchObject.flightDate = {$gte: selectedDepDateStart, $lt: selectedDepDateEnd};
         }
 
+
+
     var returnFlight = {const:""};
     if(selDepT !=null)
         returnFlight.arrivalTerminal = selDepT;
     if(selArrT !=null)
         returnFlight.departureTerminal = selArrT;
+
 
     if(selectedReturnDateStart !=null && selectedReturnDateEnd !=null)
         returnFlight.flightDate = {$gte: selectedReturnDateStart, $lt: selectedReturnDateEnd};
@@ -166,7 +194,8 @@ router.delete('/:id', (req,res)=> {
 });
 
 
-//functions
+
+
 function isValidDate(date) {
     return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
 }
@@ -225,6 +254,7 @@ function populateTable()
             flightDate:date,
             departureTime:date,
             arrivalTime:null,
+
             noOfEconSeats:econClassSeats,
             noOfBusinessSeats:busClassSeats,
             noOfFirstSeats:firstClassSeats
@@ -250,9 +280,11 @@ router.put('/:id', async(req,res) => {
         });
     const dateSample = new Date();
     const flightNumber = req.body.flightNumber;
+
     const noOfEconSeats = req.body.noOfEconSeats;
     const noOfBusinessSeats = req.body.noOfBusinessSeats;
     const noOfFirstSeats = req.body.noOfFirstSeats;
+
     const arrivalTerminal = req.body.arrivalTerminal;
     const departureTerminal = req.body.departureTerminal;
     Flights.findById(req.params.id)
@@ -268,9 +300,11 @@ router.put('/:id', async(req,res) => {
             flight.departureTime=new Date(dateSample.toDateString() + ' ' + req.body.departureTime);
             flight.departureTime.setHours(departureTime.getHours()+1);
         }
+
         flight.noOfBusinessSeats = isEmpty(noOfBusinessSeats) ? flight.noOfBusinessSeats : noOfBusinessSeats;
         flight.noOfEconSeats = isEmpty(noOfEconSeats) ? flight.noOfEconSeats : noOfEconSeats;
         flight.noOfFirstSeats = isEmpty(noOfFirstSeats) ? flight.noOfFirstSeats : noOfFirstSeats;
+
         if(!isEmpty(req.body.flightDate)){
             flight.flightDate=new Date(Date.parse(req.body.flightDate));
         }
@@ -313,11 +347,11 @@ router.post ("/link",async (req,res)=> {
         departureTime.setHours(departureTime.getHours()+1);
     }
     const flightNumber = req.body.flightNumber;
-    // arrivalTime = new Date(dateSample.toDateString() + ' ' + req.body.arrivalTime);
-    // arrivalTime.setHours(arrivalTime.getHours()+1);
+   
     const noOfEconSeats = req.body.noOfEconSeats;
     const noOfBusinessSeats = req.body.noOfBusinessSeats;
     const noOfFirstSeats = req.body.noOfFirstSeats;
+    
     var flightDate = "";
     if(!isEmpty(req.body.flightDate))
         flightDate=new Date(Date.parse(req.body.flightDate));
