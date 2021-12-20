@@ -47,7 +47,7 @@ function addAdmin ()
 };
 function addDefaultUser ()
 {
-    const user = new Users({fName: "Khaled",lName: "Tamer", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "khaledtamer",password: "khaled",email:"khaledtamer@gmail.com",userType: ["User"]});
+    const user = new Users({fName: "Youssef",lName: "Basuny", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "youssef",password: "youssef",email:"youssefbasuny@gmail.com",userType: ["User"]});
     try
     {
         user.save();
@@ -67,7 +67,7 @@ router.get('/flightDetails/:username', async(req,res) => {
             var chosenSeats=reservations[i].chosenSeats;
             var bookingNumber=reservations[i].bookingNumber;
             await Flights.findOne({bookingNumber:bookingNumber}).then((flight)=>{
-                reservation.flightNumber=flight.flightNumber;
+                reservation.flightNumber=flightNumber;
                 reservation.bookingNumber=bookingNumber;
                 reservation.flightDate=flight.flightDate;
                 reservation.departureTime=flight.departureTime;
@@ -88,7 +88,46 @@ router.delete('/:bookingNumber', (req,res)=> {
     .catch(err => console.log(err));
 });
 
+router.get('/userInfo/:username', (req,res)=> {
+    Users.findOne({username:req.params.username})
+    .then(user => res.json(user))
+    .catch(err => console.log(err));
+});
+
 //addDefaultUser();
 
-
+router.put('/updateUser/:username', async(req, res)=>{
+    var fName=req.body.fName;
+    var lName=req.body.lName;
+    var homeAddress=req.body.homeAddress;
+    var countryCode=req.body.countryCode;
+    var telephoneNumber=req.body.telephoneNumber;
+    var passportNumber=req.body.passportNumber;
+    var password=req.body.password;
+    var email=req.body.email;
+    await Users.findOne({username:req.params.username})
+    .then(async(user)=> {
+        user.fName= fName==null ||fName==""? user.fName:fName
+        user.lName= lName==null ||lName==""? user.lName:lName
+        user.homeAddress= homeAddress==null ||homeAddress==""? user.homeAddress:homeAddress
+        user.countryCode= countryCode==null ||countryCode==""? user.countryCode:countryCode
+        user.telephoneNumber= telephoneNumber==null ||telephoneNumber==""? user.telephoneNumber:telephoneNumber
+        user.passportNumber= passportNumber==null ||passportNumber==""? user.passportNumber:passportNumber
+        user.email= email==null ||email==""? user.email:email
+        user.password= password==null ||password==""? user.password:password
+        //res.json(user);
+        user.save();
+        await Reservations.find({username:req.params.username})
+        .then(reservations=>{
+            for(var i=0;i<reservations.length;i++){
+                reservations[i].fName=fName==null || fName==""?reservations[i].fName:fName;
+                reservations[i].lName=lName==null || lName==""?reservations[i].lName:lName;
+                reservations[i].email=email==null || email==""?reservations[i].email:email;
+                reservations[i].passportNumber=passportNumber==null || passportNumber==""?reservations[i].passportNumber:passportNumber;
+                reservations[i].save();
+            }
+        })
+    })
+    
+});
 module.exports = router;

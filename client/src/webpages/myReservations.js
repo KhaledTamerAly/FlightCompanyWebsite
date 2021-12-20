@@ -118,7 +118,7 @@ const headCells = [
   ];
 
 function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, selected } =
     props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -128,15 +128,7 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all reservations',
-            }}
-          />
+          
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -165,6 +157,7 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
+  selected: PropTypes.string.isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
@@ -175,6 +168,7 @@ EnhancedTableHead.propTypes = {
 
 const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
+  const { selected } = props;
 
   const [open, setOpen] = React.useState(false);
 
@@ -186,6 +180,15 @@ const EnhancedTableToolbar = (props) => {
     setOpen(false);
   };
   
+  function deleteReservation(bookingNumber)
+    {
+        var url = '/users/' + bookingNumber;
+         axios
+             .delete(url)
+            .then(()=> console.log("deleted..."));
+            window.location.reload(false);
+    }
+
   return (
     <Toolbar
       sx={{
@@ -204,7 +207,7 @@ const EnhancedTableToolbar = (props) => {
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          Booking #{selected} selected
         </Typography>
       ) : (
         <Typography
@@ -236,12 +239,12 @@ const EnhancedTableToolbar = (props) => {
         <DialogTitle>{"Confirm cancellation"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Are you sure you want to cancel your reservation for the selected flight(s)?
+            Are you sure you want to cancel your reservation for the selected flight with booking number {selected}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose}>Agree</Button>
+          <Button onClick={()=>deleteReservation(selected)}>Agree</Button>
         </DialogActions>
       </Dialog>
     </Toolbar>
@@ -250,6 +253,7 @@ const EnhancedTableToolbar = (props) => {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+  Selected: PropTypes.string.isRequired,
 };
 
 export default function MyReservations() {
@@ -277,24 +281,10 @@ export default function MyReservations() {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-    
-
-    setSelected(newSelected);
+    if(name!=selected)
+        setSelected(name);
+    else
+        setSelected("");
   };
 
   const handleChangePage = (event, newPage) => {
@@ -323,7 +313,7 @@ export default function MyReservations() {
         <Navbar />
         <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
-            <EnhancedTableToolbar numSelected={selected.length} />
+            <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
             <TableContainer>
             <Table
                 sx={{ minWidth: 750 }}
@@ -332,6 +322,7 @@ export default function MyReservations() {
             >
                 <EnhancedTableHead
                 numSelected={selected.length}
+                selected={selected}
                 order={order}
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
@@ -346,7 +337,6 @@ export default function MyReservations() {
                     .map((row, index) => {
                     const isItemSelected = isSelected(row.bookingNumber);
                     const labelId = `enhanced-table-checkbox-${index}`;
-
                     return (
                         <TableRow
                         hover
@@ -375,12 +365,13 @@ export default function MyReservations() {
                             {row.bookingNumber}
                         </TableCell>
                         <TableCell align="right">{row.flightNumber}</TableCell>
-                        <TableCell align="right">{row.flightDate}</TableCell>
-                        <TableCell align="right">{row.departureTime}</TableCell>
-                        <TableCell align="right">{row.arrivalTime}</TableCell>
+                        <TableCell align="right">{row.flightDate.toString().substring(0,9)}</TableCell>
+                        <TableCell align="right">{row.departureTime.toString().substring(11,16)}</TableCell>
+                        <TableCell align="right">{row.arrivalTime==null?(row.arrivalTime):(row.arrivalTime.toString().substring(11,16))}</TableCell>
                         <TableCell align="right">{row.departureTerminal}</TableCell>
                         <TableCell align="right">{row.arrivalTerminal}</TableCell>
-                        <TableCell align="right">{row.chosenSeats}</TableCell>
+                        <TableCell align="right">{row.chosenSeats.join(", ")}</TableCell>
+                        
                         </TableRow>
                     );
                     })}

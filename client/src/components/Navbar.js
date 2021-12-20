@@ -3,6 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -61,9 +62,9 @@ export default function Navbar() {
       </FormGroup> */}
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-            Osama Airlines
-          </Typography>
+          <Link href ="/user" variant="h4" color="inherit" underline="none" sx={{ flexGrow: 1 }}>
+            {'Osama Airlines'}
+          </Link>
           {auth && (
             <div>
               <IconButton
