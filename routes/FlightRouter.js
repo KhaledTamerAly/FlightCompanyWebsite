@@ -31,58 +31,6 @@ var selectedReturnDateStart = null;
 var selectedReturnDateEnd = null;
 
 //Routes
-router.post('/seatsOf/',async (req,res)=>{
-    var flightNumber = req.body.flightNumber;
-    var result = {};
-    var numberOfSeats = {};
-    await Flights.findOne({flightNumber:flightNumber}).select('seats').then(seats => {
-        result.seats = seats.seats;
-    });
-    await Flights.findOne({flightNumber:flightNumber}).then(flight => {
-        numberOfSeats.econ = flight.noOfEconSeats;
-        numberOfSeats.busi = flight.noOfBusinessSeats;
-        numberOfSeats.first = flight.noOfFirstSeats;
-        result.numberOfSeats = numberOfSeats;
-        result.seats = generateSeatArray(result.seats,result.numberOfSeats);
-    });
-    res.json(result.seats);
-})
-router.get('/depts',(req,res)=>{
-    Flights.find().distinct('departureTerminal').then(terminals => {
-        res.json(terminals)
-    });
-})
-router.get('/arrivals',(req,res)=>{
-    Flights.find().distinct('arrivalTerminal').then(arrivals => {
-        res.json(arrivals)
-    });
-})
-router.get('/date', (req,res)=>{
-    var array = [];
-    Flights.find().select('flightDate').select('-_id').then(dates=>{
-        for(var i = 0;i<dates.length;i++)
-            array.push(dates[i].toObject().flightDate);
-        res.json(array);
-    });
-})
-router.get('/',(req,res)=>{
-    // get all the depterminals
-    Flights.find({}).then(flights => {
-        res.json(flights);
-    });   
-})
-router.post('/',(req,res)=>{
-    // get all the depterminals
-    Flights.findOne({flightNumber:req.body.flightNumber}).then(flights => {
-        res.json(flights);
-    });   
-})
-router.get('/:id',(req,res)=>{
-    // get all the depterminals
-    Flights.findById(req.params.id).then(flights => {
-        res.json(flights);
-    });   
-})
 router.post('/matches',(req,res)=>{
     selArrT = null;
     selDepT = null;
@@ -178,13 +126,64 @@ router.get('/matches', (req,res) =>{
     if(query.length >1)
         query.shift();
 
-    console.log(query);
+
     Flights.find(
         {$or: query} 
             ).then(match => {
-        console.log("Query Returned");
       res.json(match);
     });
+})
+router.post('/seatsOf/',async (req,res)=>{
+    var flightNumber = req.body.flightNumber;
+    var result = {};
+    var numberOfSeats = {};
+    await Flights.findOne({flightNumber:flightNumber}).select('seats').then(seats => {
+        result.seats = seats.seats;
+    });
+    await Flights.findOne({flightNumber:flightNumber}).then(flight => {
+        numberOfSeats.econ = flight.noOfEconSeats;
+        numberOfSeats.busi = flight.noOfBusinessSeats;
+        numberOfSeats.first = flight.noOfFirstSeats;
+        result.numberOfSeats = numberOfSeats;
+        result.seats = generateSeatArray(result.seats,result.numberOfSeats);
+    });
+    res.json(result.seats);
+})
+router.get('/depts',(req,res)=>{
+    Flights.find().distinct('departureTerminal').then(terminals => {
+        res.json(terminals)
+    });
+})
+router.get('/arrivals',(req,res)=>{
+    Flights.find().distinct('arrivalTerminal').then(arrivals => {
+        res.json(arrivals)
+    });
+})
+router.get('/date', (req,res)=>{
+    var array = [];
+    Flights.find().select('flightDate').select('-_id').then(dates=>{
+        for(var i = 0;i<dates.length;i++)
+            array.push(dates[i].toObject().flightDate);
+        res.json(array);
+    });
+})
+router.get('/',(req,res)=>{
+    // get all the depterminals
+    Flights.find({}).then(flights => {
+        res.json(flights);
+    });   
+})
+router.post('/',(req,res)=>{
+    // get all the depterminals
+    Flights.findOne({flightNumber:req.body.flightNumber}).then(flights => {
+        res.json(flights);
+    });   
+})
+router.get('/:id',(req,res)=>{
+    // get all the depterminals
+    Flights.findById(req.params.id).then(flights => {
+        res.json(flights);
+    });   
 })
 router.delete('/:id', (req,res)=> {
     Flights.findByIdAndDelete(req.params.id)
