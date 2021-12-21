@@ -70,7 +70,9 @@ function SeatComponent(props)
                     passport: props.userInfo.passport,
                     email: props.userInfo.email,
                     flightNumber: props.depFlight,
-                    chosenSeats: chosenSeatsDep
+                    chosenSeats: chosenSeatsDep,
+                    price:props.price,
+                    cabin:props.depCabinClass
                   }
                     const api = {};
                     await axios.post('/users/addReservation', bodyDep, {headers: api}).then(res=> setBookingNumberD(res.data));
@@ -82,7 +84,9 @@ function SeatComponent(props)
                     passport: props.userInfo.passport,
                     email: props.userInfo.email,
                     flightNumber: props.retFlight,
-                    chosenSeats: chosenSeatsRet
+                    chosenSeats: chosenSeatsRet,
+                    price:props.price,
+                    cabin: props.retCabinClass
                   }
                     await axios.post('/users/addReservation', bodyRet, {headers: api}).then(res=>setBookingNumberR(res.data));
                     setIsDone(true);
@@ -92,7 +96,7 @@ function SeatComponent(props)
         <div>
             {!isDoneChoosing && isChoosingDepSeats && <SeatMap flightNumber={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>}
             {!isDoneChoosing &&!isChoosingDepSeats && <SeatMap flightNumber={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>}
-            {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR}/>}
+            {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
             {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
             {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}
     </div>

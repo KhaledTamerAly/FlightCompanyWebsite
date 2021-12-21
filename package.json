@@ -18,10 +18,11 @@
     "express": "^4.17.1",
     "is-empty": "^1.2.0",
     "mongoose": "^6.0.13",
-    "validator": "^13.7.0",
     "react-datepicker": "^4.3.0",
     "react-router-dom": "^6.0.2",
-    "react-select": "^5.2.1"
+    "react-select": "^5.2.1",
+    "reactjs-popup": "^2.0.5",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

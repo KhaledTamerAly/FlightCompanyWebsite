@@ -23,12 +23,15 @@ var selDepFN;
 var selArrFN;
 var selArrTime;
 var selDepTime;
+var buildSummary;
 
 var selectedDepDateStart = null;
 var selectedDepDateEnd = null;
 
 var selectedReturnDateStart = null;
 var selectedReturnDateEnd = null;
+var selCabClass = null;
+var selNoP = null
 
 //Routes
 router.post('/matches',(req,res)=>{
@@ -43,6 +46,11 @@ router.post('/matches',(req,res)=>{
     selectedReturnDateStart = null;
     selectedReturnDateEnd = null;
 
+    selectedNumOfPass = null;
+    selectedCabinClass = null;
+
+
+    //getting user input form ddl
 
     selArrT = req.body.selectedArrivalTerminal;
     selDepT = req.body.selectedDepartureTerminal;
@@ -50,6 +58,10 @@ router.post('/matches',(req,res)=>{
     selArrFN = req.body.selectedArrFlightNumber;
     selArrTime = req.body.selectedArrTime;
     selDepTime = req.body.selectedDepTime;
+
+    selNoP = req.body.selectedNumOfPass;
+    selCabClass = req.body.selectedCabinClass;
+
     
     if(req.body.selectedDepDate != null)
     {
@@ -97,17 +109,34 @@ router.get('/matches', (req,res) =>{
         searchObject.departureTerminal = selDepT;
     if(selArrT !=null)
         searchObject.arrivalTerminal = selArrT;
+    if(selCabClass !=null){
+        searchObject.cabinType = selCabClass;
+        if(selNoP !=null)
+        switch(selCabClass){
+            case "Economy": 
+                        searchObject.noOfEconSeats = selNoP;    
+                            break;
+            case "Business": 
+                        searchObject.noOfBusinessSeats = selNoP;
+                            break;
+            case "First": searchObject.noOfFirstSeats = selNoP;            
+                            break;
+        }
+    }
 
     if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
         {
             searchObject.flightDate = {$gte: selectedDepDateStart, $lt: selectedDepDateEnd};
         }
 
+
+
     var returnFlight = {const:""};
     if(selDepT !=null)
         returnFlight.arrivalTerminal = selDepT;
     if(selArrT !=null)
         returnFlight.departureTerminal = selArrT;
+
 
     if(selectedReturnDateStart !=null && selectedReturnDateEnd !=null)
         returnFlight.flightDate = {$gte: selectedReturnDateStart, $lt: selectedReturnDateEnd};
@@ -132,6 +161,105 @@ router.get('/matches', (req,res) =>{
             ).then(match => {
       res.json(match);
     });
+})
+router.post('/matchesAdmin',(req,res)=>{
+    selArrT = null;
+    selDepT = null;
+    selDepFN = null;
+    selDepTime = null;
+    selectedDepDateStart = null;
+    selectedDepDateEnd = null;
+    selectedReturnDateStart = null;
+    selectedReturnDateEnd = null;
+
+    selNoP = null;
+    selCabClass = null;
+
+
+    //getting user input form ddl
+    selArrT = req.body.selectedArrivalTerminal
+    selDepT = req.body.selectedDepartureTerminal
+    selDepTime = req.body.selectedDepDate
+    selCabClass = req.body.selectedCabinClass
+    selNoP = req.body.selectedNumOfPass
+
+
+    if(req.body.selectedDepDate != null)
+    {
+        
+        selectedDepDateStart = new Date(req.body.selectedDepDate);
+        selectedDepDateStart = convertUTCDateToLocalDate(selectedDepDateStart);
+        
+        selectedDepDateStart.setUTCHours(0, 0, 0, 0);
+        selectedDepDateEnd = new Date(req.body.selectedDepDate);
+        selectedDepDateEnd = convertUTCDateToLocalDate(selectedDepDateEnd);
+        selectedDepDateEnd.setUTCHours(23, 59, 59, 999);
+    }
+});
+router.get('/matchesAdmin', async (req,res) =>{
+    var result ={};
+    var departFlight = {};
+    if(selDepT !=null)
+        departFlight.departureTerminal = selDepT;
+    if(selArrT !=null)
+        departFlight.arrivalTerminal = selArrT;
+    if(selCabClass !=null){
+        departFlight.cabinType = selCabClass;
+        if(selNoP !=null)
+        {switch(selCabClass){
+            case "Economy": 
+                departFlight.noOfEconSeats = { $gte: selNoP };    
+                            break;
+            case "Business": 
+                departFlight.noOfBusinessSeats = { $gte: selNoP };
+                            break;
+            case "First": 
+                departFlight.noOfFirstSeats = { $gte: selNoP };            
+                            break;
+        }}
+    }
+    if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
+    {
+        departFlight.flightDate = {$gte: selectedDepDateStart};
+    }
+
+    console.log(departFlight)
+    await Flights.find(departFlight).then(match => {
+        result.departFlights = match;
+    });
+
+
+    var returnFlight = {};
+    if(selDepT !=null)
+        returnFlight.arrivalTerminal = selDepT;
+    if(selArrT !=null)
+        returnFlight.departureTerminal = selArrT;
+    if(selCabClass !=null){
+        returnFlight.cabinType = selCabClass;
+        if(selNoP !=null)
+        {switch(selCabClass){
+            case "Economy": 
+                returnFlight.noOfEconSeats = { $gte: selNoP };    
+                            break;
+            case "Business": 
+                returnFlight.noOfBusinessSeats = { $gte: selNoP };
+                            break;
+            case "First": 
+                returnFlight.noOfFirstSeats = { $gte: selNoP };            
+                            break;
+        }}
+    }
+    if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
+    {
+        returnFlight.flightDate = {$gte: selectedDepDateStart};
+    }
+
+
+    await Flights.find(returnFlight).then(match => {
+        result.returnFlights = match;
+    });
+
+    res.json(result);
 })
 router.post('/seatsOf/',async (req,res)=>{
     var flightNumber = req.body.flightNumber;
@@ -411,6 +539,7 @@ function populateTable()
             flightDate:date,
             departureTime:date,
             arrivalTime:null,
+
             noOfEconSeats:econClassSeats,
             noOfBusinessSeats:busClassSeats,
             noOfFirstSeats:firstClassSeats,

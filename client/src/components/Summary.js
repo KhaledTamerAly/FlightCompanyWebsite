@@ -59,6 +59,11 @@ function Summary(props)
             <br></br>
             <br></br>
             Seats:{"[ "+props.chosenSeatsD.join('-')+" ]"}
+            <br></br>
+            <br></br>
+            Price:{props.price}
+            <br></br>
+            <br></br>
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -86,6 +91,9 @@ function Summary(props)
             <br></br>
             <br></br>
             Seats:{"[ "+ props.chosenSeatsR.join('-')+" ]"}
+            <br></br>
+            <br></br>
+            Price:{props.price}
             <br></br>
             <br></br>
           </Typography>

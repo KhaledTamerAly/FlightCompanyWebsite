@@ -1,6 +1,7 @@
 import React from 'react'
 import {useNavigate} from 'react-router-dom';
 import { Button} from 'reactstrap';
+import GeneralSearch from '../components/GeneralSearch.js';
 import EnhancedTable from '../components/ScheduleViewer';
 import SeatComponent from '../components/SeatsComponent';
 function Home()
@@ -31,8 +32,10 @@ function Home()
         </div>
         <div>
           <EnhancedTable />
-          <SeatComponent depFlight= "KT 794" retFlight="KT 794" depFlightNumSeats ={5} retFlightNumSeats={5} depCabinClass="Economy" retCabinClass="First" userInfo ={userInfo}/>          
         </div>
+        <div>
+          <GeneralSearch />
+          </div>
         </>
     );
 }

@@ -22,8 +22,13 @@ router.post("/addReservation",async (req,res) => {
     var flightNum = req.body.flightNumber;
     var flightID = req.body.flightID;
     var seats = req.body.chosenSeats;
-    var bookingNumber= "#"+Math.floor(Math.random() * 99999999);
-    console.log(lastName);
+    var price = req.body.price;
+    var bookingNumber= ""+Math.floor(Math.random() * 99999999);
+    var cabinType = req.body.cabin;
+
+    console.log(flightNum);
+    
+
 
     const reservation = new Reservations({
         bookingNumber:bookingNumber,
@@ -33,11 +38,42 @@ router.post("/addReservation",async (req,res) => {
         passportNumber: passport,
         email: uemail,
         flightNumber: flightNum,
-        chosenSeats: seats
+        chosenSeats: seats,
+        paid:price
     });
     await reservation.save();
 
     var chosenSeats = req.body.chosenSeats;
+
+    if(cabinType == "Economy")
+    {
+        var noEconSeats;
+        await Flights.findOne({flightNumber:flightNum}).then(res=>{
+            noEconSeats = res.noEconSeats;
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfEconSeats:noEconSeats - seats.length},()=>console.log());
+             });
+    }
+    else if(cabinType == "First")
+    {
+        var noOfFirstSeats;
+        await Flights.findOne({flightNumber:flightNum}).then(res=>{
+            noOfFirstSeats = res.noOfFirstSeats;
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeats:noOfFirstSeats - seats.length},()=>console.log());
+             });
+        
+    }
+    else if(cabinType == "Business")
+    {
+        var noOfBusinessSeats;
+        await Flights.findOne({flightNumber:flightNum}).then(res=>{
+            noOfBusinessSeats = res.noOfBusinessSeats;
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeats:noOfBusinessSeats-seats.length},()=>console.log());
+             });
+        
+    }
+
+
+
     await Flights.findOne({flightNumber:flightNum}).select('seats').then(seats=>{
         var updatedSeats = updateSeats(chosenSeats,seats.seats);
         Flights.findOneAndUpdate({flightNumber:flightNum},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
