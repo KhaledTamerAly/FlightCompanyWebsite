@@ -32,7 +32,7 @@ const flightsSchema = new Schema({
     noOfFirstSeats:{
         type: Number 
     },
-    seats: [{seatNumber: String,isTaken: Boolean}]
+    seats: [{seatNumber: String,isTaken: Boolean,cabinType:String}]
 });
 
 module.exports = Flights = mongoose.model('flights', flightsSchema);

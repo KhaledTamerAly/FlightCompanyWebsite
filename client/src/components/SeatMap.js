@@ -23,7 +23,7 @@ async function updateStates()
     const api = {};
     await axios.post('/flights/seatsOf/', bodyDep, {headers: api}).then(res=> setFlightSeats(res.data));
 }
-    useEffect(async()=>
+useEffect(async()=>
     {
         updateStates();
     },[]);
@@ -55,6 +55,7 @@ async function updateStates()
                         (row??[]).map((col, j) => 
                         {
                             if(col!=null)
+                            {
                                 return (
                                         <FormControl component="fieldset" variant="standard" id={i+j}>
                                         <FormGroup>
@@ -76,14 +77,15 @@ async function updateStates()
                                             col.isClicked = false;
                                         }}}
                                         id={i+j}
-                                        control={<Checkbox disabled = {numberOfSeatsToReservre==0 && !col.isClicked}color="success"/>}
+                                        control={<Checkbox disabled = {(numberOfSeatsToReservre==0 && !col.isClicked) || (col.cabinType != props.cabinType)}color="success"/>}
                                         label={col.seatNumber}
                                         labelPlacement="top"
                                         />}
                                         </FormGroup>
                                         </FormControl>
                                         );
-                             })
+                            } 
+                        })
                         }
                         </ol>
                         </Box>

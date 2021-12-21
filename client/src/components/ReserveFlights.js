@@ -10,6 +10,14 @@ function ReserveFlights(props)
     const [isDoneConfirm, setIsDone] = useState(false);
 
 
+    
+    var priceOfSeat;
+    if(props.depCabinClass=="Economy")
+        priceOfSeat = 10;
+    else if(props.depCabinClass=="First")
+        priceOfSeat = 30;
+    else
+        priceOfSeat = 20;
     return (
         
         <div>
@@ -18,7 +26,7 @@ function ReserveFlights(props)
             <>
                 <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} 
                 retCabinClass={props.retCabinClass} chosenSeatsD ={[]} chosenSeatsR={[]} 
-                bookingNumberD={""} bookingNumberR={""} price = {props.price}/>
+                bookingNumberD={""} bookingNumberR={""} price = {(priceOfSeat*props.depFlightNumSeats)+props.price}/>
 
                 <div className="text-center">
                 <Button
@@ -57,7 +65,7 @@ function ReserveFlights(props)
             { isDoneConfirm &&
                 <SeatComponent depFlight= {props.depFlight} retFlight={props.retFlight} depFlightNumSeats ={props.depFlightNumSeats} 
                 retFlightNumSeats={props.retFlightNumSeats} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} 
-                userInfo ={props.userInfo} price={props.price}/>
+                userInfo ={props.userInfo} price={(priceOfSeat*props.depFlightNumSeats)+props.price}/>
             }
          </div>
          );
