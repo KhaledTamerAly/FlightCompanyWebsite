@@ -11,9 +11,9 @@ function FormComponent (props){
   const [flightDate,setFlightDate]= useState("");
   const [departureTime,setDepartureTime]= useState("");
   const [arrivalTime,setArrivalTime]= useState("");
-  const [noOfEconSeats,setNoOfEconSeats]= useState(0);
-  const [noOfBusinessSeats,setNoOfBusinessSeats]= useState(0);
-  const [noOfFirstSeats,setNoOfFirstSeats]= useState(0);
+  const [noOfEconSeats,setNoOfEconSeats]= useState("");
+  const [noOfBusinessSeats,setNoOfBusinessSeats]= useState("");
+  const [noOfFirstSeats,setNoOfFirstSeats]= useState("");
   const [errors,setErrors]= useState({});
 
 
@@ -22,6 +22,7 @@ function FormComponent (props){
   function goToAdmin() {
       navigate('/admin')
     }
+
 
     function goToAddFlight(){
       navigate('/editFlight', { state:{isAdd:true}, replace:false })
@@ -56,7 +57,6 @@ function FormComponent (props){
     event.preventDefault();
     goToAdmin();
   }
-  console.log("axios tmam")
   
 }
   
@@ -152,7 +152,7 @@ function FormComponent (props){
             onChange={(event)=> setNoOfEconSeats(event.target.value)}
             error={errors.noOfEconSeats}
             name="noOfEconSeats"
-            type="noOfEconSeats"
+            type="text"
           />
         </FormGroup>
         <FormGroup>

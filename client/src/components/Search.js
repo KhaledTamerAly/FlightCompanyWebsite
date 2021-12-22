@@ -1,3 +1,4 @@
+
 import '../App.css';
 import React, { Component ,  useState, useEffect } from 'react';
 import Select from 'react-select';
@@ -6,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import CardPanel from "./CardPanel";
 import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
+
 
 class Search extends Component {
 
@@ -75,7 +77,6 @@ async updateStates() {
              distinct[i] = elem;
            }
            this.setState({flightNumberOptions: [{label:"_" ,value:null}].concat(distinct)});
-
          });
   
 }
