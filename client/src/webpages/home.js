@@ -19,6 +19,11 @@ function Home()
     setIsLoggedIn(location?.state?.loggedIn??false);
   },[]);
 
+  function Login()
+  {
+    setIsLoggedIn(true);
+  }
+
     const navigate = useNavigate();
 
     function goToAdmin() {
@@ -41,7 +46,7 @@ function Home()
           <EnhancedTable />
         </div>
         <div>
-          <GeneralSearch />
+          <GeneralSearch login={Login} isLoggedIn={loggedIn}/>
           </div>
         </>
     );

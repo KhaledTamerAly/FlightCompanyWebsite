@@ -8,9 +8,8 @@ import { Button,UncontrolledPopover,PopoverBody,PopoverHeader } from 'reactstrap
 function ReserveFlights(props)
 {
     const [isDoneConfirm, setIsDone] = useState(false);
+    const [isLoggedIn,setIsLoggedIn] = useState(props.isLoggedIn);
 
-
-    
     var priceOfSeat;
     if(props.depCabinClass=="Economy")
         priceOfSeat = 10;
@@ -18,6 +17,7 @@ function ReserveFlights(props)
         priceOfSeat = 30;
     else
         priceOfSeat = 20;
+
     return (
         
         <div>
@@ -59,13 +59,20 @@ function ReserveFlights(props)
                         </div>
                 </UncontrolledPopover>    
                 </div>
+                
+                <Button onClick={()=>props.backButton()}>Go Back to Search</Button>
                 </>
             }
             
             { isDoneConfirm &&
-                <SeatComponent depFlight= {props.depFlight} retFlight={props.retFlight} depFlightNumSeats ={props.depFlightNumSeats} 
+                <SeatComponent login = {()=>{props.login();setIsLoggedIn(true)}} depFlight= {props.depFlight} retFlight={props.retFlight} depFlightNumSeats ={props.depFlightNumSeats} 
                 retFlightNumSeats={props.retFlightNumSeats} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} 
-                userInfo ={props.userInfo} price={(priceOfSeat*props.depFlightNumSeats)+props.price}/>
+                userInfo ={props.userInfo} price={(priceOfSeat*props.depFlightNumSeats)+props.price}
+                isLoggedIn = {isLoggedIn}
+                
+                backButton ={()=>{setIsDone(false)}}
+                
+                />
             }
          </div>
          );

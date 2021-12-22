@@ -16,6 +16,7 @@ function SeatComponent(props)
     const [bookingNumberD, setBookingNumberD] = useState("");
     const [bookingNumberR, setBookingNumberR] = useState("");
     const [isSelectedAllSeats, setIsSelectedSeats] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(props.isLoggedIn);
 
     const navigate = useNavigate();
     function chooseSeatsDep(seatNumber,isAdd)
@@ -56,7 +57,12 @@ function SeatComponent(props)
     }
     function exit()
     {
-        window.location.reload();
+        navigate('/',{
+            state: {
+              loggedIn:true
+            }
+          });
+          window.location.reload();
     }
     async function handleClick()
     {
@@ -107,23 +113,35 @@ function SeatComponent(props)
     }
     return (
         <div>
-            {!isDoneChoosing && isChoosingDepSeats && 
-            <>
-            {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
-            <SeatMap cabinType = {props.depCabinClass} flightNumber={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>
+            {console.log(isLoggedIn)}
+            {isLoggedIn && <>
+                {!isDoneChoosing && isChoosingDepSeats && 
+                <>
+                {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
+                <SeatMap cabinType = {props.depCabinClass} flightNumber={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>
+                </>
+                }
+                
+                {!isDoneChoosing &&!isChoosingDepSeats && 
+                <>
+                {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
+                <SeatMap cabinType = {props.retCabinClass} flightNumber={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>
+                </>
+                }
+                
+                {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
+                {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
+                {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}
+                {!isDoneChoosing && isChoosingDepSeats && <Button color="primary" onClick={props.backButton}> Go Back to see summary </Button>}
+                {!isDoneChoosing && !isChoosingDepSeats && <Button color="primary" onClick={()=>{setIsChoosingDep(true);setChosenSeatsDep([])}}> Go Back to choose Departure Seats Again</Button>}
+                </>
+            }
+            {!isLoggedIn && <>
+            
+            <h3 style={{ color: 'red' }}>Please Login</h3>
+            <Button color="success" onClick={()=>{props.login();setIsLoggedIn(true)}}>Login</Button>
             </>
             }
-            
-            {!isDoneChoosing &&!isChoosingDepSeats && 
-            <>
-            {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
-            <SeatMap cabinType = {props.retCabinClass} flightNumber={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>
-            </>
-            }
-            
-            {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
-            {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
-            {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}
     </div>
     );
 }

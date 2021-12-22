@@ -44,7 +44,9 @@ constructor(props) {
     super(props);
     this.state = {
       selectedNumOfPass: 1,
-      selectedNumOfPassC: 0
+      selectedNumOfPassC: 0,
+      login:props.login,
+      isLoggedIn: props.isLoggedIn
     }
   
   }
@@ -182,10 +184,10 @@ handlePCount(value) {
   this.setState({selectedNumOfPass: (this.state.selectedNumOfPass)+1});
 }
 handleNCount(value) {
-  if(this.state.selectedNumOfPass !== 0)
+  if(this.state.selectedNumOfPass > 1)
    this.setState({selectedNumOfPass: (this.state.selectedNumOfPass)-1});
   else
-    this.setState({selectedNumOfPass: 0});
+    this.setState({selectedNumOfPass: 1});
 
 }
 handlePCountC(value) {
@@ -258,12 +260,15 @@ handleOnClick(option){
       <br/>
       <b>Selected Arrival Flight is {this.state.selectedArrivalFinal ?? "NOT SELECTED"}</b>
       <br />
-      <button onClick={this.userInput.bind(this)}>Search</button>  
+      <button onClick={()=>window.location.reload()}>Clear</button>  
+        &nbsp;&nbsp;&nbsp;&nbsp;
+      <button onClick={this.userInput.bind(this)}>Search</button>
           <br/>
           Flights:
          
             {(!this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
               <div>
+                Now Selecting Departure Flight
                 {this.state.flightToBeListed && <div>Found: {this.state.flightToBeListed.length} flights</div>}
                  <ul>
                    {
@@ -299,6 +304,7 @@ handleOnClick(option){
             }
             {(this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
               <div>
+                Now Selecting Return Flight
                  <ul>
                    {
               (this.state.returnFlightToBeListed ?? []).map((option,i) =>
@@ -330,7 +336,27 @@ handleOnClick(option){
                 </div>
             }
         </div>}
-            {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights && <ReserveFlights price = {flightPrice} chosenSeatsD ={null} chosenSeatsR={null} bookingNumberD={null} bookingNumberR={null} depFlight= {this.state.selectedDepartureFinal} retFlight={this.state.selectedArrivalFinal} depFlightNumSeats ={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} retFlightNumSeats={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} depCabinClass={this.state.selectedCabinClass.label} retCabinClass={this.state.selectedCabinClass.label} userInfo ={this.state.userInfo}/>}  
+            {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights && 
+            
+              <>
+                <ReserveFlights login = {this.state.login} price = {flightPrice} chosenSeatsD ={null} chosenSeatsR={null} 
+                bookingNumberD={null} bookingNumberR={null} 
+                depFlight= {this.state.selectedDepartureFinal} retFlight={this.state.selectedArrivalFinal} 
+                depFlightNumSeats ={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} 
+                retFlightNumSeats={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} 
+                depCabinClass={this.state.selectedCabinClass.label} retCabinClass={this.state.selectedCabinClass.label} 
+                userInfo ={this.state.userInfo}
+                isLoggedIn={this.state.isLoggedIn}
+                
+                backButton={()=>{this.setState({isStopRenderSearch:false});
+                this.setState({isDoneSelectingFlights:false});
+                this.setState({departureHasBeenChosen:false});
+                window.location.reload();
+                }}
+                
+                />
+                </>
+            }  
     </div>
     );
   }
