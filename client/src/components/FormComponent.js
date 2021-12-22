@@ -144,12 +144,15 @@ function FormComponent (props){
         </FormGroup>
         <FormGroup>
           <Label for="noOfEconSeats">
-            Number of Economy class seats
+            Number of Economy class seats (must be a number)
           </Label>
           <Input
             id="noOfEconSeats"
             value={noOfEconSeats}
-            onChange={(event)=> setNoOfEconSeats(event.target.value)}
+            onChange={(event)=> {
+              if(!isNaN(event.target.value))
+                setNoOfEconSeats(event.target.value);
+            }}
             error={errors.noOfEconSeats}
             name="noOfEconSeats"
             type="text"
@@ -157,12 +160,15 @@ function FormComponent (props){
         </FormGroup>
         <FormGroup>
           <Label for="noOfBusinessSeats">
-            Number of Business class seats
+            Number of Business class seats (must be a number)
           </Label>
           <Input
             id="noOfBusinessSeats"
             value={noOfBusinessSeats}
-            onChange={(event)=> setNoOfBusinessSeats(event.target.value)}
+            onChange={(event)=> {
+              if(!isNaN(event.target.value))
+                setNoOfBusinessSeats(event.target.value);
+            }}
             error={errors.noOfBusinessSeats}
             name="noOfBusinessSeats"
             type="noOfBusinessSeats"
@@ -170,12 +176,16 @@ function FormComponent (props){
         </FormGroup>
         <FormGroup>
           <Label for="noOfFirstSeats">
-            Number of First class seats
+            Number of First class seats (must be a number)
           </Label>
           <Input
             id="noOfFirstSeats"
             value={noOfFirstSeats}
-            onChange={(event)=> setNoOfFirstSeats(event.target.value)}
+            onChange={(event)=> {
+              if(!isNaN(event.target.value))
+                setNoOfFirstSeats(event.target.value);
+            }
+            }
             error={errors.noOfFirstSeats}
             name="noOfFirstSeats"
             type="noOfFirstSeats"
