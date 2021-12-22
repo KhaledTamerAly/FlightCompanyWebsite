@@ -13,7 +13,7 @@ the software.
 • Learn how to work together as a team on GitHub.
 
 # Build Status
-No Bugs in build... Yet. :upside_down_face:
+No Bugs in build... Yet.:upside_down_face:
 
 # Code Style
 In Client side, we use a mix of Class-based ReactJS Components and Functional-based ReactJS Components, while usually depending on the latter. It's usually less verbose and easier to understand. Hooks in particular provide a smooth experience with ReactJS.
