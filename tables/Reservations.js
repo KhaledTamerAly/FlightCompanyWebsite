@@ -33,6 +33,10 @@ const reservationScheme = new Schema({
     chosenSeats : {
         type : [String],
         required : true
+    },
+    paid : {
+        type : Number,
+        required : true
     }
 });
 

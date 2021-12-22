@@ -76,8 +76,14 @@ const headCells = [
       {
       id: 'flightNumber',
       numeric: false,
-      disablePadding: true,
+      disablePadding: false,
       label: 'Flight Number',
+    },
+    {
+      id: 'paid',
+      numeric: true,
+      disablePadding: false,
+      label: 'Flight price',
     },
     {
       id: 'flightDate',
@@ -182,7 +188,8 @@ const EnhancedTableToolbar = (props) => {
   
   function deleteReservation(bookingNumber)
     {
-        var url = '/users/' + bookingNumber;
+        var url = "/users/" + bookingNumber;
+        console.log(url);
          axios
              .delete(url)
             .then(()=> console.log("deleted..."));
@@ -310,7 +317,7 @@ export default function MyReservations() {
 
   return (
     <div>
-        <Navbar />
+        <Navbar loggedIn={true}/>
         <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
             <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
@@ -365,6 +372,7 @@ export default function MyReservations() {
                             {row.bookingNumber}
                         </TableCell>
                         <TableCell align="right">{row.flightNumber}</TableCell>
+                        <TableCell align="right">{row.paid}</TableCell>
                         <TableCell align="right">{row.flightDate.toString().substring(0,9)}</TableCell>
                         <TableCell align="right">{row.departureTime.toString().substring(11,16)}</TableCell>
                         <TableCell align="right">{row.arrivalTime==null?(row.arrivalTime):(row.arrivalTime.toString().substring(11,16))}</TableCell>

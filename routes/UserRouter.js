@@ -3,11 +3,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/keys').mongoURL;
 const Reservations = require('../tables/Reservations');
+var nodemailer = require('nodemailer');
 mongoose.connect(db)
     .then(()=> console.log('MongoDB connected...'))
     .catch(err=> console.log(err));
 //importing Table Users
 const Users = require('../tables/Users');
+
 
 router.post("/addReservation",async (req,res) => {
     var uName = req.body.username;
@@ -18,6 +20,7 @@ router.post("/addReservation",async (req,res) => {
     var flightNum = req.body.flightNumber;
     var seats = req.body.chosenSeats;
     var bookingNumber= flightNum+"-"+(Math.floor(Math.random() * 999));
+    var paid=req.body.paid;
 
     const reservation = new Reservations({
         bookingNumber:bookingNumber,
@@ -27,7 +30,8 @@ router.post("/addReservation",async (req,res) => {
         passportNumber: passport,
         email: uemail,
         flightNumber: flightNum,
-        chosenSeats: seats
+        chosenSeats: seats,
+        paid:paid
     });
     await reservation.save();
     console.log(uName + " reserved flight "+flightNum+" Seats: "+seats+" in reservations table, booking num is "+bookingNumber);
@@ -66,6 +70,7 @@ router.get('/flightDetails/:username', async(req,res) => {
             var flightNumber=reservations[i].flightNumber;
             var chosenSeats=reservations[i].chosenSeats;
             var bookingNumber=reservations[i].bookingNumber;
+            var paid=reservations[i].paid;
             await Flights.findOne({bookingNumber:bookingNumber}).then((flight)=>{
                 reservation.flightNumber=flightNumber;
                 reservation.bookingNumber=bookingNumber;
@@ -75,6 +80,7 @@ router.get('/flightDetails/:username', async(req,res) => {
                 reservation.departureTerminal=flight.departureTerminal;
                 reservation.arrivalTerminal=flight.arrivalTerminal;
                 reservation.chosenSeats=chosenSeats;
+                reservation.paid=paid;
                 userFlights[i]=reservation;
             });
         }
@@ -82,9 +88,47 @@ router.get('/flightDetails/:username', async(req,res) => {
     res.json(userFlights);
     });
 
-router.delete('/:bookingNumber', (req,res)=> {
-    Reservations.findOneAndDelete(req.params.bookingNumber)
-    .then((reservation)=>console.log('Deleted reservation ' + reservation.bookingNumber +' successfully'))
+router.delete('/:bookingNumber', async(req,res)=> {
+    console.log("aaa");
+     Reservations.findOneAndDelete(req.params.bookingNumber)
+    .then((reservation)=>{console.log(
+        'Deleted reservation ' + reservation.bookingNumber +' successfully');
+         Flights.findOne({bookingNumber:reservation.bookingNumber}).then((flight)=>{
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: 'osamatourss@gmail.com',
+                  pass: 'osama1stop'
+                }
+              });
+              console.log(reservation);
+              var mailOptions = {
+                from: 'osamatourss@gmail.com',
+                to: reservation.email,
+                subject: 'Cancellation confirmation '+reservation.bookingNumber,
+                text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
+                'This email is to confirm that you cancelled your reservation with number '+reservation.bookingNumber+'.\n'+
+                'You will be refunded $'+reservation.paid+', the following are the full details of the reservation.\n'+
+                'Flight number: '+reservation.flightNumber+'\n'+
+                'Flight date: '+flight.flightDate+'\n'+
+                'Departure time: '+flight.departureTime+'\n'+
+                'Arrival time: '+flight.arrivalTime+'\n'+
+                'Departure terminal: '+flight.departureTerminal+'\n'+
+                'Arrival terminal: '+flight.arrivalTerminal+'\n'+
+                'Seats: '+reservation.chosenSeats.join(", ")+'\n'
+                
+              };
+              
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log('Email sent: ' + info.response);
+                }
+              });
+        });
+        
+    })
     .catch(err => console.log(err));
 });
 

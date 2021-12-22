@@ -19,6 +19,7 @@
     "is-empty": "^1.2.0",
     "mongoose": "^6.0.13",
     "mongosh": "^1.1.7",
+    "nodemailer": "^6.7.2",
     "react-datepicker": "^4.3.0",
     "react-router-dom": "^6.0.2",
     "react-select": "^5.2.1",

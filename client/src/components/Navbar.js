@@ -12,15 +12,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import Button from '@mui/material/Button';
 import {useNavigate} from 'react-router-dom';
 
-export default function Navbar() {
-  const [auth, setAuth] = React.useState(true);
+export default function Navbar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -44,28 +41,44 @@ export default function Navbar() {
 
     function goToHomepage() {
       handleClose();
-      navigate('/')
+      navigate('/',{
+        state: {
+          loggedIn:false
+        }
+      });
+      window.location.reload();
     }
+
+    function signUp(){
+
+    }
+
+    function login(){
+      navigate('/',{
+        state: {
+          loggedIn:true
+        }
+      });
+      window.location.reload();
+    }
+
+    function mainButton(){
+      if(props.loggedIn)
+        login();
+      else
+        goToHomepage();
+    }
+    
   return (
+
+    
     <Box sx={{ flexGrow: 1 }}>
-      {/* <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={auth}
-              onChange={handleChange}
-              aria-label="login switch"
-            />
-          }
-          label={auth ? 'Logout' : 'Login'}
-        />
-      </FormGroup> */}
       <AppBar position="static">
         <Toolbar>
-          <Link href ="/user" variant="h4" color="inherit" underline="none" sx={{ flexGrow: 1 }}>
+        <Button onClick={mainButton} variant="text" style={{fontSize: "30px", textAlign: "right"}} color="inherit" sx={{ flexGrow: 1 }}>
             {'Osama Airlines'}
-          </Link>
-          {auth && (
+          </Button>
+          {props.loggedIn && (
             <div>
               <IconButton
                 size="large"
@@ -96,6 +109,12 @@ export default function Navbar() {
                 <MenuItem onClick={goToMyInformation}>My information</MenuItem>
                 <MenuItem onClick={goToHomepage}>Log out</MenuItem>
               </Menu>
+            </div>
+          )}
+          {!props.loggedIn &&(
+            <div>
+              <Button onClick= {signUp} sx={{ m: 1 }} variant="contained" color='warning'>Sign up</Button>
+              <Button onClick= {login} sx={{ m: 1 }} variant="contained" color='warning'>Login</Button>
             </div>
           )}
         </Toolbar>
