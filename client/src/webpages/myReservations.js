@@ -373,7 +373,7 @@ export default function MyReservations() {
                         </TableCell>
                         <TableCell align="right">{row.flightNumber}</TableCell>
                         <TableCell align="right">{row.paid}</TableCell>
-                        <TableCell align="right">{row.flightDate.toString().substring(0,9)}</TableCell>
+                        <TableCell align="right">{row.flightDate.toString().substring(0,10)}</TableCell>
                         <TableCell align="right">{row.departureTime.toString().substring(11,16)}</TableCell>
                         <TableCell align="right">{row.arrivalTime==null?(row.arrivalTime):(row.arrivalTime.toString().substring(11,16))}</TableCell>
                         <TableCell align="right">{row.departureTerminal}</TableCell>

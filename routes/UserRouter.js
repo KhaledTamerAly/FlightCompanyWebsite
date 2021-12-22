@@ -82,7 +82,7 @@ router.get('/flightDetails/:username', async(req,res) => {
             var chosenSeats=reservations[i].chosenSeats;
             var bookingNumber=reservations[i].bookingNumber;
             var paid=reservations[i].paid;
-            await Flights.findOne({bookingNumber:bookingNumber}).then((flight)=>{
+            await Flights.findOne({flightNumber:flightNumber}).then((flight)=>{
                 reservation.flightNumber=flightNumber;
                 reservation.bookingNumber=bookingNumber;
                 reservation.flightDate=flight.flightDate;
@@ -238,7 +238,7 @@ function addAdmin ()
 };
 function addDefaultUser ()
 {
-    const user = new Users({fName: "Youssef",lName: "Basuny", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "youssef",password: "youssef",email:"youssefbasuny@gmail.com",userType: ["User"]});
+    const user = new Users({fName: "Youssef",lName: "Basuny", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "youssef",password: "youssef",email:"k.tamer155@gmail.com",userType: ["User"]});
     try
     {
         user.save();
