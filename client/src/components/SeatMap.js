@@ -47,6 +47,7 @@ useEffect(async()=>
         <div>
             <h3>Select your prefered seats in your {props.type} flight</h3>
             <h4>You have {numberOfSeatsToReservre} seats to reserve</h4>
+            {console.log(flightSeats)}
                 {(flightSeats??[]).map((row, i) =>{
                 return (
                     <Box>

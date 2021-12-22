@@ -47,27 +47,24 @@ router.post("/addReservation",async (req,res) => {
 
     if(cabinType == "Economy")
     {
-        var noEconSeats;
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            noEconSeats = res.noEconSeats;
-            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfEconSeats:noEconSeats - seats.length},()=>console.log());
+            console.log(res.noOfEconSeatsLeft);
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfEconSeatsLeft:res.noOfEconSeatsLeft - seats.length},()=>console.log());
              });
     }
     else if(cabinType == "First")
     {
-        var noOfFirstSeats;
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            noOfFirstSeats = res.noOfFirstSeats;
-            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeats:noOfFirstSeats - seats.length},()=>console.log());
+            console.log(res.noOfFirstSeatsLeft);
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft - seats.length},()=>console.log());
              });
         
     }
     else if(cabinType == "Business")
     {
-        var noOfBusinessSeats;
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            noOfBusinessSeats = res.noOfBusinessSeats;
-            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeats:noOfBusinessSeats-seats.length},()=>console.log());
+            console.log(res.noOfBusinessSeatsLeft);
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft-seats.length},()=>console.log());
              });
         
     }

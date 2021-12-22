@@ -208,13 +208,13 @@ router.get('/matchesAdmin', async (req,res) =>{
         if(selNoP !=null)
         {switch(selCabClass){
             case "Economy": 
-                departFlight.noOfEconSeats = { $gte: selNoP };    
+                departFlight.noOfEconSeatsLeft = { $gte: selNoP };    
                             break;
             case "Business": 
-                departFlight.noOfBusinessSeats = { $gte: selNoP };
+                departFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
                             break;
             case "First": 
-                departFlight.noOfFirstSeats = { $gte: selNoP };            
+                departFlight.noOfFirstSeatsLeft = { $gte: selNoP };            
                             break;
         }}
     }
@@ -239,13 +239,13 @@ router.get('/matchesAdmin', async (req,res) =>{
         if(selNoP !=null)
         {switch(selCabClass){
             case "Economy": 
-                returnFlight.noOfEconSeats = { $gte: selNoP };    
+                returnFlight.noOfEconSeatsLeft = { $gte: selNoP };    
                             break;
             case "Business": 
-                returnFlight.noOfBusinessSeats = { $gte: selNoP };
+                returnFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
                             break;
             case "First": 
-                returnFlight.noOfFirstSeats = { $gte: selNoP };            
+                returnFlight.noOfFirstSeatsleft = { $gte: selNoP };            
                             break;
         }}
     }
@@ -459,7 +459,7 @@ function generateSeatArray(flightSeats,numOfSeats)
                 }
             }
         }
-        console.log(allSeats);
+        
         return allSeats;
     }
 function updateSeats(chosenSeats, allSeats)
@@ -542,6 +542,9 @@ function populateTable()
             noOfEconSeats:econClassSeats,
             noOfBusinessSeats:busClassSeats,
             noOfFirstSeats:firstClassSeats,
+            noOfEconSeatsLeft:econClassSeats,
+            noOfBusinessSeatsLeft:busClassSeats,
+            noOfFirstSeatsLeft:firstClassSeats,
             seats:seatsOnFlight
         })
         count++;

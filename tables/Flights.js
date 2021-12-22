@@ -32,6 +32,15 @@ const flightsSchema = new Schema({
     noOfFirstSeats:{
         type: Number 
     },
+    noOfEconSeatsLeft:{
+        type: Number 
+    },
+    noOfBusinessSeatsLeft:{
+        type: Number 
+    },
+    noOfFirstSeatsLeft:{
+        type: Number 
+    },
     seats: [{seatNumber: String,isTaken: Boolean,cabinType:String}]
 });
 

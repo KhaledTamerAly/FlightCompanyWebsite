@@ -249,9 +249,9 @@ handleOnClick(option){
                   dateFormat = 'yyyy/MM/dd'
                 />
         
-      <b>Selected Departure Terminal is {this.state.selectedDepartureFinal ?? "NOT SELECTED"}</b> 
+      <b>Selected Departure Flight is {this.state.selectedDepartureFinal ?? "NOT SELECTED"}</b> 
       <br/>
-      <b>Selected Arrival Terminal is {this.state.selectedArrivalFinal ?? "NOT SELECTED"}</b>
+      <b>Selected Arrival Flight is {this.state.selectedArrivalFinal ?? "NOT SELECTED"}</b>
       <br />
       <button onClick={this.userInput.bind(this)}>Search</button>  
           <br/>
