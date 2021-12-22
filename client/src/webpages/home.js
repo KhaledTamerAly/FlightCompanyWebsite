@@ -1,11 +1,24 @@
-import React from 'react'
-import {useNavigate} from 'react-router-dom';
+import React,{useEffect} from 'react'
+import {useNavigate, useLocation} from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+} from "react-router-dom";
 import { Button} from 'reactstrap';
 import GeneralSearch from '../components/GeneralSearch.js';
 import EnhancedTable from '../components/ScheduleViewer';
-import SeatComponent from '../components/SeatsComponent';
+import Navbar from '../components/Navbar';
+
 function Home()
 {
+  const location  = useLocation();
+  const [loggedIn,setIsLoggedIn]=React.useState(false);
+  
+  useEffect(()=>{
+    setIsLoggedIn(location?.state?.loggedIn??false);
+  },[]);
+
     const navigate = useNavigate();
 
     function goToAdmin() {
@@ -14,21 +27,15 @@ function Home()
     function goToLogin() {
         navigate('/login')
       }
-      const userInfo=  {
-        username:"youssef",
-        firstName: "youssef",
-        lastname: "Bassiouny",
-        passport: "A2765",
-        email: "youssef@osamaTours.com"
-      }
     return (
       <>
         <div>
-            <h1>Welcome to placeholder flights</h1>
+          <Navbar loggedIn={loggedIn}/>
+        </div>
+        <div>
+            <h1>Welcome to Osama Airlines</h1>
             <p></p>
             <Button color="primary" outline onClick={goToAdmin}> Login as Admin </Button>
-            <Button color="primary" outline onClick={()=> navigate('/user')}> Login as User </Button>
-            <Button color="success" outline> Register </Button>
         </div>
         <div>
           <EnhancedTable />

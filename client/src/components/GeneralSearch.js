@@ -37,7 +37,8 @@ class GeneralSearch extends Component {
     departureHasBeenChosen: false,
     returnFlightToBeListed:null,
     isDoneSelectingFlights:false,
-    isStopRenderSearch: false
+    isStopRenderSearch: false,
+    userInfo:null
   };
 constructor(props) {
     super(props);
@@ -48,7 +49,7 @@ constructor(props) {
   
   }
 async updateStates() {
-  axios.get('/flights')
+  await axios.get('/flights')
          .then(res =>{
            const allFlights = res.data;
            this.setState({flights:allFlights});
@@ -100,9 +101,20 @@ async updateStates() {
 
 
          });
+  await axios.get('users/userInfo/youssef')
+    .then(user=> {
+      const userInfoObject=  {
+        username:user.data.username,
+        firstName: user.data.fName,
+        lastname: user.data.lName,
+        passport: user.data.passportNumber,
+        email: user.data.email
+      }
+      this.setState({userInfo:userInfoObject})
+    });
   
 }
-componentDidMount()
+async componentDidMount()
 {
   this.updateStates();
 }
@@ -192,13 +204,6 @@ handleOnClick(option){
   render() 
   {
     const flightPrice = 50;
-    const userInfo=  {
-      username:"youssef",
-      firstName: "youssef",
-      lastname: "Bassiouny",
-      passport: "A2765",
-      email: "youssefbasuny@gmail.com"
-    }
     return (
       <div className="App">
         {!this.state.isStopRenderSearch && <div>
@@ -259,6 +264,7 @@ handleOnClick(option){
          
             {(!this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
               <div>
+                {this.state.flightToBeListed && <div>Found: {this.state.flightToBeListed.length} flights</div>}
                  <ul>
                    {
               (this.state.flightToBeListed ?? []).map((option,i) =>
@@ -324,7 +330,7 @@ handleOnClick(option){
                 </div>
             }
         </div>}
-            {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights && <ReserveFlights price = {flightPrice} chosenSeatsD ={null} chosenSeatsR={null} bookingNumberD={null} bookingNumberR={null} depFlight= {this.state.selectedDepartureFinal} retFlight={this.state.selectedArrivalFinal} depFlightNumSeats ={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} retFlightNumSeats={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} depCabinClass={this.state.selectedCabinClass.label} retCabinClass={this.state.selectedCabinClass.label} userInfo ={userInfo}/>}  
+            {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights && <ReserveFlights price = {flightPrice} chosenSeatsD ={null} chosenSeatsR={null} bookingNumberD={null} bookingNumberR={null} depFlight= {this.state.selectedDepartureFinal} retFlight={this.state.selectedArrivalFinal} depFlightNumSeats ={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} retFlightNumSeats={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} depCabinClass={this.state.selectedCabinClass.label} retCabinClass={this.state.selectedCabinClass.label} userInfo ={this.state.userInfo}/>}  
     </div>
     );
   }

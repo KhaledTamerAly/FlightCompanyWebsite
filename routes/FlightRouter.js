@@ -461,7 +461,7 @@ function generateSeatArray(flightSeats,numOfSeats)
         }
         
         return allSeats;
-    }
+}
 function updateSeats(chosenSeats, allSeats)
 {
     for(var i =0;i<chosenSeats.length;i++)
@@ -568,7 +568,7 @@ function generateSeats(first,busi,econ)
             seat = 'B'+ rowNum.toString();
             rowNum++;
         }
-        var newSeat = {seatNumber:seat, isTaken:false ,cabinType:null};
+        var newSeat = {seatNumber:seat, isTaken:false ,cabinType:"First"};
         seats.push(newSeat);
     }
 
@@ -593,7 +593,7 @@ function generateSeats(first,busi,econ)
             seat = previousSeatLetter + rowNum.toString();
         }
         
-        var newSeat = {seatNumber:seat, isTaken:false,cabinType:null };
+        var newSeat = {seatNumber:seat, isTaken:false,cabinType:"Business"};
         seats.push(newSeat);
     }
 
@@ -617,16 +617,9 @@ function generateSeats(first,busi,econ)
             previousSeatLetter = String.fromCharCode(previousSeatLetter.charCodeAt()+1);
             seat = previousSeatLetter + rowNum.toString();
         }
-        var newSeat = {seatNumber:seat, isTaken:false,cabinType:null };
+        var newSeat = {seatNumber:seat, isTaken:false,cabinType:"Economy"};
         seats.push(newSeat);
     }
-    var i = 0
-    for(i;i<first;i++)
-        seats[i].cabinType = "First";
-    for(i;i<busi+first;i++)
-        seats[i].cabinType = "Business";
-    for(i;i<busi+first+econ;i++)
-        seats[i].cabinType = "Economy";
     return seats;
 }
 function isValidDate(date) {

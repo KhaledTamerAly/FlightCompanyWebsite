@@ -37,6 +37,10 @@ const reservationScheme = new Schema({
     paid : {
         type : Number,
         required : true
+    },
+    cabinType : {
+        type : String,
+        required : true
     }
 });
 
