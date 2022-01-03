@@ -46,7 +46,7 @@ function Home()
           <EnhancedTable />
         </div>
         <div>
-          <GeneralSearch login={Login} isLoggedIn={loggedIn}/>
+          <GeneralSearch login={Login} isLoggedIn={location?.state?.loggedIn??loggedIn}/>
           </div>
         </>
     );
