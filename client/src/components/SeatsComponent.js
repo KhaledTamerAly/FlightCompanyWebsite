@@ -118,14 +118,14 @@ function SeatComponent(props)
                 {!isDoneChoosing && isChoosingDepSeats && 
                 <>
                 {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
-                <SeatMap cabinType = {props.depCabinClass} flightNumber={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>
+                <SeatMap oldSeats = {[]} cabinType = {props.depCabinClass} flightNumber={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>
                 </>
                 }
                 
                 {!isDoneChoosing &&!isChoosingDepSeats && 
                 <>
                 {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
-                <SeatMap cabinType = {props.retCabinClass} flightNumber={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>
+                <SeatMap oldSeats={[]} cabinType = {props.retCabinClass} flightNumber={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>
                 </>
                 }
                 

@@ -202,6 +202,28 @@ router.put('/updateUser/:username', async(req, res)=>{
     })
     
 });
+router.get('/reservationDetails/:bookingNumber', (req,res) => {
+    Reservations.findOne({bookingNumber:req.params.bookingNumber}).then((reservations)=> {
+        res.json(reservations);
+    })
+});
+router.post('/updateSeatReservation', (req,res)=>{
+    var chosenSeats = req.body.chosenSeats;
+    var bookingNumber= req.body.bookingNumber;
+    var flightNum = req.body.flightNumber;
+    Reservations.findOneAndUpdate({bookingNumber:bookingNumber},{chosenSeats:chosenSeats},()=>{
+        Flights.findOne({flightNumber:flightNum}).select('seats').then(seats=>{
+            var updatedSeats = updateSeatsToFalse(req.body.oldChosenSeats,seats.seats);
+            Flights.findOneAndUpdate({flightNumber:flightNum},{seats:updatedSeats},()=>{
+                console.log("Seat Unreserved in Flights table");
+                Flights.findOne({flightNumber:flightNum}).select('seats').then(seats=>{
+                         var updatedSeats = updateSeats(chosenSeats,seats.seats);
+                         Flights.findOneAndUpdate({flightNumber:flightNum},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
+                     });
+            });
+        });
+    });
+});
 
 
 
@@ -223,6 +245,23 @@ function updateSeats(chosenSeats, allSeats)
     }
     return allSeats;
 }
+function updateSeatsToFalse(chosenSeats, allSeats)
+{
+    for(var i =0;i<chosenSeats.length;i++)
+    {
+        var seatToLookFor = chosenSeats[i];
+
+        for(var j =0;j<allSeats.length;j++)
+        {
+            if(seatToLookFor == allSeats[j].seatNumber)
+                {
+                    allSeats[j].isTaken = false;
+                }
+        }
+    }
+    return allSeats;
+}
+
 function addAdmin ()
 {
     const admin = new Users({fName: "Administrator",lName: " ", homeAddress: "Nelkenstrasse",countryCode: "+49",telephoneNumber:["01277"],passportNumber: "A2765", username: "administrator",password: "osama",email:"admin@osamaTours.com",userType: ["Admin"]});
