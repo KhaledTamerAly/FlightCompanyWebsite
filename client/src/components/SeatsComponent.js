@@ -17,6 +17,7 @@ function SeatComponent(props)
     const [bookingNumberR, setBookingNumberR] = useState("");
     const [isSelectedAllSeats, setIsSelectedSeats] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(props.isLoggedIn);
+    const [isPaying, setIsPaying] = useState(false);
 
     const navigate = useNavigate();
     function chooseSeatsDep(seatNumber,isAdd)
@@ -113,7 +114,6 @@ function SeatComponent(props)
     }
     return (
         <div>
-            {console.log(isLoggedIn)}
             {isLoggedIn && <>
                 {!isDoneChoosing && isChoosingDepSeats && 
                 <>

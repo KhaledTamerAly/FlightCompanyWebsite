@@ -71,6 +71,39 @@ router.post("/addReservation",async (req,res) => {
         Flights.findOneAndUpdate({flightNumber:flightNum},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
     });
     console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
+
+    Flights.findOne({flightNumber:reservation.flightNumber}).then((flight)=>{
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: 'osamatourss@gmail.com',
+                  pass: 'osama1stop'
+                }
+              });
+              var mailOptions = {
+                from: 'osamatourss@gmail.com',
+                to: reservation.email,
+                subject: 'Itinerary confirmation '+reservation.bookingNumber,
+                text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
+                'This email is to confirm that you booked your reservation with number '+reservation.bookingNumber+'.\n'+
+                'You paid $'+reservation.paid+', the following are the full details of the reservation.\n'+
+                'Flight number: '+reservation.flightNumber+'\n'+
+                'Flight date: '+flight.flightDate+'\n'+
+                'Departure time: '+flight.departureTime+'\n'+
+                'Arrival time: '+flight.arrivalTime+'\n'+
+                'Departure terminal: '+flight.departureTerminal+'\n'+
+                'Arrival terminal: '+flight.arrivalTerminal+'\n'+
+                'Seats: '+reservation.chosenSeats.join(", ")+'\n'
+              };
+              
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log('Email sent: ' + info.response);
+                }
+              });
+        });
     res.json(bookingNumber);
 });
 router.get('/flightDetails/:username', async(req,res) => {
@@ -103,7 +136,7 @@ router.delete('/:bookingNumber', async(req,res)=> {
      Reservations.findOneAndDelete(req.params.bookingNumber)
     .then(async(reservation)=>{console.log(
         'Deleted reservation ' + reservation.bookingNumber +' successfully');
-         Flights.findOne({bookingNumber:reservation.bookingNumber}).then((flight)=>{
+         Flights.findOne({flightNumber:reservation.flightNumber}).then((flight)=>{
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {

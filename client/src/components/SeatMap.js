@@ -56,7 +56,7 @@ useEffect(async()=>
                         {
                             if(col!=null)
                             {
-                                if(props.oldSeats.includes(col.seatNumber))
+                                if(props.oldSeats.includes(col.seatNumber) && props.oldSeats!=[])
                                 {
                                     return (
                                         <FormControl component="fieldset" variant="standard" id={i+j}>

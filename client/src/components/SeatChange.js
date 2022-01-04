@@ -2,7 +2,7 @@ import '../App.css';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import SeatMap from './SeatMap';
-import { Button } from '@mui/material';
+import { Button } from 'reactstrap';
 
 
 function SeatChange(props)
@@ -56,7 +56,7 @@ function SeatChange(props)
             }
     }
     return (
-        <div>
+        <div className="App">
                 {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
                 {reservation && 
                     <SeatMap oldSeats = {reservation.chosenSeats} cabinType = {reservation.cabinType} flightNumber={reservation.flightNumber} numberOfSeats ={reservation.chosenSeats.length}  type="" func={chooseSeats}/>
