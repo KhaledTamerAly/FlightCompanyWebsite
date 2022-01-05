@@ -1,3 +1,6 @@
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_TEST);
+const cors = require('cors');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -11,6 +14,7 @@ mongoose.connect(db)
 const Users = require('../tables/Users');
 const Flights = require('../tables/Flights');
 
+router.use(cors());
 
 
 //Routes
@@ -337,6 +341,31 @@ router.post('/updateSeatReservation', (req,res)=>{
         });
     });
 });
+router.post('/payment', cors(), async(req,res)=>{
+    var {amount , id} = req.body;
+    console.log('here');
+    try {
+		const payment = await stripe.paymentIntents.create({
+			amount,
+			currency: "USD",
+			description: "Reserved Flight",
+			payment_method: id,
+			confirm: true
+		})
+		console.log("Payment", payment)
+		res.json({
+			message: "Payment successful",
+			success: true
+		})
+	} catch (error) {
+		console.log("Error", error)
+		res.json({
+			message: "Payment failed",
+			success: false
+		})
+	}
+
+})
 
 
 

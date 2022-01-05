@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Button} from 'reactstrap';
 import SeatMap from './SeatMap';
 import Summary from './Summary';
+import StripeComponent from './StripeComponent'
 
 
 function SeatComponent(props)
@@ -17,7 +18,7 @@ function SeatComponent(props)
     const [bookingNumberR, setBookingNumberR] = useState("");
     const [isSelectedAllSeats, setIsSelectedSeats] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(props.isLoggedIn);
-    const [isPaying, setIsPaying] = useState(false);
+    const [didPay, setDidPay] = useState(false);
 
     const navigate = useNavigate();
     function chooseSeatsDep(seatNumber,isAdd)
@@ -81,48 +82,51 @@ function SeatComponent(props)
                     setIsSelectedSeats(false);
                 else
                 {
-                    const bodyDep = { 
-                        username:props.userInfo.username,
-                        firstName: props.userInfo.firstName,
-                        lastName: props.userInfo.lastname,
-                        passport: props.userInfo.passport,
-                        email: props.userInfo.email,
-                        flightNumber: props.depFlight,
-                        chosenSeats: chosenSeatsDep,
-                        price:props.price,
-                        cabin:props.depCabinClass,
-                        flightType: "Departure"
-                    }
-                    const bodyRet = { 
-                        username:props.userInfo.username,
-                        firstName: props.userInfo.firstName,
-                        lastName: props.userInfo.lastname,
-                        passport: props.userInfo.passport,
-                        email: props.userInfo.email,
-                        flightNumber: props.retFlight,
-                        chosenSeats: chosenSeatsRet,
-                        price:props.price,
-                        cabin: props.retCabinClass,
-                        flightType: "Return"
-                    }
-                        const api = {};
-                        await axios.post('/users/addReservation', bodyDep, {headers: api}).then(async(res1)=> {
-                            setBookingNumberD(res1.data);
-                            setIsDone(true);
-                            setIsSelectedSeats(false);
-                            await axios.post('/users/addReservation', bodyRet, {headers: api}).then(async(res2)=>{
-                                setBookingNumberR(res2.data)
-                                const body = { 
-                                    departBookingNumber: res1.data,
-                                    returnBookingNumber: res2.data
-                                }
-                                await axios.post('users/linkReservations', body, {headers: api});
-                            });
-                            
-                        });
-                       
-                    }
+                    setIsDone(true);
+                    setIsSelectedSeats(false);      
+                }
             }
+    }
+    async function reserveFlights()
+    {
+        const bodyDep = { 
+            username:props.userInfo.username,
+            firstName: props.userInfo.firstName,
+            lastName: props.userInfo.lastname,
+            passport: props.userInfo.passport,
+            email: props.userInfo.email,
+            flightNumber: props.depFlight,
+            chosenSeats: chosenSeatsDep,
+            price:props.price,
+            cabin:props.depCabinClass,
+            flightType: "Departure"
+        }
+        const bodyRet = { 
+            username:props.userInfo.username,
+            firstName: props.userInfo.firstName,
+            lastName: props.userInfo.lastname,
+            passport: props.userInfo.passport,
+            email: props.userInfo.email,
+            flightNumber: props.retFlight,
+            chosenSeats: chosenSeatsRet,
+            price:props.price,
+            cabin: props.retCabinClass,
+            flightType: "Return"
+        }
+            const api = {};
+            await axios.post('/users/addReservation', bodyDep, {headers: api}).then(async(res1)=> {
+                setBookingNumberD(res1.data);
+                await axios.post('/users/addReservation', bodyRet, {headers: api}).then(async(res2)=>{
+                    setBookingNumberR(res2.data)
+                    setDidPay(true);
+                    const body = { 
+                        departBookingNumber: res1.data,
+                        returnBookingNumber: res2.data
+                    }
+                    await axios.post('users/linkReservations', body, {headers: api});
+                });
+                
+            });
     }
     return (
         <div>
@@ -141,7 +145,8 @@ function SeatComponent(props)
                 </>
                 }
                 
-                {isDoneChoosing &&!isChoosingDepSeats && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
+                {isDoneChoosing &&!isChoosingDepSeats && didPay && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
+                {isDoneChoosing && !isChoosingDepSeats && !didPay && <StripeComponent price = {props.price} reserve= {reserveFlights}/>}
                 {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
                 {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}
                 {!isDoneChoosing && isChoosingDepSeats && <Button color="primary" onClick={props.backButton}> Go Back to see summary </Button>}

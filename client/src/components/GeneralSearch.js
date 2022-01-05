@@ -1,4 +1,4 @@
-import '../App.css';
+
 import React, { Component ,  useState, useEffect } from 'react';
 import Select from 'react-select';
 import Popup from 'reactjs-popup';

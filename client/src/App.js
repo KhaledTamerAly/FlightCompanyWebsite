@@ -1,4 +1,3 @@
-import './App.css';
 import React, { Component ,  useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Webpages from './webpages';
