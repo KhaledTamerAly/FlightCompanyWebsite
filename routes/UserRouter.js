@@ -26,6 +26,7 @@ router.post("/addReservation",async (req,res) => {
     var price = req.body.price;
     var bookingNumber= ""+Math.floor(Math.random() * 99999999);
     var cabinType = req.body.cabin;
+    var flightType = req.body.flightType;
 
     const reservation = new Reservations({
         bookingNumber:bookingNumber,
@@ -37,7 +38,9 @@ router.post("/addReservation",async (req,res) => {
         flightNumber: flightNum,
         chosenSeats: seats,
         paid:price,
-        cabinType: req.body.cabin
+        cabinType: req.body.cabin,
+        flightType: flightType,
+        linkedBookingNumber:"NA"
     });
     await reservation.save();
 
@@ -106,6 +109,16 @@ router.post("/addReservation",async (req,res) => {
         });
     res.json(bookingNumber);
 });
+router.post('/linkReservations', (req,res)=>{
+    var departBookingNumber = req.body.departBookingNumber;
+    var returnBookingNumber = req.body.returnBookingNumber;
+
+    Reservations.findOneAndUpdate({bookingNumber:departBookingNumber},{linkedBookingNumber:returnBookingNumber},()=>{
+         Reservations.findOneAndUpdate({bookingNumber:returnBookingNumber},{linkedBookingNumber:departBookingNumber},()=>{
+            console.log('linked reservatons');
+        });
+    });
+});
 router.get('/flightDetails/:username', async(req,res) => {
     var userFlights=[];
     await Reservations.find({username:req.params.username}).then(async(reservations)=> {
@@ -132,69 +145,136 @@ router.get('/flightDetails/:username', async(req,res) => {
     res.json(userFlights);
 });
 router.delete('/:bookingNumber', async(req,res)=> {
-    console.log("aaa");
-     Reservations.findOneAndDelete(req.params.bookingNumber)
-    .then(async(reservation)=>{console.log(
-        'Deleted reservation ' + reservation.bookingNumber +' successfully');
-         Flights.findOne({flightNumber:reservation.flightNumber}).then((flight)=>{
-            var transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                  user: 'osamatourss@gmail.com',
-                  pass: 'osama1stop'
-                }
-              });
-              console.log(reservation);
-              var mailOptions = {
-                from: 'osamatourss@gmail.com',
-                to: reservation.email,
-                subject: 'Cancellation confirmation '+reservation.bookingNumber,
-                text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
-                'This email is to confirm that you cancelled your reservation with number '+reservation.bookingNumber+'.\n'+
-                'You will be refunded $'+reservation.paid+', the following are the full details of the reservation.\n'+
-                'Flight number: '+reservation.flightNumber+'\n'+
-                'Flight date: '+flight.flightDate+'\n'+
-                'Departure time: '+flight.departureTime+'\n'+
-                'Arrival time: '+flight.arrivalTime+'\n'+
-                'Departure terminal: '+flight.departureTerminal+'\n'+
-                'Arrival terminal: '+flight.arrivalTerminal+'\n'+
-                'Seats: '+reservation.chosenSeats.join(", ")+'\n'
-                
-              };
-              
-              transporter.sendMail(mailOptions, function(error, info){
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log('Email sent: ' + info.response);
-                }
-              });
-        });
+    Reservations.findOneAndDelete(req.params.bookingNumber).then(async(reservation)=>
+    {
+        console.log('Deleted reservation ' + reservation.bookingNumber +' successfully');
         
-    if(reservation.cabinType == "Economy")
-    {
-        await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
-            Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation.chosenSeats.length},()=>console.log());
-             });
-    }
-    else if(reservation.cabinType == "First")
-    {
-        await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
-            Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation.chosenSeats.length},()=>console.log());
-             });
+        await Reservations.findOneAndDelete(reservation.linkedBookingNumber).then(async(reservation1)=>{
+            Flights.findOne({flightNumber:reservation.flightNumber}).then((flight)=>{
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                      user: 'osamatourss@gmail.com',
+                      pass: 'osama1stop'
+                    }
+                  });
+                  console.log(reservation);
+                  var mailOptions = {
+                    from: 'osamatourss@gmail.com',
+                    to: reservation.email,
+                    subject: 'Cancellation confirmation '+reservation.bookingNumber,
+                    text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
+                    'This email is to confirm that you cancelled your reservation with number '+reservation.bookingNumber+'.\n'+
+                    'You will be refunded $'+reservation.paid+', the following are the full details of the reservation.\n'+
+                    'Flight number: '+reservation.flightNumber+'\n'+
+                    'Flight date: '+flight.flightDate+'\n'+
+                    'Departure time: '+flight.departureTime+'\n'+
+                    'Arrival time: '+flight.arrivalTime+'\n'+
+                    'Departure terminal: '+flight.departureTerminal+'\n'+
+                    'Arrival terminal: '+flight.arrivalTerminal+'\n'+
+                    'Seats: '+reservation.chosenSeats.join(", ")+'\n'
+                    
+                  };
+                  
+                  transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                      console.log(error);
+                    } else {
+                      console.log('Email sent: ' + info.response);
+                    }
+                  });
+            });
+            Flights.findOne({flightNumber:reservation.flightNumber}).select('seats').then(seats=>{
+                var updatedSeats = updateSeatsToFalse(reservation.chosenSeats,seats.seats);
+                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{seats:updatedSeats},()=>{
+                    console.log("Seat Unreserved in Flights table");
+                });
+            });  
+            if(reservation.cabinType == "Economy")
+        {
+            await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
+                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation.chosenSeats.length},()=>console.log());
+                 });
+            }
+            else if(reservation.cabinType == "First")
+        {
+            await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
+                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation.chosenSeats.length},()=>console.log());
+                 });
+            
+            }
+            else if(reservation.cabinType == "Business")
+        {
+            await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
+                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation.chosenSeats.length},()=>console.log());
+                 });
+            }
+            console.log('deleted linked flight')
+            ////////////////////////////////////////////////////////
+            Flights.findOne({flightNumber:reservation1.flightNumber}).then((flight)=>{
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                      user: 'osamatourss@gmail.com',
+                      pass: 'osama1stop'
+                    }
+                  });
+                  console.log(reservation1);
+                  var mailOptions = {
+                    from: 'osamatourss@gmail.com',
+                    to: reservation1.email,
+                    subject: 'Cancellation confirmation '+reservation1.bookingNumber,
+                    text: 'Dear Mr/Mrs '+reservation1.lName+',\n\n'+
+                    'This email is to confirm that you cancelled your reservation with number '+reservation1.bookingNumber+'.\n'+
+                    'You will be refunded $'+reservation1.paid+', the following are the full details of the reservation.\n'+
+                    'Flight number: '+reservation1.flightNumber+'\n'+
+                    'Flight date: '+flight.flightDate+'\n'+
+                    'Departure time: '+flight.departureTime+'\n'+
+                    'Arrival time: '+flight.arrivalTime+'\n'+
+                    'Departure terminal: '+flight.departureTerminal+'\n'+
+                    'Arrival terminal: '+flight.arrivalTerminal+'\n'+
+                    'Seats: '+reservation1.chosenSeats.join(", ")+'\n'
+                    
+                  };
+                  
+                  transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                      console.log(error);
+                    } else {
+                      console.log('Email sent: ' + info.response);
+                    }
+                  });
+            });
+            Flights.findOne({flightNumber:reservation1.flightNumber}).select('seats').then(seats=>{
+                var updatedSeats = updateSeatsToFalse(reservation1.chosenSeats,seats.seats);
+                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{seats:updatedSeats},()=>{
+                    console.log("Seat Unreserved in Flights table");
+                });
+            });
+            
+            if(reservation1.cabinType == "Economy")
+        {
+            await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
+                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+                 });
+            }
+            else if(reservation1.cabinType == "First")
+        {
+            await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
+                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+                 });
+            
+            }
+            else if(reservation1.cabinType == "Business")
+        {
+            await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
+                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation1.chosenSeats.length},()=>console.log());
+                 });
+            }
         
-    }
-    else if(reservation.cabinType == "Business")
-    {
-        await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
-            Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation.chosenSeats.length},()=>console.log());
-             });
-    }
+        });    
     })
-    .catch(err => console.log(err));
-
-
-    
+        .catch(err => console.log(err));
 });
 router.get('/userInfo/:username', (req,res)=> {
     Users.findOne({username:req.params.username})

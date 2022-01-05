@@ -268,6 +268,7 @@ const EnhancedTableToolbar = (props) => {
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             Are you sure you want to cancel your reservation for the selected flight with booking number {selected}?
+            Warning: cancelling a flight will cancel entire itinerary, both return and departing flight!
           </DialogContentText>
         </DialogContent>
         <DialogActions>

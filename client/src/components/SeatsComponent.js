@@ -90,11 +90,9 @@ function SeatComponent(props)
                         flightNumber: props.depFlight,
                         chosenSeats: chosenSeatsDep,
                         price:props.price,
-                        cabin:props.depCabinClass
+                        cabin:props.depCabinClass,
+                        flightType: "Departure"
                     }
-                        const api = {};
-                        await axios.post('/users/addReservation', bodyDep, {headers: api}).then(res=> setBookingNumberD(res.data));
-
                     const bodyRet = { 
                         username:props.userInfo.username,
                         firstName: props.userInfo.firstName,
@@ -104,11 +102,25 @@ function SeatComponent(props)
                         flightNumber: props.retFlight,
                         chosenSeats: chosenSeatsRet,
                         price:props.price,
-                        cabin: props.retCabinClass
+                        cabin: props.retCabinClass,
+                        flightType: "Return"
                     }
-                        await axios.post('/users/addReservation', bodyRet, {headers: api}).then(res=>setBookingNumberR(res.data));
-                        setIsDone(true);
-                        setIsSelectedSeats(false);
+                        const api = {};
+                        await axios.post('/users/addReservation', bodyDep, {headers: api}).then(async(res1)=> {
+                            setBookingNumberD(res1.data);
+                            setIsDone(true);
+                            setIsSelectedSeats(false);
+                            await axios.post('/users/addReservation', bodyRet, {headers: api}).then(async(res2)=>{
+                                setBookingNumberR(res2.data)
+                                const body = { 
+                                    departBookingNumber: res1.data,
+                                    returnBookingNumber: res2.data
+                                }
+                                await axios.post('users/linkReservations', body, {headers: api});
+                            });
+                            
+                        });
+                       
                     }
             }
     }

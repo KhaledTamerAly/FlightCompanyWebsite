@@ -41,6 +41,13 @@ const reservationScheme = new Schema({
     cabinType : {
         type : String,
         required : true
+    },
+    flightType:{
+        type:String,
+        required:true
+    },
+    linkedBookingNumber:{
+        type:String
     }
 });
 
