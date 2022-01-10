@@ -16,6 +16,7 @@ mongoose.connect(db)
 //importing Table flights
 const Flights = require('../tables/Flights');
 const isEmpty = require('is-empty');
+const Reservations = require('../tables/Reservations');
 
 var selDepT;
 var selArrT;
@@ -302,7 +303,8 @@ router.get('/',(req,res)=>{
     });   
 })
 router.post('/',(req,res)=>{
-    // get all the depterminals
+    if(req.body.flightNumber==null)
+        return;
     Flights.findOne({flightNumber:req.body.flightNumber}).then(flights => {
         res.json(flights);
     });   
@@ -395,6 +397,12 @@ try{
 }catch(err){
     res.send("err");
 }
+});
+router.get('/getFlight/:bookingNumber', async(req,res)=>{
+    console.log(req.params.bookingNumber);
+    Reservations.findOne({bookingNumber:req.params.bookingNumber}).then((reservation)=>{
+        res.json(reservation.flightNumber);
+   });
 });
 
 

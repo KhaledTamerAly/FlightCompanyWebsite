@@ -86,8 +86,8 @@ function ChangeFlights(props)
                     }
                 }
     }
-async function reserveFlights()
-{
+    async function reserveFlights()
+    {
             const bodyF = { 
                 bookingNumber:props.flightsToChange[0].bookingNumber, 
                 username:props.userInfo.username,
@@ -122,8 +122,8 @@ async function reserveFlights()
                     const api = {};
                     axios.post('/users/changeReservation', bodyS, {headers: api}).then((res)=> {});
                 }
-                window.location.reload();
-}
+                setDidPay(true);
+    }
     return (
         <div className="App">
             {!isDoneChoosing && isChoosingFirstFlightSeats && 
@@ -138,7 +138,8 @@ async function reserveFlights()
                 <SeatMap oldSeats={[]} cabinType = {props.cabinClass} flightNumber={props.flightsToChange[1].flightNumber} numberOfSeats ={props.flightNumSeats}  type={props.flightsToChange[1].type} func={chooseSeatsS}/>
                 </>
             }
-            {isDoneChoosing &&!isChoosingFirstFlightSeats && didPay && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} cabinClass={props.cabinClass} chosenSeatsD ={chosenSeatsF} chosenSeatsR={chosenSeatsS} bookingNumberD={bookingNumberF} bookingNumberR={bookingNumberS} price={props.price}/>}
+            
+            {isDoneChoosing &&!isChoosingFirstFlightSeats && didPay && <Summary depFlight= {props.flightsToChange[0].flightNumber} retFlight={props.flightsToChange[1]?.flightNumber??null} cabinClass={props.cabinClass} chosenSeatsD ={chosenSeatsF} chosenSeatsR={chosenSeatsS} bookingNumberD={bookingNumberF} bookingNumberR={bookingNumberS} price={props.price}/>}
             {isDoneChoosing && !isChoosingFirstFlightSeats && !didPay && <StripeComponent price = {props.price} reserve= {reserveFlights}/>}
             {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
             {!isDoneChoosing && isChoosingFirstFlightSeats && <Button color="primary" onClick={props.backButton}> Go Back to see summary </Button>}

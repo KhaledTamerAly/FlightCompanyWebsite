@@ -307,13 +307,13 @@ const EnhancedTableToolbar = (props) => {
           <ChangeFlights flightsToChange={
             [
               {
-                flightNumber:"KT 789",
-                bookingNumber: "2184798",
+                flightNumber:"KT 754",
+                bookingNumber: "71712339",
                 type:"Departure"
               },
               {
-                flightNumber:"KT 754",
-                bookingNumber:"98668797",
+                flightNumber:"KT 789",
+                bookingNumber:"42504317",
                 type:"Return"
               }
             ]
@@ -325,7 +325,7 @@ const EnhancedTableToolbar = (props) => {
         }
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>{setFlightChange(false); setIsChangingFlights(false)}}>Exit</Button>
+          <Button onClick={()=>{setFlightChange(false); setIsChangingFlights(false); window.location.reload()}}>Exit</Button>
           {!isChangingFlights && <Button onClick={()=>setIsChangingFlights(true)}>Continue</Button>}
         </DialogActions>
       </Dialog>
