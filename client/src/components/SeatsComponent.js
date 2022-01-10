@@ -70,7 +70,7 @@ function SeatComponent(props)
     {
         if(isChoosingDepSeats)
         {
-            if(chosenSeatsDep.length==props.depFlightNumSeats)
+            if(chosenSeatsDep.length==props.flightNumSeats)
                 setIsChoosingDep(false);
             else
                 setIsSelectedSeats(false);
@@ -78,7 +78,7 @@ function SeatComponent(props)
         else
             {
                 //reserve axios
-                if(chosenSeatsRet.length!=props.retFlightNumSeats)
+                if(chosenSeatsRet.length!=props.flightNumSeats)
                     setIsSelectedSeats(false);
                 else
                 {
@@ -98,7 +98,7 @@ function SeatComponent(props)
             flightNumber: props.depFlight,
             chosenSeats: chosenSeatsDep,
             price:props.price,
-            cabin:props.depCabinClass,
+            cabin:props.cabinClass,
             flightType: "Departure"
         }
         const bodyRet = { 
@@ -110,7 +110,7 @@ function SeatComponent(props)
             flightNumber: props.retFlight,
             chosenSeats: chosenSeatsRet,
             price:props.price,
-            cabin: props.retCabinClass,
+            cabin: props.cabinClass,
             flightType: "Return"
         }
             const api = {};
@@ -134,18 +134,19 @@ function SeatComponent(props)
                 {!isDoneChoosing && isChoosingDepSeats && 
                 <>
                 {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
-                <SeatMap oldSeats = {[]} cabinType = {props.depCabinClass} flightNumber={props.depFlight} numberOfSeats ={props.depFlightNumSeats}  type="Departure" func={chooseSeatsDep}/>
+                <SeatMap oldSeats = {[]} cabinType = {props.cabinClass} flightNumber={props.depFlight} numberOfSeats ={props.flightNumSeats}  type="Departure" func={chooseSeatsDep}/>
                 </>
                 }
                 
                 {!isDoneChoosing &&!isChoosingDepSeats && 
                 <>
                 {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
-                <SeatMap oldSeats={[]} cabinType = {props.retCabinClass} flightNumber={props.retFlight} numberOfSeats ={props.retFlightNumSeats}  type="Return" func={chooseSeatsRet}/>
+                <SeatMap oldSeats={[]} cabinType = {props.cabinClass} flightNumber={props.retFlight} numberOfSeats ={props.flightNumSeats}  type="Return" func={chooseSeatsRet}/>
                 </>
                 }
                 
-                {isDoneChoosing &&!isChoosingDepSeats && didPay && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
+                {isDoneChoosing &&!isChoosingDepSeats && didPay && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} cabinClass={props.cabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
+                {console.log(props.price)}
                 {isDoneChoosing && !isChoosingDepSeats && !didPay && <StripeComponent price = {props.price} reserve= {reserveFlights}/>}
                 {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
                 {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}

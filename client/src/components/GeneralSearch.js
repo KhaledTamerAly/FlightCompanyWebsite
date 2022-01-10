@@ -343,13 +343,10 @@ handleOnClick(option){
                 bookingNumberR={null} 
                 depFlight= {this.state.selectedDepartureFinal} 
                 retFlight={this.state.selectedArrivalFinal} 
-                depFlightNumSeats ={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} 
-                retFlightNumSeats={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} 
-                depCabinClass={this.state.selectedCabinClass.label} 
-                retCabinClass={this.state.selectedCabinClass.label} 
+                flightNumSeats ={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} 
+                cabinClass={this.state.selectedCabinClass.label} 
                 userInfo ={this.state.userInfo}
                 isLoggedIn={this.state.isLoggedIn}
-
                 backButton={()=>{this.setState({isStopRenderSearch:false});
                 this.setState({isDoneSelectingFlights:false});
                 this.setState({departureHasBeenChosen:false});

@@ -11,9 +11,9 @@ function ReserveFlights(props)
     const [isDoneConfirm, setIsDone] = useState(false);
 
     var priceOfSeat;
-    if(props.depCabinClass=="Economy")
+    if(props.cabinClass=="Economy")
         priceOfSeat = 10;
-    else if(props.depCabinClass=="First")
+    else if(props.cabinClass=="First")
         priceOfSeat = 30;
     else
         priceOfSeat = 20;
@@ -24,9 +24,9 @@ function ReserveFlights(props)
             { !isDoneConfirm && 
 
             <>
-                <Summary depFlight= {props.depFlight} retFlight={props.retFlight} depCabinClass={props.depCabinClass} 
-                retCabinClass={props.retCabinClass} chosenSeatsD ={[]} chosenSeatsR={[]} 
-                bookingNumberD={""} bookingNumberR={""} price = {(priceOfSeat*props.depFlightNumSeats)+props.price}/>
+                <Summary depFlight= {props.depFlight} retFlight={props.retFlight} cabinClass={props.cabinClass} 
+                chosenSeatsD ={[]} chosenSeatsR={[]} 
+                bookingNumberD={""} bookingNumberR={""} price = {(priceOfSeat*props.flightNumSeats)+props.price}/>
 
                 <div className="text-center">
                 <Button
@@ -63,11 +63,13 @@ function ReserveFlights(props)
                 <Button onClick={()=>props.backButton()}>Go Back to Search</Button>
                 </>
             }
-            
             { isDoneConfirm && 
-                <SeatComponent login = {()=>{props.login()}} depFlight= {props.depFlight} retFlight={props.retFlight} depFlightNumSeats ={props.depFlightNumSeats} 
-                retFlightNumSeats={props.retFlightNumSeats} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} 
-                userInfo ={props.userInfo} price={(priceOfSeat*props.depFlightNumSeats)+props.price}
+                <SeatComponent login = {()=>{props.login()}} 
+                depFlight= {props.depFlight} 
+                retFlight={props.retFlight} 
+                flightNumSeats ={props.flightNumSeats} 
+                cabinClass={props.cabinClass}  
+                userInfo ={props.userInfo} price={(priceOfSeat*props.flightNumSeats)+props.price}
                 isLoggedIn = {props.isLoggedIn}
                 
                 backButton ={()=>{setIsDone(false)}}

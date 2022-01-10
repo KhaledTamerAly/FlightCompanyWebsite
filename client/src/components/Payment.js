@@ -57,6 +57,7 @@ function Payment(props)
                 <fieldset className="FormGroup">
                     <div className="FormRow">
                         <CardElement options={CARD_OPTIONS}/>
+                        {console.log(props.price)}
                     </div>
                 </fieldset>
                 <Button color = "success" onClick={handlePayment}>Pay</Button>

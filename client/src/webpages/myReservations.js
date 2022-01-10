@@ -35,6 +35,7 @@ import Slide from '@mui/material/Slide';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
 import SeatChange from "../components/SeatChange";
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
+import ChangeFlights from '../components/ChangeFlight';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -183,7 +184,9 @@ const EnhancedTableToolbar = (props) => {
   const [open, setOpen] = React.useState(false);
   const [seatChangeOpen, setSeatOpen] = React.useState(false);
   const [isChangingSeats, setIsChangingSeats] = React.useState(false);
+  const [isChangingFlights, setIsChangingFlights] = React.useState(false);
   const [flightChangeOpen, setFlightChange] = React.useState(false);
+  const [user,setState] = React.useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -202,6 +205,19 @@ const EnhancedTableToolbar = (props) => {
             .then(()=> console.log("deleted..."));
             window.location.reload(false);
     }
+    useEffect(()=>{
+      axios.get('users/userInfo/youssef')
+        .then(user=> {
+          const userInfoObject=  {
+            username:user.data.username,
+            firstName: user.data.fName,
+            lastname: user.data.lName,
+            passport: user.data.passportNumber,
+            email: user.data.email
+      }
+      setState(userInfoObject);
+    });
+    },[]);
 
   return (
     <Toolbar
@@ -282,16 +298,35 @@ const EnhancedTableToolbar = (props) => {
         open={flightChangeOpen}
         TransitionComponent={Transition}
         keepMounted
-        onClose={()=>setFlightChange(false)}
+        onClose={()=>{setFlightChange(false);setIsChangingSeats(false)}}
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{"Confirm change flight"}</DialogTitle>
         <DialogContent>
-          SALMA SEARCH
+        {isChangingFlights &&
+          <ChangeFlights flightsToChange={
+            [
+              {
+                flightNumber:"KT 789",
+                bookingNumber: "2184798",
+                type:"Departure"
+              },
+              {
+                flightNumber:"KT 754",
+                bookingNumber:"98668797",
+                type:"Return"
+              }
+            ]
+          } 
+          flightNumSeats = {1} 
+          cabinClass = {"Economy"} 
+          userInfo={user} 
+          price={60} />
+        }
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>setFlightChange(false)}>Disagree</Button>
-          <Button onClick={()=>console.log('change flight')}>Agree</Button>
+          <Button onClick={()=>{setFlightChange(false); setIsChangingFlights(false)}}>Exit</Button>
+          {!isChangingFlights && <Button onClick={()=>setIsChangingFlights(true)}>Continue</Button>}
         </DialogActions>
       </Dialog>
       

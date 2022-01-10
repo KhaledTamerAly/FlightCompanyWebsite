@@ -53,15 +53,14 @@ router.post("/addReservation",async (req,res) => {
     if(cabinType == "Economy")
     {
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            console.log(res.noOfEconSeatsLeft);
-            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfEconSeatsLeft:res.noOfEconSeatsLeft - seats.length},()=>console.log());
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfEconSeatsLeft:res.noOfEconSeatsLeft - seats.length},()=>{});
              });
     }
     else if(cabinType == "First")
     {
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
             console.log(res.noOfFirstSeatsLeft);
-            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft - seats.length},()=>console.log());
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft - seats.length},()=>{});
              });
         
     }
@@ -320,8 +319,8 @@ router.put('/updateUser/:username', async(req, res)=>{
     
 });
 router.get('/reservationDetails/:bookingNumber', (req,res) => {
-    Reservations.findOne({bookingNumber:req.params.bookingNumber}).then((reservations)=> {
-        res.json(reservations);
+    Reservations.findOne({bookingNumber:req.params.bookingNumber}).then((reservation)=> {
+        res.json(reservation);
     })
 });
 router.post('/updateSeatReservation', (req,res)=>{
@@ -343,7 +342,7 @@ router.post('/updateSeatReservation', (req,res)=>{
 });
 router.post('/payment', cors(), async(req,res)=>{
     var {amount , id} = req.body;
-    console.log('here');
+    console.log(amount);
     try {
 		const payment = await stripe.paymentIntents.create({
 			amount,
@@ -366,6 +365,97 @@ router.post('/payment', cors(), async(req,res)=>{
 	}
 
 })
+router.post('/changeReservation', async(req,res)=>{
+    var uName = req.body.username;
+    var firstName = req.body.firstName;
+    var lastName = req.body.lastName;
+    var passport = req.body.passport;
+    var uemail = req.body.email;
+    var flightNum = req.body.flightNumber;
+    var seats = req.body.chosenSeats;
+    var price = req.body.price;
+    var bookingNumber= req.body.bookingNumber;
+    var cabinType = req.body.cabin;
+    var flightType = req.body.flightType;
+    var linkedBookingNumber = null;
+    //delete old reservation
+    await Reservations.findOneAndDelete(bookingNumber).then(async(reservation1)=>
+    {
+        linkedBookingNumber = reservation1.linkedBookingNumber;
+
+        await Flights.findOne({flightNumber:reservation1.flightNumber}).select('seats').then(seats=>{
+            var updatedSeats = updateSeatsToFalse(reservation1.chosenSeats,seats.seats);
+            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{seats:updatedSeats},()=>{
+                console.log("Seat Unreserved in Flights table");
+            });
+        });
+        
+        if(reservation1.cabinType == "Economy")
+        {
+        await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
+            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+             });
+        }
+        else if(reservation1.cabinType == "First")
+        {
+        await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
+            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+             });
+        }
+        else if(reservation1.cabinType == "Business")
+        {
+        await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
+            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation1.chosenSeats.length},()=>console.log());
+             });
+        }
+    });
+    
+    const reservation = new Reservations({
+        bookingNumber:bookingNumber,
+        username:uName,
+        fName:firstName,
+        lName:lastName,
+        passportNumber: passport,
+        email: uemail,
+        flightNumber: flightNum,
+        chosenSeats: seats,
+        paid:price,
+        cabinType: req.body.cabin,
+        flightType: flightType,
+        linkedBookingNumber:linkedBookingNumber
+    });
+    await reservation.save();
+
+    var chosenSeats = req.body.chosenSeats;
+
+    if(cabinType == "Economy")
+    {
+        await Flights.findOne({flightNumber:flightNum}).then(res=>{
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfEconSeatsLeft:res.noOfEconSeatsLeft - seats.length},()=>{});
+             });
+    }
+    else if(cabinType == "First")
+    {
+        await Flights.findOne({flightNumber:flightNum}).then(res=>{
+            console.log(res.noOfFirstSeatsLeft);
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft - seats.length},()=>{});
+             });
+        
+    }
+    else if(cabinType == "Business")
+    {
+        await Flights.findOne({flightNumber:flightNum}).then(res=>{
+            console.log(res.noOfBusinessSeatsLeft);
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft-seats.length},()=>console.log());
+             });
+        
+    }
+    await Flights.findOne({flightNumber:flightNum}).select('seats').then(seats=>{
+        var updatedSeats = updateSeats(chosenSeats,seats.seats);
+        Flights.findOneAndUpdate({flightNumber:flightNum},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
+    });
+    console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
+});
 
 
 

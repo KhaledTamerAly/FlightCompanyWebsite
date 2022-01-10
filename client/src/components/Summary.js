@@ -55,7 +55,7 @@ function Summary(props)
             Arrival Time:{flights?.depFlight.arrivalTime?? ""}
             <br></br>
             <br></br>
-            Cabin:{props.depCabinClass}
+            Cabin:{props.cabinClass}
             <br></br>
             <br></br>
             Seats:{"[ "+props.chosenSeatsD.join('-')+" ]"}
@@ -87,7 +87,7 @@ function Summary(props)
             Arrival Time:{flights?.retFlight.arrivalTime ?? ""}
             <br></br>
             <br></br>
-            Cabin:{props.retCabinClass}
+            Cabin:{props.cabinClass}
             <br></br>
             <br></br>
             Seats:{"[ "+ props.chosenSeatsR.join('-')+" ]"}
