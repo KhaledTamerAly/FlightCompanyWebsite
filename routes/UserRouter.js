@@ -163,11 +163,30 @@ router.delete('/:bookingNumber', async(req,res)=> {
 
     
 });
+
+router.get('/flightInfo/:bookingNumber', (req,res)=>{
+    Reservations.findOne({bookingNumber: req.params.bookingNumber}).then(reservation=>{
+      //  res.json(reservation)
+        Flights.findOne({flightNumber: reservation.flightNumber}).then(flight =>{
+          //  res.json(flight)
+          Reservations.findOne({bookingNumber:reservation.linkedBookingNumber}).then(linkedReservation=>{
+              Flights.findOne({flightNumber:linkedReservation.flightNumber}).then(linkedFlight=>{
+                var flightInfoObject = {bnReservation: reservation, fnFlight: flight, linkedFlight:linkedFlight};
+                res.json(flightInfoObject)
+              })
+          })
+        });
+    });
+    
+    
+});
+
 router.get('/userInfo/:username', (req,res)=> {
     Users.findOne({username:req.params.username})
     .then(user => res.json(user))
     .catch(err => console.log(err));
 });
+
 router.put('/updateUser/:username', async(req, res)=>{
     var fName=req.body.fName;
     var lName=req.body.lName;

@@ -9,6 +9,7 @@ import { Button} from 'reactstrap';
 import GeneralSearch from '../components/GeneralSearch.js';
 import EnhancedTable from '../components/ScheduleViewer';
 import Navbar from '../components/Navbar';
+import PostBookSearch from '../components/PostBookSearch.js';
 
 function Home()
 {
@@ -47,6 +48,8 @@ function Home()
         </div>
         <div>
           <GeneralSearch login={Login} isLoggedIn={location?.state?.loggedIn??loggedIn}/>
+         
+
           </div>
         </>
     );

@@ -1,3 +1,4 @@
+import '../App.css';
 import React from "react";
 import Navbar from '../components/Navbar';
 import PropTypes from 'prop-types';
@@ -31,6 +32,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
+import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
+//import SeatChange from "../components/SeatChange";
+import FindReplaceIcon from '@mui/icons-material/FindReplace';
+import PostBookSearch from '../components/PostBookSearch';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -177,6 +182,9 @@ const EnhancedTableToolbar = (props) => {
   const { selected } = props;
 
   const [open, setOpen] = React.useState(false);
+  const [seatChangeOpen, setSeatOpen] = React.useState(false);
+  const [isChangingSeats, setIsChangingSeats] = React.useState(false);
+  const [flightChangeOpen, setFlightChange] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -228,11 +236,25 @@ const EnhancedTableToolbar = (props) => {
       )}
 
       {numSelected > 0 ? (
+        <>
+        <Tooltip title="Change Flight Seats">
+          <IconButton onClick={()=>{setSeatOpen(true)}}>
+            <AirlineSeatReclineNormalIcon />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Change Flight">
+          <IconButton onClick={()=>{setFlightChange(true)}}>
+            <FindReplaceIcon />
+          </IconButton>
+        </Tooltip>
+
         <Tooltip title="Delete">
           <IconButton onClick={handleClickOpen}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
+      </>
       ) : (
         <></>
       )}
@@ -247,11 +269,51 @@ const EnhancedTableToolbar = (props) => {
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             Are you sure you want to cancel your reservation for the selected flight with booking number {selected}?
+            Warning: cancelling a flight will cancel entire itinerary, both return and departing flight!
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Disagree</Button>
           <Button onClick={()=>deleteReservation(selected)}>Agree</Button>
+        </DialogActions>
+      </Dialog>
+
+
+      <Dialog
+        open={flightChangeOpen}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={()=>setFlightChange(false)}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Confirm change flight"}</DialogTitle>
+        <DialogContent>
+          {flightChangeOpen && <PostBookSearch bookingNumber={selected}/>}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>setFlightChange(false)}>Disagree</Button>
+          {flightChangeOpen && <Button onClick={()=>setFlightChange(true)}>Agree</Button>}
+        </DialogActions>
+      </Dialog>
+      
+
+      <Dialog
+        open={seatChangeOpen}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={()=>{setSeatOpen(false); setIsChangingSeats(false)}}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Confirm change seats"}</DialogTitle>
+        <DialogContent>
+           {!isChangingSeats && <DialogContentText id="alert-dialog-slide-description">
+            Are you sure you want to change seats for selected flight with booking number {selected}?
+          </DialogContentText>}
+          {isChangingSeats && <div>khaled</div>}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>{setSeatOpen(false); setIsChangingSeats(false)}}>Exit</Button>
+          {!isChangingSeats && <Button onClick={()=>setIsChangingSeats(true)}>Continue</Button>}
         </DialogActions>
       </Dialog>
     </Toolbar>
