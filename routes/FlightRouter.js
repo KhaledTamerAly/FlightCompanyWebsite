@@ -32,9 +32,74 @@ var selectedDepDateEnd = null;
 var selectedReturnDateStart = null;
 var selectedReturnDateEnd = null;
 var selCabClass = null;
-var selNoP = null
+var selNoP = null;
+var dateOperator = null;
 
 //Routes
+
+router.get('/matches', (req,res) =>{
+      
+    var query = [{}];
+    var searchObject = {const:""};
+    if(selDepFN!=null)
+        searchObject.flightNumber = selDepFN;
+    if(selDepT !=null)
+        searchObject.departureTerminal = selDepT;
+    if(selArrT !=null)
+        searchObject.arrivalTerminal = selArrT;
+    if(selCabClass !=null){
+        searchObject.cabinType = selCabClass;
+        if(selNoP !=null)
+        switch(selCabClass){
+            case "Economy": 
+                        searchObject.noOfEconSeats = selNoP;    
+                            break;
+            case "Business": 
+                        searchObject.noOfBusinessSeats = selNoP;
+                            break;
+            case "First": searchObject.noOfFirstSeats = selNoP;            
+                            break;
+        }
+    }
+
+    if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
+        {
+            searchObject.flightDate = {$gte: selectedDepDateStart, $lt: selectedDepDateEnd};
+        }
+
+
+
+    var returnFlight = {const:""};
+    if(selDepT !=null)
+        returnFlight.arrivalTerminal = selDepT;
+    if(selArrT !=null)
+        returnFlight.departureTerminal = selArrT;
+
+
+    if(selectedReturnDateStart !=null && selectedReturnDateEnd !=null)
+        returnFlight.flightDate = {$gte: selectedReturnDateStart, $lt: selectedReturnDateEnd};
+
+    if(JSON.stringify(searchObject) != JSON.stringify({const:""}))
+    {
+        delete searchObject.const;
+        query.push(searchObject);
+    }
+    if(JSON.stringify(returnFlight) != JSON.stringify({const:""})  && selectedReturnDateStart !=null)
+    {
+        delete returnFlight.const;
+        query.push(returnFlight);
+    }
+
+    if(query.length >1)
+        query.shift();
+
+
+    Flights.find(
+        {$or: query} 
+            ).then(match => {
+      res.json(match);
+    });
+})
 router.post('/matches',(req,res)=>{
     selArrT = null;
     selDepT = null;
@@ -175,6 +240,7 @@ router.post('/matchesUserSearch',(req,res)=>{
 
     selNoP = null;
     selCabClass = null;
+    dateOperator = null;
 
 
     //getting user input form ddl
@@ -183,6 +249,7 @@ router.post('/matchesUserSearch',(req,res)=>{
     selDepTime = req.body.selectedDepDate
     selCabClass = req.body.selectedCabinClass
     selNoP = req.body.selectedNumOfPass
+    dateOperator = req.body.dateOperator ?? null;
 
 
     if(req.body.selectedDepDate != null)
@@ -198,7 +265,6 @@ router.post('/matchesUserSearch',(req,res)=>{
     }
 });
 router.get('/matchesUserSearch', (req,res) =>{
-    
     var result ={};
     var departFlight = {};
     if(selDepT !=null)
@@ -222,13 +288,14 @@ router.get('/matchesUserSearch', (req,res) =>{
     }
     if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
     {
-        departFlight.flightDate = {$gte: selectedDepDateStart};
+        if(dateOperator=="lessThan")
+            departFlight.flightDate = {$lte: selectedDepDateStart};
+        else
+            departFlight.flightDate = {$gte: selectedDepDateStart};
     }
-
+    console.log(departFlight)
     Flights.find(departFlight).then(async(match) => {
-        console.log(match)
         var matchesToReturn = [];
-        //////////////////////////////////////
         //check for each match if there is a return flight for it, if yes add to matchesToBeRturned
         for(var i =0;i<match.length;i++)
         {
@@ -266,10 +333,9 @@ router.get('/matchesUserSearch', (req,res) =>{
         }
         result.departFlights = matchesToReturn;
         res.json(result);
-        ///////////////////////////////////////
     });
 })
-router.post('/matchesUserSearch2',(req,res)=>{
+router.post('/matchesUserSearch_Response',(req,res)=>{
     var result ={};
     var flight = {};
     flight.departureTerminal = req.body.departureTerminal;

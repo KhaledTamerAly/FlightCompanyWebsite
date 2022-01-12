@@ -302,7 +302,7 @@ return cabOpArr;
                         numOfPass:selNumPass
                       }
                         const api = {}; 
-                        await axios.post('/flights/matchesUserSearch2', body, {headers: api}).then(res=>{
+                        await axios.post('/flights/matchesUserSearch_Response', body, {headers: api}).then(res=>{
                           this.setState({returnFlightToBeListed:res.data})
                         });
                       

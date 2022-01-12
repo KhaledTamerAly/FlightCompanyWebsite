@@ -36,6 +36,7 @@ import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatRecline
 import SeatChange from "../components/SeatChange";
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
 import ChangeFlights from '../components/ChangeFlight';
+import PostBookSearch from '../components/PostBookSearch';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -298,35 +299,16 @@ const EnhancedTableToolbar = (props) => {
         open={flightChangeOpen}
         TransitionComponent={Transition}
         keepMounted
-        onClose={()=>{setFlightChange(false);setIsChangingSeats(false)}}
+        onClose={()=>setFlightChange(false)}
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{"Confirm change flight"}</DialogTitle>
         <DialogContent>
-        {isChangingFlights &&
-          <ChangeFlights flightsToChange={
-            [
-              {
-                flightNumber:"KT 754",
-                bookingNumber: "71712339",
-                type:"Departure"
-              },
-              {
-                flightNumber:"KT 789",
-                bookingNumber:"42504317",
-                type:"Return"
-              }
-            ]
-          } 
-          flightNumSeats = {1} 
-          cabinClass = {"Economy"} 
-          userInfo={user} 
-          price={60} />
-        }
+          {flightChangeOpen && <PostBookSearch bookingNumber={selected}/>}
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>{setFlightChange(false); setIsChangingFlights(false); window.location.reload()}}>Exit</Button>
-          {!isChangingFlights && <Button onClick={()=>setIsChangingFlights(true)}>Continue</Button>}
+          <Button onClick={()=>setFlightChange(false)}>Disagree</Button>
+          {flightChangeOpen && <Button onClick={()=>setFlightChange(true)}>Agree</Button>}
         </DialogActions>
       </Dialog>
       
