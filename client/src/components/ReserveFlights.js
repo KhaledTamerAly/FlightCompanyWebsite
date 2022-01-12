@@ -64,10 +64,11 @@ function ReserveFlights(props)
             }
             
             { isDoneConfirm &&
-                <SeatComponent login = {()=>{props.login()}} depFlight= {props.depFlight} retFlight={props.retFlight} depFlightNumSeats ={props.depFlightNumSeats} 
+                <SeatComponent login = {(username)=>{props.login(username)}} depFlight= {props.depFlight} retFlight={props.retFlight} depFlightNumSeats ={props.depFlightNumSeats} 
                 retFlightNumSeats={props.retFlightNumSeats} depCabinClass={props.depCabinClass} retCabinClass={props.retCabinClass} 
                 userInfo ={props.userInfo} price={(priceOfSeat*props.depFlightNumSeats)+props.price}
                 isLoggedIn = {props.isLoggedIn}
+                username={localStorage.getItem('username')}
                 
                 backButton ={()=>{setIsDone(false)}}
                 

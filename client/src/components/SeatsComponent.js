@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Button} from 'reactstrap';
 import SeatMap from './SeatMap';
 import Summary from './Summary';
+import LoginForm from './LoginForm';
 
 
 function SeatComponent(props)
@@ -17,6 +18,7 @@ function SeatComponent(props)
     const [bookingNumberR, setBookingNumberR] = useState("");
     const [isSelectedAllSeats, setIsSelectedSeats] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(props.isLoggedIn);
+    const [username, setUsername] = useState(null);
 
     const navigate = useNavigate();
     function chooseSeatsDep(seatNumber,isAdd)
@@ -80,12 +82,31 @@ function SeatComponent(props)
                     setIsSelectedSeats(false);
                 else
                 {
+                    var user = null;
+                    if(props.userInfo!=null)
+                    {
+                        user = props.userInfo;
+                    }
+                    else
+                    {
+                        const path="users/userInfo/"+localStorage.getItem('username');
+                        await axios.get(path).then(userRes=> {
+                        const userInfoObject=  {
+                            username:userRes.data.username,
+                            firstName: userRes.data.fName,
+                            lastname: userRes.data.lName,
+                            passport: userRes.data.passportNumber,
+                            email: userRes.data.email
+                        }
+                        user = userInfoObject;
+                        });
+                    }
                     const bodyDep = { 
-                        username:props.userInfo.username,
-                        firstName: props.userInfo.firstName,
-                        lastName: props.userInfo.lastname,
-                        passport: props.userInfo.passport,
-                        email: props.userInfo.email,
+                        username:user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastname,
+                        passport: user.passport,
+                        email: user.email,
                         flightNumber: props.depFlight,
                         chosenSeats: chosenSeatsDep,
                         price:props.price,
@@ -95,11 +116,11 @@ function SeatComponent(props)
                         await axios.post('/users/addReservation', bodyDep, {headers: api}).then(res=> setBookingNumberD(res.data));
 
                     const bodyRet = { 
-                        username:props.userInfo.username,
-                        firstName: props.userInfo.firstName,
-                        lastName: props.userInfo.lastname,
-                        passport: props.userInfo.passport,
-                        email: props.userInfo.email,
+                        username:user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastname,
+                        passport: user.passport,
+                        email: user.email,
                         flightNumber: props.retFlight,
                         chosenSeats: chosenSeatsRet,
                         price:props.price,
@@ -113,7 +134,7 @@ function SeatComponent(props)
     }
     return (
         <div>
-            {console.log(isLoggedIn)}
+            {console.log(localStorage.getItem('username'))}
             {isLoggedIn && <>
                 {!isDoneChoosing && isChoosingDepSeats && 
                 <>
@@ -137,9 +158,7 @@ function SeatComponent(props)
                 </>
             }
             {!isLoggedIn && <>
-            
-            <h3 style={{ color: 'red' }}>Please Login</h3>
-            <Button color="success" onClick={()=>{props.login();setIsLoggedIn(true)}}>Login</Button>
+            <LoginForm buttonFunction={(username)=>{props.login(username);setIsLoggedIn(true); setUsername(username)}}/>
             </>
             }
     </div>

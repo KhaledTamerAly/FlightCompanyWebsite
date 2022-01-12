@@ -100,7 +100,8 @@ async updateStates() {
 
 
          });
-  await axios.get('users/userInfo/youssef')
+  const path="users/userInfo/"+localStorage.getItem('username');
+  await axios.get(path)
     .then(user=> {
       const userInfoObject=  {
         username:user.data.username,

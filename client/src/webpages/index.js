@@ -10,6 +10,8 @@ import Login from './login';
 import EditFlightPage from './editFlightPage';
 import MyReservations from './myReservations';
 import MyInformation from './myInformation';
+import SignUp from './signUp';
+import ChangePassword from './changePassword';
 
 function Webpages()
 {
@@ -22,6 +24,8 @@ function Webpages()
             <Route path = "/editFlight" element = {<EditFlightPage />} />   
             <Route path ="/myReservations" element = {<MyReservations />} />
             <Route path ="/myInformation" element = {<MyInformation />} />
+            <Route path ="/signUp" element = {<SignUp />} />
+            <Route path ="/changePassword" element = {<ChangePassword />} />
         </Routes>
         </Router>
     );

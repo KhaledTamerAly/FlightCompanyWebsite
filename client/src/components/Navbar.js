@@ -2,14 +2,8 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
@@ -31,7 +25,7 @@ export default function Navbar(props) {
 
     function goToMyReservations() {
         handleClose();
-        navigate('/myReservations')
+        navigate('/myReservations');
     }
 
     function goToMyInformation() {
@@ -41,6 +35,7 @@ export default function Navbar(props) {
 
     function goToHomepage() {
       handleClose();
+      localStorage.removeItem('username');
       navigate('/',{
         state: {
           loggedIn:false
@@ -50,21 +45,22 @@ export default function Navbar(props) {
     }
 
     function signUp(){
-
+      navigate('/signUp');
     }
 
     function login(){
-      navigate('/',{
+      navigate('/login');
+    }
+
+    function mainButton(){
+      if(props.loggedIn){
+        navigate('/',{
         state: {
           loggedIn:true
         }
       });
       window.location.reload();
     }
-
-    function mainButton(){
-      if(props.loggedIn)
-        login();
       else
         goToHomepage();
     }
@@ -78,7 +74,7 @@ export default function Navbar(props) {
         <Button onClick={mainButton} variant="text" style={{fontSize: "30px", textAlign: "right"}} color="inherit" sx={{ flexGrow: 1 }}>
             {'Osama Airlines'}
           </Button>
-          {props.loggedIn && (
+          {props.loggedIn && props.signUp==null &&(
             <div>
               <IconButton
                 size="large"
@@ -111,7 +107,7 @@ export default function Navbar(props) {
               </Menu>
             </div>
           )}
-          {!props.loggedIn &&(
+          {!props.loggedIn && props.signUp==null &&(
             <div>
               <Button onClick= {signUp} sx={{ m: 1 }} variant="contained" color='warning'>Sign up</Button>
               <Button onClick= {login} sx={{ m: 1 }} variant="contained" color='warning'>Login</Button>

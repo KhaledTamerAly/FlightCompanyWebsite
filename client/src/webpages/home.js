@@ -12,16 +12,23 @@ import Navbar from '../components/Navbar';
 
 function Home()
 {
-  const location  = useLocation();
+  const location = useLocation();
   const [loggedIn,setIsLoggedIn]=React.useState(false);
+  const [username,setUsername] = React.useState(localStorage.getItem('username') || null);
   
   useEffect(()=>{
-    setIsLoggedIn(location?.state?.loggedIn??false);
+    if(localStorage.getItem('username')==null)
+      setIsLoggedIn(false);
+    else{
+      setUsername(localStorage.getItem('username'));
+      setIsLoggedIn(true);
+    }
   },[]);
 
-  function Login()
+  function Login(username)
   {
     setIsLoggedIn(true);
+    setUsername(username);
   }
 
     const navigate = useNavigate();
@@ -29,9 +36,7 @@ function Home()
     function goToAdmin() {
       navigate('/admin')
     }
-    function goToLogin() {
-        navigate('/login')
-      }
+    console.log(username);
     return (
       <>
         <div>
@@ -40,12 +45,12 @@ function Home()
         <div>
             <h1>Welcome to Osama Airlines</h1>
             <p></p>
-            <Button color="primary" outline onClick={goToAdmin}> Login as Admin </Button>
         </div>
         <div>
           <EnhancedTable />
         </div>
         <div>
+          {console.log(username)}
           <GeneralSearch login={Login} isLoggedIn={location?.state?.loggedIn??loggedIn}/>
           </div>
         </>
