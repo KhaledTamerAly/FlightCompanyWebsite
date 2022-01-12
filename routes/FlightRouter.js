@@ -165,69 +165,6 @@ router.post('/matches',(req,res)=>{
     selectedReturnDateEnd.setUTCHours(23, 59, 59, 999);
     }
 });
-router.get('/matches', (req,res) =>{
-      
-    var query = [{}];
-    var searchObject = {const:""};
-    if(selDepFN!=null)
-        searchObject.flightNumber = selDepFN;
-    if(selDepT !=null)
-        searchObject.departureTerminal = selDepT;
-    if(selArrT !=null)
-        searchObject.arrivalTerminal = selArrT;
-    if(selCabClass !=null){
-        searchObject.cabinType = selCabClass;
-        if(selNoP !=null)
-        switch(selCabClass){
-            case "Economy": 
-                        searchObject.noOfEconSeats = selNoP;    
-                            break;
-            case "Business": 
-                        searchObject.noOfBusinessSeats = selNoP;
-                            break;
-            case "First": searchObject.noOfFirstSeats = selNoP;            
-                            break;
-        }
-    }
-
-    if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
-        {
-            searchObject.flightDate = {$gte: selectedDepDateStart, $lt: selectedDepDateEnd};
-        }
-
-
-
-    var returnFlight = {const:""};
-    if(selDepT !=null)
-        returnFlight.arrivalTerminal = selDepT;
-    if(selArrT !=null)
-        returnFlight.departureTerminal = selArrT;
-
-
-    if(selectedReturnDateStart !=null && selectedReturnDateEnd !=null)
-        returnFlight.flightDate = {$gte: selectedReturnDateStart, $lt: selectedReturnDateEnd};
-
-    if(JSON.stringify(searchObject) != JSON.stringify({const:""}))
-    {
-        delete searchObject.const;
-        query.push(searchObject);
-    }
-    if(JSON.stringify(returnFlight) != JSON.stringify({const:""})  && selectedReturnDateStart !=null)
-    {
-        delete returnFlight.const;
-        query.push(returnFlight);
-    }
-
-    if(query.length >1)
-        query.shift();
-
-
-    Flights.find(
-        {$or: query} 
-            ).then(match => {
-      res.json(match);
-    });
-})
 router.post('/matchesUserSearch',(req,res)=>{
     selArrT = null;
     selDepT = null;
@@ -267,71 +204,31 @@ router.post('/matchesUserSearch',(req,res)=>{
 router.get('/matchesUserSearch', (req,res) =>{
     var result ={};
     var departFlight = {};
-    if(selDepT !=null)
-        departFlight.departureTerminal = selDepT;
-    if(selArrT !=null)
-        departFlight.arrivalTerminal = selArrT;
-    if(selCabClass !=null){
-        departFlight.cabinType = selCabClass;
-        if(selNoP !=null)
-        {switch(selCabClass){
-            case "Economy": 
-                departFlight.noOfEconSeatsLeft = { $gte: selNoP };    
-                            break;
-            case "Business": 
-                departFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
-                            break;
-            case "First": 
-                departFlight.noOfFirstSeatsLeft = { $gte: selNoP };            
-                            break;
-        }}
+    departFlight.departureTerminal = selDepT;
+    departFlight.arrivalTerminal = selArrT;
+    departFlight.cabinType = selCabClass;
+    switch(departFlight.cabinType)
+    {
+        case "Economy": 
+            departFlight.noOfEconSeatsLeft = { $gte: selNoP };
+            break;
+        case "Business": 
+            departFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
+            break;
+        case "First": 
+            departFlight.noOfFirstSeatsLeft = { $gte: selNoP };            
+            break;
     }
     if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
     {
         if(dateOperator=="lessThan")
-            departFlight.flightDate = {$lte: selectedDepDateStart};
+            departFlight.flightDate = {$lte: selectedDepDateEnd};
         else
             departFlight.flightDate = {$gte: selectedDepDateStart};
     }
     console.log(departFlight)
     Flights.find(departFlight).then(async(match) => {
-        var matchesToReturn = [];
-        //check for each match if there is a return flight for it, if yes add to matchesToBeRturned
-        for(var i =0;i<match.length;i++)
-        {
-            var flight = match[i];
-            var returnFlight = {};
-            if(selDepT !=null)
-                returnFlight.arrivalTerminal = flight.departureTerminal;
-            if(selArrT !=null)
-                returnFlight.departureTerminal = flight.arrivalTerminal;
-            if(selCabClass !=null){
-                returnFlight.cabinType = selCabClass;
-                if(selNoP !=null)
-                {switch(selCabClass){
-                    case "Economy": 
-                        returnFlight.noOfEconSeatsLeft = { $gte: selNoP };    
-                                    break;
-                    case "Business": 
-                        returnFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
-                                    break;
-                    case "First": 
-                        returnFlight.noOfFirstSeatsleft = { $gte: selNoP };            
-                                    break;
-                }}
-            }
-            if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
-            {
-                returnFlight.flightDate = {$gte: flight.flightDate};
-            }
-            
-            await Flights.find(returnFlight).then(match2 => {
-                var res = match2;
-                if(res.length!=0)
-                    matchesToReturn.push(flight);
-            });
-        }
-        result.departFlights = matchesToReturn;
+        result.departFlights = match;
         res.json(result);
     });
 })
@@ -345,13 +242,13 @@ router.post('/matchesUserSearch_Response',(req,res)=>{
     {
         case "Economy": 
             flight.noOfEconSeatsLeft = { $gte: req.body.numOfPass };    
-                    break;
+            break;
         case "Business": 
             flight.noOfBusinessSeatsLeft = { $gte: req.body.numOfPass };
-                    break;
+            break;
         case "First": 
             flight.noOfFirstSeatsLeft = { $gte: req.body.numOfPass };            
-                    break;
+            break;
     }
     flight.flightDate = {$gte: req.body.depDate};
 
@@ -485,9 +382,20 @@ if(!isEmpty(req.body.flightDate))
     flightDate=new Date(Date.parse(req.body.flightDate));
 const arrivalTerminal = req.body.arrivalTerminal;
 const departureTerminal = req.body.departureTerminal;
-const flight= new Flights({flightNumber:flightNumber, arrivalTerminal:arrivalTerminal, departureTerminal:departureTerminal,
-flightDate:flightDate, departureTime:departureTime, arrivalTime:arrivalTime, 
-noOfEconSeats:noOfEconSeats, noOfBusinessSeats:noOfBusinessSeats, noOfFirstSeats:noOfFirstSeats, seats:seatMap});
+const flight= new Flights({
+    flightNumber:flightNumber, 
+    arrivalTerminal:arrivalTerminal, 
+    departureTerminal:departureTerminal,
+    flightDate:flightDate,
+    departureTime:departureTime, 
+    arrivalTime:arrivalTime, 
+    noOfEconSeats:noOfEconSeats, 
+    noOfBusinessSeats:noOfBusinessSeats, 
+    noOfFirstSeats:noOfFirstSeats,
+    noOfFirstSeatsLeft:noOfFirstSeats,
+    noOfEconSeatsLeft:noOfEconSeats,
+    noOfBusinessSeatsLeft:noOfBusinessSeats,
+    seats:seatMap});
 try{
     console.log(flight);
     await flight.save();
@@ -636,7 +544,7 @@ function populateTable()
                 busClassSeats = num;
         }
         seatsOnFlight = generateSeats(firstClassSeats, busClassSeats, econClassSeats);
-        fName += getRndInteger(10,99);
+        fName += getRndInteger(10,999);
         var newFlight = new Flights({
             flightNumber:fName,
             arrivalTerminal: to,
