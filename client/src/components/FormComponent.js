@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
 import axios from 'axios';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
 
 function FormComponent (props){
 
@@ -16,6 +16,24 @@ function FormComponent (props){
   const [noOfFirstSeats,setNoOfFirstSeats]= useState("");
   const [errors,setErrors]= useState({});
 
+  useEffect(()=>{
+    if(!props.add){
+      const path="/flights/"+props.id;
+        axios.get(path)
+        .then(flight=> {
+            setFlightNumber(flight.data.flightNumber);
+            setDepartureTerminal(flight.data.departureTerminal);
+            setArrivalTerminal(flight.data.arrivalTerminal);
+            setFlightDate(flight.data.flightDate);
+            setDepartureTime(flight.data.departureTime);
+            setArrivalTime(flight.data.arrivalTime);
+            setNoOfEconSeats(flight.data.noOfEconSeats);
+            setNoOfBusinessSeats(flight.data.noOfBusinessSeats);
+            setNoOfFirstSeats(flight.data.noOfFirstSeats);
+            console.log(flight);
+        })
+    }
+},[]);
 
   const navigate = useNavigate();
 
@@ -41,7 +59,7 @@ function FormComponent (props){
     noOfFirstSeats:noOfFirstSeats
   }
   console.log(newFlight);
-
+  
   const api={};
   var path='/flights/';
 
@@ -191,8 +209,8 @@ function FormComponent (props){
             type="noOfFirstSeats"
           />
         </FormGroup>
+        <Button color="primary" type="button" onClick={goToAdmin}> Go back </Button>
         <Button  color= "success" type="submit"> Submit </Button>
-        <Button color="primary" type="button" onClick={goToAdmin}> Home page </Button>
         </Form>);
 }
 

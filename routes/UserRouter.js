@@ -249,7 +249,8 @@ router.put('/updateUser/:username', async(req, res)=>{
         var lName=req.body.lName;
         var homeAddress=req.body.homeAddress;
         var countryCode=req.body.countryCode;
-        var telephoneNumber=req.body.telephoneNumber;
+        var telephoneNumber=req.body.telephoneNumber.split('\n');
+        console.log(telephoneNumber);
         var passportNumber=req.body.passportNumber;
         var password=req.body.password;
         var email=req.body.email;
@@ -298,7 +299,7 @@ router.post('/signUp', async (req, res) => {
                     const lName=req.body.lName;
                     const homeAddress=req.body.homeAddress;
                     const countryCode=req.body.countryCode;
-                    const telephoneNumber=req.body.telephoneNumber;
+                    const telephoneNumber=req.body.telephoneNumber.split('\n');
                     const passportNumber=req.body.passportNumber;
                     const username=req.body.username.toLowerCase();
                     const email=req.body.email;
@@ -367,7 +368,6 @@ router.post('/signUp', async (req, res) => {
             //console.log(process.env.ACCESS_TOKEN_SECRET);
             const payload={username:user.username,type:user.userType};
             const accessToken = jwt.sign(payload,process.env.ACCESS_TOKEN_SECRET);
-            console.log(JSON.parse(atob(accessToken.split('.')[1])));
             res.json(JSON.parse(atob(accessToken.split('.')[1])));
         } else {
             errors="Incorrect password";

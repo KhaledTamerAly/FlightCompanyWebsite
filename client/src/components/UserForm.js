@@ -236,6 +236,8 @@ export default function UserForm(props) {
             required
             id="telephoneNumber"
             label="Telephone Number(s)"
+            multiline
+            maxRows={4}
             value={telephoneNumber}
             onChange={handleTelephoneNumber}
             style ={{width: '20.8%'}}

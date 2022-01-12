@@ -31,6 +31,8 @@ export default function LoginForm(props)
           if(res.data.errors==null){
             console.log(res.data.username);
             localStorage.setItem('username',res.data.username);
+            localStorage.setItem('type',res.data.type);
+            console.log(localStorage.getItem('type'));
             if(res.data.type=="Admin")
               navigate("/admin")
             else

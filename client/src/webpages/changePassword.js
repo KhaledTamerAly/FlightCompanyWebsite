@@ -10,6 +10,8 @@ export default function ChangePassword() {
   useEffect(()=>{
     if(localStorage.getItem('username')==null)
       navigate('/');
+    else if(localStorage.getItem('type')=='Admin')
+      navigate('/admin');
   });
 
   return (

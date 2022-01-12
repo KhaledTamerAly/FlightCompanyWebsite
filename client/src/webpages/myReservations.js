@@ -367,6 +367,8 @@ const location  = useLocation();
     useEffect(()=>{
       if(localStorage.getItem('username')==null)
         navigate('/');
+      else if(localStorage.getItem('type')=='Admin')
+        navigate('/admin');
       else{
         const path="/users/flightDetails/"+localStorage.getItem('username');
         axios.get(path).then(res =>{setMyReservations(res.data)})

@@ -6,12 +6,26 @@ import {useNavigate} from 'react-router-dom';
 function Admin()
 {
     const navigate=useNavigate();
+    React.useEffect(()=>{
+        if(localStorage.getItem('type')==null || localStorage.getItem('type')=='User'){
+            navigate('/'); 
+            console.log("hi");
+        }
+      })
+
     function goToAddFlight(){
         navigate('/editFlight', { state:{isAdd:true}, replace:false })
     }
     function goToHome()
     {
-        navigate('/');
+        localStorage.removeItem('username');
+        localStorage.removeItem('type');
+        navigate('/',{
+            state: {
+              loggedIn:false
+            }
+          });
+          window.location.reload();
     }
     return (
         <>
@@ -22,7 +36,7 @@ function Admin()
                 color="primary"
                 onClick = {goToHome}
             >
-            Go Back To Home
+            Sign out
             </Button>
             <Button
                 id="addFlight"

@@ -36,6 +36,7 @@ export default function Navbar(props) {
     function goToHomepage() {
       handleClose();
       localStorage.removeItem('username');
+      localStorage.removeItem('type');
       navigate('/',{
         state: {
           loggedIn:false

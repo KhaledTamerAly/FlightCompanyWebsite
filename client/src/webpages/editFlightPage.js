@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import {Button} from 'reactstrap';
+import React, { useEffect } from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 import FormComponent from '../components/FormComponent';
 
@@ -19,13 +18,23 @@ function UpdateFlight(props)
         </div>
     );
 }
-function EditFlightPage(props)
+function EditFlightPage()
 {
+    const navigate=useNavigate();
+    useEffect(()=>{
+        if(localStorage.getItem('type')==null || localStorage.getItem('type')=='User'){
+            navigate('/');
+        }
+    })
     const location = useLocation();
+
+    var isAdd=true;
+    if(location?.state?.isAdd!=null)
+        isAdd=location.state.isAdd;
     return (
         <div>
-            {location.state.isAdd && <AddFlight />}
-            {!location.state.isAdd && <UpdateFlight id = {location.state.id}/>}
+            {isAdd && <AddFlight />}
+            {!isAdd && <UpdateFlight id = {location.state.id}/>}
         </div>
 
     );
