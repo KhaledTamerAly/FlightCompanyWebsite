@@ -40,7 +40,7 @@ class GeneralSearch extends Component {
     isStopRenderSearch: false,
     userInfo:null
   };
-constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       selectedNumOfPass: 1,
@@ -50,7 +50,7 @@ constructor(props) {
     }
   
   }
-async updateStates() {
+  async updateStates() {
   await axios.get('/flights')
          .then(res =>{
            const allFlights = res.data;
@@ -112,12 +112,12 @@ async updateStates() {
       this.setState({userInfo:userInfoObject})
     });
   
-}
-async componentDidMount()
+  }
+  async componentDidMount()
 {
   this.updateStates();
-}
-async userInput(event) {
+  }
+  async userInput(event) {
   
     var selArrT, selDepT,selNumPass, selCabClass;
     selArrT =this.state.selectedArrivalTerminal;
@@ -140,16 +140,15 @@ async userInput(event) {
         selectedNumOfPass:selNumPass
       }
         const api = {}; 
-        axios.post('/flights/matchesAdmin', body, {headers: api});
+        axios.post('/flights/matchesUserSearch', body, {headers: api});
 
-        axios.get('/flights/matchesAdmin')
+        axios.get('/flights/matchesUserSearch')
               .then(res =>{
                   this.setState({selectedDepDate:null})
                   this.setState({flightToBeListed: res.data.departFlights})
-                  this.setState({returnFlightToBeListed: res.data.returnFlights})
               });
-}
-getCabin(option)
+  }
+  getCabin(option)
 {
   var cabOp = ["Economy", "Business", "First"];
   var cabOpV = null;
@@ -175,30 +174,30 @@ getCabin(option)
   }
 return cabOpArr;
 
-}
-handlePCount(value) {
+  }
+  handlePCount(value) {
   this.setState({selectedNumOfPass: (this.state.selectedNumOfPass)+1});
-}
-handleNCount(value) {
+  }
+  handleNCount(value) {
   if(this.state.selectedNumOfPass > 1)
    this.setState({selectedNumOfPass: (this.state.selectedNumOfPass)-1});
   else
     this.setState({selectedNumOfPass: 1});
 
-}
-handlePCountC(value) {
+  }
+  handlePCountC(value) {
   this.setState({selectedNumOfPassC: (this.state.selectedNumOfPassC)+1});
-}
-handleNCountC(value) {
+  }
+  handleNCountC(value) {
   if(this.state.selectedNumOfPassC !== 0)
    this.setState({selectedNumOfPassC: (this.state.selectedNumOfPassC)-1});
   else
     this.setState({selectedNumOfPassC: 0});
 
-}
-handleOnClick(option){
+  }
+  handleOnClick(option){
   this.setState({selectedDepartureTerminal: option.departureTerminal});
-}
+  }
   render() 
   {
     const flightPrice = 50;
@@ -285,7 +284,30 @@ handleOnClick(option){
                     value = {option.flightNumber}
                     size="sm"
 
-                    onClick = {(event) => {this.setState({selectedDepartureFinal: option.flightNumber }); this.setState({departureHasBeenChosen: true})}}
+                    onClick = {async(event) => {
+                      this.setState({selectedDepartureFinal: option.flightNumber });
+                      
+                      var selArrT, selDepT,selNumPass, selCabClass;
+                      selArrT =this.state.selectedArrivalTerminal;
+                      selDepT =this.state.selectedDepartureTerminal;
+
+                      selNumPass = this.state.selectedNumOfPass+this.state.selectedNumOfPassC;
+                      selCabClass = this.state.selectedCabinClass;
+                      
+                      const body = { 
+                        arrivalTerminal:selDepT.value,
+                        departureTerminal: selArrT.value,
+                        depDate: option.flightDate,
+                        cabinClass:selCabClass.label,
+                        numOfPass:selNumPass
+                      }
+                        const api = {}; 
+                        await axios.post('/flights/matchesUserSearch2', body, {headers: api}).then(res=>{
+                          this.setState({returnFlightToBeListed:res.data})
+                        });
+                      
+                        this.setState({departureHasBeenChosen: true})
+                  }}
                 >
                 <b>Select Departure Flight</b> 
                 </Button>
@@ -304,7 +326,8 @@ handleOnClick(option){
                  <ul>
                    {
               (this.state.returnFlightToBeListed ?? []).map((option,i) =>
-              <li>
+              {
+              return (<li>
               <Popup trigger = { <button  title={option.flightNumber} 
                 subtitle="" content={"To:  "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate}>
                 {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </button> }
@@ -326,7 +349,8 @@ handleOnClick(option){
                   </div>
 
                 </Popup>
-                </li>)
+                </li>);}
+                )
                  }
                  </ul> 
                 </div>

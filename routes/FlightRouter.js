@@ -163,7 +163,7 @@ router.get('/matches', (req,res) =>{
       res.json(match);
     });
 })
-router.post('/matchesAdmin',(req,res)=>{
+router.post('/matchesUserSearch',(req,res)=>{
     selArrT = null;
     selDepT = null;
     selDepFN = null;
@@ -197,7 +197,8 @@ router.post('/matchesAdmin',(req,res)=>{
         selectedDepDateEnd.setUTCHours(23, 59, 59, 999);
     }
 });
-router.get('/matchesAdmin', async (req,res) =>{
+router.get('/matchesUserSearch', (req,res) =>{
+    
     var result ={};
     var departFlight = {};
     if(selDepT !=null)
@@ -224,45 +225,76 @@ router.get('/matchesAdmin', async (req,res) =>{
         departFlight.flightDate = {$gte: selectedDepDateStart};
     }
 
-    console.log(departFlight)
-    await Flights.find(departFlight).then(match => {
-        result.departFlights = match;
+    Flights.find(departFlight).then(async(match) => {
+        console.log(match)
+        var matchesToReturn = [];
+        //////////////////////////////////////
+        //check for each match if there is a return flight for it, if yes add to matchesToBeRturned
+        for(var i =0;i<match.length;i++)
+        {
+            var flight = match[i];
+            var returnFlight = {};
+            if(selDepT !=null)
+                returnFlight.arrivalTerminal = flight.departureTerminal;
+            if(selArrT !=null)
+                returnFlight.departureTerminal = flight.arrivalTerminal;
+            if(selCabClass !=null){
+                returnFlight.cabinType = selCabClass;
+                if(selNoP !=null)
+                {switch(selCabClass){
+                    case "Economy": 
+                        returnFlight.noOfEconSeatsLeft = { $gte: selNoP };    
+                                    break;
+                    case "Business": 
+                        returnFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
+                                    break;
+                    case "First": 
+                        returnFlight.noOfFirstSeatsleft = { $gte: selNoP };            
+                                    break;
+                }}
+            }
+            if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
+            {
+                returnFlight.flightDate = {$gte: flight.flightDate};
+            }
+            
+            await Flights.find(returnFlight).then(match2 => {
+                var res = match2;
+                if(res.length!=0)
+                    matchesToReturn.push(flight);
+            });
+        }
+        result.departFlights = matchesToReturn;
+        res.json(result);
+        ///////////////////////////////////////
     });
-
-
-    var returnFlight = {};
-    if(selDepT !=null)
-        returnFlight.arrivalTerminal = selDepT;
-    if(selArrT !=null)
-        returnFlight.departureTerminal = selArrT;
-    if(selCabClass !=null){
-        returnFlight.cabinType = selCabClass;
-        if(selNoP !=null)
-        {switch(selCabClass){
-            case "Economy": 
-                returnFlight.noOfEconSeatsLeft = { $gte: selNoP };    
-                            break;
-            case "Business": 
-                returnFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
-                            break;
-            case "First": 
-                returnFlight.noOfFirstSeatsleft = { $gte: selNoP };            
-                            break;
-        }}
-    }
-    if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
-    {
-        returnFlight.flightDate = {$gte: selectedDepDateStart};
-    }
-
-
-    await Flights.find(returnFlight).then(match => {
-        result.returnFlights = match;
-    });
-
-    res.json(result);
 })
+router.post('/matchesUserSearch2',(req,res)=>{
+    var result ={};
+    var flight = {};
+    flight.departureTerminal = req.body.departureTerminal;
+    flight.arrivalTerminal = req.body.arrivalTerminal;
+    flight.cabinType = req.body.cabinClass;
+    switch(req.body.cabinClass)
+    {
+        case "Economy": 
+            flight.noOfEconSeatsLeft = { $gte: req.body.numOfPass };    
+                    break;
+        case "Business": 
+            flight.noOfBusinessSeatsLeft = { $gte: req.body.numOfPass };
+                    break;
+        case "First": 
+            flight.noOfFirstSeatsLeft = { $gte: req.body.numOfPass };            
+                    break;
+    }
+    flight.flightDate = {$gte: req.body.depDate};
+
+    Flights.find(flight).then(match => {
+        res.json(match);
+    });
+});
 router.post('/seatsOf/',async (req,res)=>{
+
     var flightNumber = req.body.flightNumber;
     var result = {};
     var numberOfSeats = {};
