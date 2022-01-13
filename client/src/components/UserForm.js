@@ -102,7 +102,6 @@ export default function UserForm(props) {
       if(props.signUp){
         axios.post('/users/signUp',userinfo,{headers:{}}).then(res=>{
           setErrors(res.data.errors);
-          console.log(res.data.errors);
           if(res.data.errors==null){
             navigate('/login');
           }

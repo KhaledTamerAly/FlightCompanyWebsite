@@ -213,10 +213,9 @@ const EnhancedTableToolbar = (props) => {
   function deleteReservation(bookingNumber)
     {
         var url = "/users/" + bookingNumber;
-        console.log(url);
          axios
              .delete(url)
-            .then(()=> console.log("deleted..."));
+            .then(()=> {});
             window.location.reload(false);
     }
     useEffect(()=>{
@@ -237,7 +236,7 @@ const EnhancedTableToolbar = (props) => {
     var url = "/users/emailItinerary/" + bookingNumber;
          axios
              .get(url)
-            .then(()=> console.log("sent"));
+            .then(()=> {});
             handleCloseEmail();
   }
 

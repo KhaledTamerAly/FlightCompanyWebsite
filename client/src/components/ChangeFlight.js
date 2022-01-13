@@ -11,6 +11,14 @@ import StripeComponent from './StripeComponent';
 
 function ChangeFlights(props)
 {
+    var priceOfSeat;
+    if(props.cabinClass=="Economy")
+        priceOfSeat = 10;
+    else if(props.cabinClass=="First")
+        priceOfSeat = 30;
+    else
+        priceOfSeat = 20;
+
     const [isChangingMoreThanOneFlight, setIsChangingMTOF] = useState((props.flightsToChange.length>1));
     const [isChoosingFirstFlightSeats, setIsChoosingFFSeats] = useState(true);
     const [isDoneChoosing, setIsDone] = useState(false);
@@ -20,6 +28,9 @@ function ChangeFlights(props)
     const [bookingNumberS, setBookingNumberS] = useState(props.flightsToChange[1]?.bookingNumber??"");
     const [isSelectedAllSeats, setIsSelectedSeats] = useState(true);
     const [didPay, setDidPay] = useState(false);
+    const [actualPriceToPay, setPriceToPay] = useState(((priceOfSeat*props.flightNumSeats)+parseInt(props.price))-props.oldPrice);
+    
+    
     
     function chooseSeatsF(seatNumber,isAdd)
     {
@@ -97,12 +108,17 @@ function ChangeFlights(props)
                 email: props.userInfo.email,
                 flightNumber: props.flightsToChange[0].flightNumber,
                 chosenSeats: chosenSeatsF,
-                price:props.price,
+                price:(priceOfSeat*props.flightNumSeats)+parseInt(props.price),
                 cabin:props.cabinClass,
                 flightType: props.flightsToChange[0].type
             }
             const api = {};
-            axios.post('/users/changeReservation', bodyF, {headers: api}).then((res)=> {console.log(isChangingMoreThanOneFlight);});
+            axios.post('/users/changeReservation', bodyF, {headers: api}).then((res)=> {
+                const body = { 
+                    price:(priceOfSeat*props.flightNumSeats)+parseInt(props.price)
+                }
+                axios.post('/users/updatePricesInReservation/'+res.data,body,{headers:{}});
+            });
                 
             if(isChangingMoreThanOneFlight)
             {
@@ -115,7 +131,7 @@ function ChangeFlights(props)
                     email: props.userInfo.email,
                     flightNumber: props.flightsToChange[1].flightNumber,
                     chosenSeats: chosenSeatsS,
-                    price:props.price,
+                    price:(priceOfSeat*props.flightNumSeats)+parseInt(props.price),
                     cabin:props.cabinClass,
                     flightType: props.flightsToChange[1].type
                 }
@@ -124,7 +140,6 @@ function ChangeFlights(props)
                 }
                 setDidPay(true);
     }
-
     var summaryD, summaryR,summaryChosenD,summaryChosenR, summaryBookingD,summaryBookingR;
     if(isChangingMoreThanOneFlight)
     {
@@ -156,12 +171,12 @@ function ChangeFlights(props)
             summaryBookingR = props.flightsToChange[0].bookingNumber;
         }
     }
+
     return (
         <div className="App">
             {!isDoneChoosing && isChoosingFirstFlightSeats && 
                 <>
                 {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
-                {console.log(props.cabinClass)}
                 <SeatMap oldSeats = {[]} cabinType = {props.cabinClass} flightNumber={props.flightsToChange[0].flightNumber} numberOfSeats ={props.flightNumSeats}  type={props.flightsToChange[0].type} func={chooseSeatsF}/>
                 </>
             } 
@@ -172,10 +187,10 @@ function ChangeFlights(props)
                 </>
             }
             
-            {isDoneChoosing &&!isChoosingFirstFlightSeats && didPay && <Summary depFlight= {summaryD} retFlight={summaryR} cabinClass={props.cabinClass} chosenSeatsD ={summaryChosenD} chosenSeatsR={summaryChosenR} bookingNumberD={summaryBookingD} bookingNumberR={summaryBookingR} price={props.price}/>}
+            {isDoneChoosing &&!isChoosingFirstFlightSeats && didPay && <Summary depFlight= {summaryD} retFlight={summaryR} cabinClass={props.cabinClass} chosenSeatsD ={summaryChosenD} chosenSeatsR={summaryChosenR} bookingNumberD={summaryBookingD} bookingNumberR={summaryBookingR} price={(priceOfSeat*props.flightNumSeats)+parseInt(props.price)}/>}
             {isDoneChoosing && !isChoosingFirstFlightSeats && !didPay && 
             <div>
-            <StripeComponent price = {props.price+20} reserve= {reserveFlights}/>
+            <StripeComponent price = {actualPriceToPay} reserve= {reserveFlights} isRefund={(actualPriceToPay<0)}/>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -190,7 +205,6 @@ function ChangeFlights(props)
             </div>
             }
             {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
-            {!isDoneChoosing && isChoosingFirstFlightSeats && <Button color="primary" onClick={props.backButton}> Go Back to see summary </Button>}
             {!isDoneChoosing && !isChoosingFirstFlightSeats && <Button color="primary" onClick={()=>{setIsChoosingFFSeats(true);setChosenSeatsF([])}}> Go Back to choose first flight seats again</Button>}
     </div>
     );

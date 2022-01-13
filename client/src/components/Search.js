@@ -35,7 +35,6 @@ async updateStates() {
            this.setState({flights:allFlights});
            this.setState({flightToBeListed:allFlights});
 
-           console.log(allFlights)
 
 
            var options = [];
@@ -114,7 +113,6 @@ async userInput(event) {
         selectedDepTime: ( (selDepTime==null) ? null: selDepTime)
       }
         const api = {};
-        console.log(body);
         axios.post('/flights/matches', body, {headers: api});
 
         axios.get('/flights/matches')
@@ -200,7 +198,7 @@ async userInput(event) {
           Flights:
           <ul>
             {
-              (this.state.flightToBeListed ?? []).map((option,i) => <li><CardPanel i = {i} idOfFlight = {option._id} deleteFlight = {()=> {this.updateStates(); console.log(this.state.flights); window.location.reload();}} title={option.flightNumber} subtitle="" content={"From:  "+ option.departureTerminal+ " "+ "To: "+option.arrivalTerminal + " " +"On: "+ option.flightDate} /></li>)
+              (this.state.flightToBeListed ?? []).map((option,i) => <li><CardPanel i = {i} idOfFlight = {option._id} deleteFlight = {()=> {this.updateStates(); window.location.reload();}} title={option.flightNumber} subtitle="" content={"From:  "+ option.departureTerminal+ " "+ "To: "+option.arrivalTerminal + " " +"On: "+ option.flightDate} /></li>)
             }
           </ul>
     </div>

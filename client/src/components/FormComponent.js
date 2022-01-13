@@ -28,7 +28,6 @@ function FormComponent (props){
             setNoOfEconSeats(flight.data.noOfEconSeats);
             setNoOfBusinessSeats(flight.data.noOfBusinessSeats);
             setNoOfFirstSeats(flight.data.noOfFirstSeats);
-            console.log(flight);
         })
     }
 },[]);
@@ -57,7 +56,6 @@ function FormComponent (props){
     noOfFirstSeats:noOfFirstSeats,
     didChange:didChange
   }
-  console.log(newFlight);
   
   const api={};
   var path='/flights/';

@@ -8,7 +8,6 @@ function CardPanel(props)
 
   const navigate=useNavigate();
     function goToUpdateFlight(){
-      console.log(props.idOfFlight)
         navigate('/editFlight', { state:{isAdd:false,id:props.idOfFlight}, replace:false })
     }
 

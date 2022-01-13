@@ -38,7 +38,8 @@ class GeneralSearch extends Component {
     returnFlightToBeListed:null,
     isDoneSelectingFlights:false,
     isStopRenderSearch: false,
-    userInfo:null
+    userInfo:null,
+    ticketPrice:null
   };
   constructor(props) {
     super(props);
@@ -115,7 +116,8 @@ class GeneralSearch extends Component {
   
   }
   async componentDidMount()
-{
+  {
+  this.setState({ticketPrice:this.getRndInteger(60,99)});
   this.updateStates();
   }
   async userInput(event) {
@@ -137,7 +139,7 @@ class GeneralSearch extends Component {
         selectedArrivalTerminal:selArrT.value,
         selectedDepartureTerminal: selDepT.value,
         selectedDepDate: this.state.selectedDepDate,
-        selectedCabinClass:selCabClass.label,
+        selectedCabinClass:selCabClass.value,
         selectedNumOfPass:selNumPass
       }
         const api = {}; 
@@ -148,6 +150,10 @@ class GeneralSearch extends Component {
                   this.setState({selectedDepDate:null})
                   this.setState({flightToBeListed: res.data.departFlights})
               });
+  }
+  getRndInteger(min, max) 
+  {
+    return (Math.floor(Math.random() * (max - min) ) + min);
   }
   getCabin(option)
 {
@@ -201,7 +207,7 @@ return cabOpArr;
   }
   render() 
   {
-    const flightPrice = 50;
+    
     return (
       <div className="App">
         {!this.state.isStopRenderSearch && <div>
@@ -223,9 +229,9 @@ return cabOpArr;
                   <Select 
                     value = {this.state.selectedCabinClass}
                     options = {[
-                      { value: 'economy', label: 'Economy' },
-                      { value: 'business', label: 'Business' },
-                      { value: 'first', label: 'First' }
+                      { value: 'Economy', label: 'Economy (10 Euros per seat)' },
+                      { value: 'Business', label: 'Business (20 Euros per seat)' },
+                      { value: 'First', label: 'First (30 Euros per seat)' }
                     ]}
                     onChange = {(obj) => this.setState({selectedCabinClass: obj})}
                   />
@@ -275,7 +281,7 @@ return cabOpArr;
                 {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </button> }
                 position="right center">
                   <div>{ "Flight Number: " + option.flightNumber} <br/> {" Departure Time: " + option.departureTime} <br/> { "Arrival Time: " +option.arrivalTime+
-                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50kg"}<br/> {" Price: " + flightPrice} 
+                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
 
                 <br>
                 </br>
@@ -299,7 +305,7 @@ return cabOpArr;
                         arrivalTerminal:selDepT.value,
                         departureTerminal: selArrT.value,
                         depDate: option.flightDate,
-                        cabinClass:selCabClass.label,
+                        cabinClass:selCabClass.value,
                         numOfPass:selNumPass
                       }
                         const api = {}; 
@@ -334,7 +340,7 @@ return cabOpArr;
                 {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </button> }
                 position="right center">
                   <div>{ "Flight Number: " + option.flightNumber} <br/> {" Departure Time: " + option.departureTime} <br/> { "Arrival Time: " +option.arrivalTime+
-                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50Kg"} <br/> {" Price: " + flightPrice} 
+                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50Kg"} <br/> {" Price: " + this.state.ticketPrice} 
                 <br>
                 </br>
                 <Button
@@ -361,7 +367,7 @@ return cabOpArr;
             
               <>
                 <ReserveFlights login = {this.state.login} 
-                price = {flightPrice} 
+                price = {this.state.ticketPrice} 
                 chosenSeatsD ={null} 
                 chosenSeatsR={null} 
                 bookingNumberD={null}
@@ -369,7 +375,7 @@ return cabOpArr;
                 depFlight= {this.state.selectedDepartureFinal} 
                 retFlight={this.state.selectedArrivalFinal} 
                 flightNumSeats ={this.state.selectedNumOfPass+this.state.selectedNumOfPassC} 
-                cabinClass={this.state.selectedCabinClass.label} 
+                cabinClass={this.state.selectedCabinClass.value} 
                 userInfo ={this.state.userInfo}
                 isLoggedIn={this.state.isLoggedIn}
                 backButton={()=>{this.setState({isStopRenderSearch:false});

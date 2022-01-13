@@ -12,8 +12,10 @@ function StripeComponent(props)
     const stripe = loadStripe(PUBLIC_KEY);
     return (
         <div className='AppPay'>
+            {!props.isRefund && <>You will pay a total of {props.price} Euros</>}
+            {props.isRefund && <>Once you pay, you will be refunded a total of {-1* props.price} Euros</>}
         <Elements stripe={stripe}>
-            <Payment price = {props.price} reserve= {props.reserve}/>
+            <Payment price = {props.price} reserve= {props.reserve} isRefund={props.isRefund??false}/>
         </Elements>
         </div>
     );

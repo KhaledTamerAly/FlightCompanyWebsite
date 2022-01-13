@@ -62,7 +62,6 @@ router.post("/addReservation",async (req,res) => {
     else if(cabinType == "First")
     {
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            console.log(res.noOfFirstSeatsLeft);
             Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft - seats.length},()=>{});
              });
         
@@ -70,8 +69,7 @@ router.post("/addReservation",async (req,res) => {
     else if(cabinType == "Business")
     {
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            console.log(res.noOfBusinessSeatsLeft);
-            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft-seats.length},()=>console.log());
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft-seats.length},()=>{});
              });
         
     }
@@ -82,40 +80,39 @@ router.post("/addReservation",async (req,res) => {
     console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
 
     Flights.findOne({flightNumber:reservation.flightNumber}).then((flight)=>{
-            var transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                  user: 'osamatourss@gmail.com',
-                  pass: 'osama1stop'
-                }
-              });
-              var mailOptions = {
-                from: 'osamatourss@gmail.com',
-                to: reservation.email,
-                subject: 'Itinerary confirmation '+reservation.bookingNumber,
-                text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
-                'This email is to confirm that you booked your reservation with number '+reservation.bookingNumber+'.\n'+
-                'You paid $'+reservation.paid+', the following are the full details of the reservation.\n'+
-                'Flight number: '+reservation.flightNumber+'\n'+
-                'Flight date: '+flight.flightDate+'\n'+
-                'Departure time: '+flight.departureTime+'\n'+
-                'Arrival time: '+flight.arrivalTime+'\n'+
-                'Departure terminal: '+flight.departureTerminal+'\n'+
-                'Arrival terminal: '+flight.arrivalTerminal+'\n'+
-                'Seats: '+reservation.chosenSeats.join(", ")+'\n'
-              };
-              
-              transporter.sendMail(mailOptions, function(error, info){
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log('Email sent: ' + info.response);
-                }
-              });
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'osamatourss@gmail.com',
+              pass: 'osama1stop'
+            }
+          });
+          var mailOptions = {
+            from: 'osamatourss@gmail.com',
+            to: reservation.email,
+            subject: 'Itinerary confirmation '+reservation.bookingNumber,
+            text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
+            'This email is to confirm that you booked your reservation with number '+reservation.bookingNumber+'.\n'+
+            'You paid'+reservation.paid+' Euros, the following are the full details of the reservation.\n'+
+            'Flight number: '+reservation.flightNumber+'\n'+
+            'Flight date: '+flight.flightDate+'\n'+
+            'Departure time: '+flight.departureTime+'\n'+
+            'Arrival time: '+flight.arrivalTime+'\n'+
+            'Departure terminal: '+flight.departureTerminal+'\n'+
+            'Arrival terminal: '+flight.arrivalTerminal+'\n'+
+            'Seats: '+reservation.chosenSeats.join(", ")+'\n'
+          };
+          
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
         });
     res.json(bookingNumber);
 });
-
 router.get('/flightDetails/:username', async(req,res) => {
     var userFlights=[];
     await Reservations.find({username:req.params.username}).then(async(reservations)=> {
@@ -141,14 +138,12 @@ router.get('/flightDetails/:username', async(req,res) => {
     })
     res.json(userFlights);
 });
-
 router.get('/emailItinerary/:bookingNumber', async (req,res)=>{
     Reservations.findOne({bookingNumber:req.params.bookingNumber})
     .then(async(reservation)=>{
         var flight;
         await Flights.findOne({flightNumber:reservation.flightNumber})
         .then(async (Flight)=>flight=Flight)
-        console.log(reservation.linkedBookingNumber);
         Reservations.findOne({bookingNumber:reservation.linkedBookingNumber})
         .then(async(reservation2)=>{
             var flight2;
@@ -177,7 +172,7 @@ router.get('/emailItinerary/:bookingNumber', async (req,res)=>{
                 subject: 'Osama Tours requested itenerary',
                 text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
                 "You've requested an itenerary for booking numbers "+departureRes.bookingNumber+" and "+arrivalRes.bookingNumber+'\n'+
-                'Price for both flights is $'+reservation.paid+'\n\n'+
+                'Price for both flights is '+reservation.paid+" Euros"+'\n\n'+
                 'Details for the departure flight are as follows.. \n'+
                 'Booking number: '+departureRes.bookingNumber+'\n'+
                 'Flight number: '+departureRes.flightNumber+'\n'+
@@ -267,7 +262,7 @@ router.delete('/:bookingNumber', async(req,res)=>
                     subject: 'Cancellation confirmation '+reservation.bookingNumber,
                     text: 'Dear Mr/Mrs '+reservation.lName+',\n\n'+
                     'This email is to confirm that you cancelled your reservation with number '+reservation.bookingNumber+'.\n'+
-                    'You will be refunded $'+reservation.paid+', the following are the full details of the reservation.\n'+
+                    'You will be refunded '+reservation.paid+' Euros, the following are the full details of the reservation.\n'+
                     'Flight number: '+reservation.flightNumber+'\n'+
                     'Flight date: '+flight.flightDate+'\n'+
                     'Departure time: '+flight.departureTime+'\n'+
@@ -295,20 +290,20 @@ router.delete('/:bookingNumber', async(req,res)=>
             if(reservation.cabinType == "Economy")
         {
             await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
-                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation.chosenSeats.length},()=>console.log());
+                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation.chosenSeats.length},()=>{});
                  });
             }
             else if(reservation.cabinType == "First")
         {
             await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
-                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation.chosenSeats.length},()=>console.log());
+                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation.chosenSeats.length},()=>{});
                  });
             
             }
             else if(reservation.cabinType == "Business")
         {
             await Flights.findOne({flightNumber:reservation.flightNumber}).then(res=>{
-                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation.chosenSeats.length},()=>console.log());
+                Flights.findOneAndUpdate({flightNumber:reservation.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation.chosenSeats.length},()=>{});
                  });
             }
             console.log('deleted linked flight')
@@ -321,14 +316,13 @@ router.delete('/:bookingNumber', async(req,res)=>
                       pass: 'osama1stop'
                     }
                   });
-                  console.log(reservation1);
                   var mailOptions = {
                     from: 'osamatourss@gmail.com',
                     to: reservation1.email,
                     subject: 'Cancellation confirmation '+reservation1.bookingNumber,
                     text: 'Dear Mr/Mrs '+reservation1.lName+',\n\n'+
                     'This email is to confirm that you cancelled your reservation with number '+reservation1.bookingNumber+'.\n'+
-                    'You will be refunded $'+reservation1.paid+', the following are the full details of the reservation.\n'+
+                    'You will be refunded'+reservation1.paid+' Euros, the following are the full details of the reservation.\n'+
                     'Flight number: '+reservation1.flightNumber+'\n'+
                     'Flight date: '+flight.flightDate+'\n'+
                     'Departure time: '+flight.departureTime+'\n'+
@@ -357,20 +351,20 @@ router.delete('/:bookingNumber', async(req,res)=>
             if(reservation1.cabinType == "Economy")
         {
             await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
-                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation1.chosenSeats.length},()=>{});
                  });
             }
             else if(reservation1.cabinType == "First")
         {
             await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
-                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation1.chosenSeats.length},()=>{});
                  });
             
             }
             else if(reservation1.cabinType == "Business")
         {
             await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
-                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation1.chosenSeats.length},()=>console.log());
+                Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation1.chosenSeats.length},()=>{});
                  });
             }
         
@@ -391,7 +385,6 @@ router.put('/updateUser/:username', async(req, res)=>{
         var homeAddress=req.body.homeAddress;
         var countryCode=req.body.countryCode;
         var telephoneNumber=req.body.telephoneNumber;
-        console.log(telephoneNumber);
         var passportNumber=req.body.passportNumber;
         var password=req.body.password;
         var email=req.body.email;
@@ -445,22 +438,19 @@ router.post('/updateSeatReservation', (req,res)=>{
 });
 router.post('/payment', cors(), async(req,res)=>{
     var {amount , id} = req.body;
-    console.log(amount);
     try {
 		const payment = await stripe.paymentIntents.create({
-			amount,
-			currency: "USD",
+			amount: amount*100,
+			currency: "EUR",
 			description: "Reserved Flight",
 			payment_method: id,
 			confirm: true
 		})
-		console.log("Payment", payment)
 		res.json({
 			message: "Payment successful",
 			success: true
 		})
 	} catch (error) {
-		console.log("Error", error)
 		res.json({
 			message: "Payment failed",
 			success: false
@@ -482,6 +472,7 @@ router.post('/changeReservation', async(req,res)=>{
     var flightType = req.body.flightType;
     var linkedBookingNumber = null;
     //delete old reservation
+    
     await Reservations.findOneAndDelete(bookingNumber).then(async(reservation1)=>
     {
         linkedBookingNumber = reservation1.linkedBookingNumber;
@@ -496,19 +487,19 @@ router.post('/changeReservation', async(req,res)=>{
         if(reservation1.cabinType == "Economy")
         {
         await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
-            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfEconSeatsLeft:res.noOfEconSeatsLeft + reservation1.chosenSeats.length},()=>{});
              });
         }
         else if(reservation1.cabinType == "First")
         {
         await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
-            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation1.chosenSeats.length},()=>console.log());
+            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft + reservation1.chosenSeats.length},()=>{});
              });
         }
         else if(reservation1.cabinType == "Business")
         {
         await Flights.findOne({flightNumber:reservation1.flightNumber}).then(res=>{
-            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation1.chosenSeats.length},()=>console.log());
+            Flights.findOneAndUpdate({flightNumber:reservation1.flightNumber},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft+reservation1.chosenSeats.length},()=>{});
              });
         }
     });
@@ -528,6 +519,7 @@ router.post('/changeReservation', async(req,res)=>{
         linkedBookingNumber:linkedBookingNumber
     });
     await reservation.save();
+    
 
     var chosenSeats = req.body.chosenSeats;
 
@@ -540,7 +532,6 @@ router.post('/changeReservation', async(req,res)=>{
     else if(cabinType == "First")
     {
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            console.log(res.noOfFirstSeatsLeft);
             Flights.findOneAndUpdate({flightNumber:flightNum},{noOfFirstSeatsLeft:res.noOfFirstSeatsLeft - seats.length},()=>{});
              });
         
@@ -548,8 +539,7 @@ router.post('/changeReservation', async(req,res)=>{
     else if(cabinType == "Business")
     {
         await Flights.findOne({flightNumber:flightNum}).then(res=>{
-            console.log(res.noOfBusinessSeatsLeft);
-            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft-seats.length},()=>console.log());
+            Flights.findOneAndUpdate({flightNumber:flightNum},{noOfBusinessSeatsLeft:res.noOfBusinessSeatsLeft-seats.length},()=>{});
              });
         
     }
@@ -558,6 +548,7 @@ router.post('/changeReservation', async(req,res)=>{
         Flights.findOneAndUpdate({flightNumber:flightNum},{seats:updatedSeats},()=>console.log("Seat Reserved in Flights table"));
     });
     console.log(uName + "reserved flight "+flightNum+" Seats: "+seats+" in reservations table");
+    res.json(linkedBookingNumber);
 });
 router.get('/flightInfo/:bookingNumber', (req,res)=>{
     Reservations.findOne({bookingNumber: req.params.bookingNumber}).then(reservation=>{
@@ -573,8 +564,6 @@ router.get('/flightInfo/:bookingNumber', (req,res)=>{
     
     
 });
-
-
 router.post('/signUp', async (req, res) => {
     try {
         if(req.body.password1=="" || req.body.password2=="" || req.body.fName=="" || req.body.lName=="" || req.body.homeAddress=="" || req.body.countryCode=="" || req.body.telephoneNumber=="" || req.body.passportNumber=="" || req.body.username=="" || req.body.email=="")
@@ -582,7 +571,6 @@ router.post('/signUp', async (req, res) => {
         else{
             await Users.findOne({username:req.body.username}).then(async found=>{
                 if(found!=null){
-                    console.log("hi");
                     res.send({errors:"Username already taken"});
                 }
                 else if(req.body.password1!=req.body.password2)
@@ -599,7 +587,6 @@ router.post('/signUp', async (req, res) => {
                     const email=req.body.email;
                     const user = new Users({ fName: fName, lName: lName, homeAddress:homeAddress, countryCode:countryCode, telephoneNumber:telephoneNumber, passportNumber:passportNumber, username:username, password:hashedPassword, email:email, userType:["User"]});
                     user.save();
-                    console.log(user);
                     res.send(user);
                 }
             });
@@ -626,7 +613,6 @@ router.put('/changePassword/:username', async (req,res)=>{
                     const hashedPassword = await bcrypt.hash(req.body.newPassword1, 10);
                     user.password=hashedPassword;
                     user.save();
-                    console.log(user);
                     errors="Password changed successfully!";
                 }
                 catch{
@@ -637,7 +623,6 @@ router.put('/changePassword/:username', async (req,res)=>{
         else
             errors="Incorrect old password";
         res.send({errors:errors});
-        console.log(errors);
       })
     }
 })
@@ -657,7 +642,6 @@ router.post('/login', async (req, res) => {
       found=await bcrypt.compare(req.body.password, user.password);
       try {
       if(found) {
-          //console.log(process.env.ACCESS_TOKEN_SECRET);
           const payload={username:user.username,type:user.userType};
           const accessToken = jwt.sign(payload,process.env.ACCESS_TOKEN_SECRET);
           res.json(JSON.parse(Buffer.from(accessToken.split('.')[1],'base64')));
@@ -671,6 +655,38 @@ router.post('/login', async (req, res) => {
   }
 })
 });
+router.post('/refund/:username',(req,res)=>{
+    var price = -1 * req.body.amount;
+
+    Users.findOne({username:req.params.username}).then(user => {
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'osamatourss@gmail.com',
+              pass: 'osama1stop'
+            }
+          });
+          var mailOptions = {
+            from: 'osamatourss@gmail.com',
+            to: user.email,
+            subject: 'Refund From OsamaTours',
+            text: 'Dear Mr/Mrs '+user.lName+',\n\n'+
+            'This email is for a refund of '+price+" Euros"
+          };
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
+    })
+
+});
+router.post('/updatePricesInReservation/:bookingNumber',(req,res)=>{
+     Reservations.findOneAndUpdate({bookingNumber:req.params.bookingNumber},{paid:req.body.price},()=>{
+     });
+})
 
 //Functions
 function updateSeats(chosenSeats, allSeats)
@@ -712,7 +728,6 @@ function addAdmin ()
     try
     {
         admin.save();
-        console.log("ok");
     }
     catch(err)
     {

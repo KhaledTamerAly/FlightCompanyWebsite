@@ -29,16 +29,13 @@ export default function LoginForm(props)
         axios.post('/users/login',userinfo,{headers:{}}).then(res=>{
           setErrors(res.data.errors);
           if(res.data.errors==null){
-            console.log(res.data.username);
             localStorage.setItem('username',res.data.username);
             localStorage.setItem('type',res.data.type);
-            console.log(localStorage.getItem('type'));
             if(res.data.type=="Admin")
               navigate("/admin")
             else
               props.buttonFunction(username);
             }
-            //console.log(res);
         })
     }
     return (

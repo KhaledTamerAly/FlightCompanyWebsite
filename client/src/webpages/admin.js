@@ -8,8 +8,7 @@ function Admin()
     const navigate=useNavigate();
     React.useEffect(()=>{
         if(localStorage.getItem('type')==null || localStorage.getItem('type')=='User'){
-            navigate('/'); 
-            console.log("hi");
+            navigate('/');
         }
       })
 

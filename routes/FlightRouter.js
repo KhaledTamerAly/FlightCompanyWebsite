@@ -230,7 +230,6 @@ router.get('/matchesUserSearch', (req,res) =>{
         else
             departFlight.flightDate = {$gte: selectedDepDateStart};
     }
-    console.log(departFlight)
     Flights.find(departFlight).then(async(match) => {
         var matchesToReturn = [];
         //check for each match if there is a return flight for it, if yes add to matchesToBeRturned
@@ -566,6 +565,8 @@ function populateTable()
         var from = rowValues[0];
         var to = rowValues[1];
         var date = convertUTCDateToLocalDate(new Date(rowValues[2]));
+        var arrivalTime = convertUTCDateToLocalDate(new Date(rowValues[2]));
+        arrivalTime.setHours(arrivalTime.getHours()+2);
         var firstClassSeats;
         var econClassSeats;
         var busClassSeats;
@@ -592,7 +593,7 @@ function populateTable()
             departureTerminal: from,
             flightDate:date,
             departureTime:date,
-            arrivalTime:null,
+            arrivalTime:arrivalTime,
 
             noOfEconSeats:econClassSeats,
             noOfBusinessSeats:busClassSeats,

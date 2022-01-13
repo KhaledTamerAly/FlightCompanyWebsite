@@ -35,8 +35,9 @@ class PostBookSearch extends Component {
     selectedArrivalFinal: null,
     isChangingDepartFlight: true,
     user:null,
-    linkedBooking:null
-    
+    linkedBooking:null,
+    ticketPrice:null,
+    oldPrice:null
   };
 
 constructor(props)
@@ -84,11 +85,17 @@ async updateStates()
       this.setState({currentFlightType: combo.data.bnReservation.flightType});
       this.setState({linkedFlight: combo.data.linkedFlight});
       this.setState({linkedBooking:combo.data.linkedBooking});
+      this.setState({oldPrice:combo.data.bnReservation.paid});
     });
 }
 async componentDidMount()
 {
+  this.setState({ticketPrice:this.getRndInteger(60,99)});
   this.updateStates();
+}
+getRndInteger(min, max) 
+{
+  return (Math.floor(Math.random() * (max - min) ) + min);
 }
 async userInput(event)
 {
@@ -108,7 +115,7 @@ async userInput(event)
     
     const body = {
       selectedDepDate: this.state.selectedDepDate,
-      selectedCabinClass:selCabClass.label,
+      selectedCabinClass:selCabClass.value,
       selectedArrivalTerminal: this.state.selectedArrivalTerminal,
       selectedDepartureTerminal: this.state.selectedDepartureTerminal,
       selectedNumOfPass: this.state.selectedNumOfPass
@@ -130,7 +137,7 @@ async userInput(event)
       arrivalTerminal:this.state.selectedArrivalTerminal,
       departureTerminal:this.state.selectedDepartureTerminal,
       depDate: this.state.selectedDepDate,
-      cabinClass:selCabClass.label,
+      cabinClass:selCabClass.value,
       numOfPass:this.state.selectedNumOfPass
     }
     const api = {}; 
@@ -168,7 +175,6 @@ return cabOpArr;
 }
 render()
 {
-  const flightPrice = 50;
   
   var flightsToChange = [];
   if(this.state.isStopRenderSearch)
@@ -240,9 +246,9 @@ render()
       <br/>
        Cabin Class<br/>
        <Select value = {this.state.selectedCabinClass}
-        options = {[{ value: 'economy', label: 'Economy' },
-                    { value: 'business', label: 'Business' },
-                    { value: 'first', label: 'First' }]}
+        options = {[{ value: 'Economy', label: 'Economy (10 Euros per seat)' },
+                    { value: 'Business', label: 'Business (20 Euros per seat)' },
+                    { value: 'First', label: 'First (30 Euros per seat)' }]}
         onChange = {(obj) => this.setState({selectedCabinClass: obj})}
         />
       <br/>
@@ -269,7 +275,7 @@ render()
             <button id={"confirmDep"+i}
             onClick={()=> {this.setState({triggerDialogue: true});this.setState({target:option});}} title={option.flightNumber}
             subtitle="" > From: {option.departureTerminal} To:{option.arrivalTerminal}
-            Flight Number: {option.flightNumber} Departure Time: {option.flightDate} Arrival Time: {option.arrivalTime} Price: {flightPrice} <br/> Press for more details 
+            Flight Number: {option.flightNumber} Departure Time: {option.flightDate} Arrival Time: {option.arrivalTime} Price: {this.state.ticketPrice} <br/> Press for more details 
             </button>
             </li>
           )
@@ -286,7 +292,7 @@ render()
           <DialogContent>
             <DialogContentText id={"confirmDep"+this.state.target.flightNumber}>
               { "Flight Number: " + this.state.target.flightNumber} <br/> {" Departure Time: " + this.state.target.flightDate} <br/> { "Arrival Time: " +this.state.target.arrivalTime+
-                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(this.state.target) + " Baggage: 50kg"}<br/> {" Price: " + flightPrice} 
+                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(this.state.target) + " Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -322,7 +328,7 @@ render()
                     arrivalTerminal:this.state.target.departureTerminal,
                     departureTerminal:this.state.target.arrivalTerminal,
                     depDate: this.state.target.flightDate,
-                    cabinClass:selCabClass.label,
+                    cabinClass:selCabClass.value,
                     numOfPass:this.state.selectedNumOfPass
                   }
                   const api = {}; 
@@ -353,7 +359,7 @@ render()
                 <button id={"confirmDep"+i}
                 onClick={()=> {this.setState({triggerDialogue: true});this.setState({target:option})}} 
                 title={option.flightNumber}
-                subtitle="" > From: {option.departureTerminal} To:{option.arrivalTerminal} Flight Number: {option.flightNumber} Departure Time: {option.flightDate} Arrival Time: {option.arrivalTime} Price: {flightPrice} <br/> Press for more details </button>
+                subtitle="" > From: {option.departureTerminal} To:{option.arrivalTerminal} Flight Number: {option.flightNumber} Departure Time: {option.flightDate} Arrival Time: {option.arrivalTime} Price: {this.state.ticketPrice} <br/> Press for more details </button>
                 </li>)
                 }
               </ul>
@@ -368,7 +374,7 @@ render()
                 <DialogContent>
                   <DialogContentText id={"confirmDep"+this.state.target.flightNumber}>
                   { "Flight Number: " + this.state.target.flightNumber} <br/> {" Departure Time: " + this.state.target.flightDate} <br/> { "Arrival Time: " +this.state.target.arrivalTime+
-                       " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(this.state.target) + " Baggage: 50kg"}<br/> {" Price: " + flightPrice} 
+                       " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(this.state.target) + " Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -397,7 +403,7 @@ render()
                         var selCabClass = this.state.selectedCabinClass;
                         const body = {
                           selectedDepDate: this.state.target.flightDate,
-                          selectedCabinClass:selCabClass.label,
+                          selectedCabinClass:selCabClass.value,
                           selectedArrivalTerminal: this.state.target.departureTerminal,
                           selectedDepartureTerminal: this.state.target.arrivalTerminal,
                           selectedNumOfPass: this.state.selectedNumOfPass,
@@ -426,12 +432,13 @@ render()
            
            {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights && (flightsToChange.length!=0)&&  
               <>
-              {console.log(flightsToChange)}
               <ChangeFlights flightsToChange= {flightsToChange} 
               flightNumSeats = {this.state.selectedNumOfPass} 
-              cabinClass = {this.state.selectedCabinClass.label} 
+              cabinClass = {this.state.selectedCabinClass.value} 
               userInfo={this.state.user} 
-              price={flightPrice} />
+              price={this.state.ticketPrice}
+              oldPrice={this.state.oldPrice} 
+              />
               </>
             }  
   </div>

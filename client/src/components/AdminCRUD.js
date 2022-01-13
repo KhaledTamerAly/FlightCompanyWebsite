@@ -9,7 +9,7 @@ function DeleteButton(props)
         var url = '/flights/' + idToDelete;
          axios
              .delete(url)
-            .then(()=> console.log("deleted..."));
+            .then(()=>{});
         props.onDelete();
     }
     return (

@@ -147,7 +147,6 @@ function SeatComponent(props)
                 }
                 
                 {isDoneChoosing &&!isChoosingDepSeats && didPay && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} cabinClass={props.cabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
-                {console.log(props.price)}
                 {isDoneChoosing && !isChoosingDepSeats && !didPay && <StripeComponent price = {props.price} reserve= {reserveFlights}/>}
                 {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
                 {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}

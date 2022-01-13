@@ -36,7 +36,6 @@ function Home()
     function goToAdmin() {
       navigate('/admin')
     }
-    console.log(username);
     return (
       <>
         <div>
@@ -50,7 +49,6 @@ function Home()
           <EnhancedTable />
         </div>
         <div>
-          {console.log(username)}
           <GeneralSearch login={Login} isLoggedIn={location?.state?.loggedIn??loggedIn}/>
           </div>
         </>
