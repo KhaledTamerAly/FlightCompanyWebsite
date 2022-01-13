@@ -21,10 +21,12 @@ import Tooltip from '@mui/material/Tooltip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import { useState, useEffect } from 'react'
+import {useNavigate, useLocation} from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -37,6 +39,7 @@ import SeatChange from "../components/SeatChange";
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
 import ChangeFlights from '../components/ChangeFlight';
 import PostBookSearch from '../components/PostBookSearch';
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -188,15 +191,25 @@ const EnhancedTableToolbar = (props) => {
   const [isChangingFlights, setIsChangingFlights] = React.useState(false);
   const [flightChangeOpen, setFlightChange] = React.useState(false);
   const [user,setState] = React.useState(null);
+  const [emailItineraryOpen,setEmailItineraryOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
-  
+
   const handleClose = () => {
     setOpen(false);
   };
   
+  const handleEmailOpen = () => {
+    setEmailItineraryOpen(true);
+  }
+
+  const handleCloseEmail = () => {
+    setEmailItineraryOpen(false);
+  };
+
+
   function deleteReservation(bookingNumber)
     {
         var url = "/users/" + bookingNumber;
@@ -207,7 +220,7 @@ const EnhancedTableToolbar = (props) => {
             window.location.reload(false);
     }
     useEffect(()=>{
-      axios.get('users/userInfo/youssef')
+      axios.get('users/userInfo/'+localStorage.getItem('username'))
         .then(user=> {
           const userInfoObject=  {
             username:user.data.username,
@@ -219,6 +232,14 @@ const EnhancedTableToolbar = (props) => {
       setState(userInfoObject);
     });
     },[]);
+
+  function emailItinerary(bookingNumber){
+    var url = "/users/emailItinerary/" + bookingNumber;
+         axios
+             .get(url)
+            .then(()=> console.log("sent"));
+            handleCloseEmail();
+  }
 
   return (
     <Toolbar
@@ -265,6 +286,11 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
         </Tooltip>
 
+        <Tooltip title="Itinerary">
+        <IconButton onClick={handleEmailOpen}>
+          <ReceiptLongIcon />
+        </IconButton>
+        </Tooltip>
         <Tooltip title="Delete">
           <IconButton onClick={handleClickOpen}>
             <DeleteIcon />
@@ -293,8 +319,6 @@ const EnhancedTableToolbar = (props) => {
           <Button onClick={()=>deleteReservation(selected)}>Agree</Button>
         </DialogActions>
       </Dialog>
-
-
       <Dialog
         open={flightChangeOpen}
         TransitionComponent={Transition}
@@ -331,6 +355,25 @@ const EnhancedTableToolbar = (props) => {
           {!isChangingSeats && <Button onClick={()=>setIsChangingSeats(true)}>Continue</Button>}
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={emailItineraryOpen}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleCloseEmail}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Email Itinerary"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            The itinerary for {selected} will be sent to your email
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEmail}>Cancel</Button>
+          <Button onClick={()=>emailItinerary(selected)}>Agree</Button>
+        </DialogActions>
+      </Dialog>
+
     </Toolbar>
   );
 };
@@ -348,6 +391,10 @@ export default function MyReservations() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const [username,setUsername] = React.useState();
+const location  = useLocation();
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -388,13 +435,22 @@ export default function MyReservations() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - myReservations.length) : 0;
 
 
-    
-    useEffect(()=>{axios.get('/users/flightDetails/youssef').then(res =>{setMyReservations(res.data)})}, []);
+    const navigate=useNavigate();
+    useEffect(()=>{
+      if(localStorage.getItem('username')==null)
+        navigate('/');
+      else if(localStorage.getItem('type')=='Admin')
+        navigate('/admin');
+      else{
+        const path="/users/flightDetails/"+localStorage.getItem('username');
+        axios.get(path).then(res =>{setMyReservations(res.data)})
+      }
+    }, []);
     
 
   return (
     <div>
-        <Navbar loggedIn={true}/>
+        <Navbar loggedIn={true} />
         <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
             <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>

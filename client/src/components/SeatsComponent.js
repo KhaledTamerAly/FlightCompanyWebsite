@@ -6,6 +6,7 @@ import { Button} from 'reactstrap';
 import SeatMap from './SeatMap';
 import Summary from './Summary';
 import StripeComponent from './StripeComponent'
+import LoginForm from './LoginForm';
 
 
 function SeatComponent(props)
@@ -155,9 +156,7 @@ function SeatComponent(props)
                 </>
             }
             {!isLoggedIn && <>
-            
-            <h3 style={{ color: 'red' }}>Please Login</h3>
-            <Button color="success" onClick={()=>{props.login();setIsLoggedIn(true)}}>Login</Button>
+            <LoginForm buttonFunction={(username)=>{props.login(username);setIsLoggedIn(true);}}/>
             </>
             }
     </div>

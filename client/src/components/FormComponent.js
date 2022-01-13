@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
 import axios from 'axios';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
 
 function FormComponent (props){
 
@@ -14,8 +14,24 @@ function FormComponent (props){
   const [noOfEconSeats,setNoOfEconSeats]= useState("");
   const [noOfBusinessSeats,setNoOfBusinessSeats]= useState("");
   const [noOfFirstSeats,setNoOfFirstSeats]= useState("");
+  const [didChange,setDidChange]= useState(false);
   const [errors,setErrors]= useState({});
 
+  useEffect(()=>{
+    if(!props.add){
+      const path="/flights/"+props.id;
+        axios.get(path)
+        .then(flight=> {
+            setFlightNumber(flight.data.flightNumber);
+            setDepartureTerminal(flight.data.departureTerminal);
+            setArrivalTerminal(flight.data.arrivalTerminal);
+            setNoOfEconSeats(flight.data.noOfEconSeats);
+            setNoOfBusinessSeats(flight.data.noOfBusinessSeats);
+            setNoOfFirstSeats(flight.data.noOfFirstSeats);
+            console.log(flight);
+        })
+    }
+},[]);
 
   const navigate = useNavigate();
 
@@ -38,10 +54,11 @@ function FormComponent (props){
     arrivalTime:arrivalTime,
     noOfEconSeats:noOfEconSeats,
     noOfBusinessSeats:noOfBusinessSeats,
-    noOfFirstSeats:noOfFirstSeats
+    noOfFirstSeats:noOfFirstSeats,
+    didChange:didChange
   }
   console.log(newFlight);
-
+  
   const api={};
   var path='/flights/';
 
@@ -69,7 +86,7 @@ function FormComponent (props){
             id="flightNumber"
             name="flightNumber"
             value={flightNumber}
-            onChange={(event)=> setFlightNumber(event.target.value)}
+            onChange={(event)=> {setFlightNumber(event.target.value);setDidChange(true)}}
             error={errors.flightNumber}
             placeholder="Example: MS 107"
             type="flightNumber"
@@ -191,8 +208,8 @@ function FormComponent (props){
             type="noOfFirstSeats"
           />
         </FormGroup>
+        <Button color="primary" type="button" onClick={goToAdmin}> Go back </Button>
         <Button  color= "success" type="submit"> Submit </Button>
-        <Button color="primary" type="button" onClick={goToAdmin}> Home page </Button>
         </Form>);
 }
 

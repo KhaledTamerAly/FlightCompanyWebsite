@@ -2,7 +2,6 @@ import React, { Component ,  useState, useEffect } from 'react';
 import SeatComponent from './SeatsComponent';
 import Summary from './Summary';
 import { Button,UncontrolledPopover,PopoverBody,PopoverHeader } from 'reactstrap';
-import Payment from './Payment';
 
 
 
@@ -19,7 +18,6 @@ function ReserveFlights(props)
         priceOfSeat = 20;
 
     return (
-        
         <div>
             { !isDoneConfirm && 
 
@@ -69,7 +67,8 @@ function ReserveFlights(props)
                 retFlight={props.retFlight} 
                 flightNumSeats ={props.flightNumSeats} 
                 cabinClass={props.cabinClass}  
-                userInfo ={props.userInfo} price={(priceOfSeat*props.flightNumSeats)+props.price}
+                userInfo ={props.userInfo}
+                price={(priceOfSeat*props.flightNumSeats)+props.price}
                 isLoggedIn = {props.isLoggedIn}
                 
                 backButton ={()=>{setIsDone(false)}}

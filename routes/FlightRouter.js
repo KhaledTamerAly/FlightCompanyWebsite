@@ -204,31 +204,71 @@ router.post('/matchesUserSearch',(req,res)=>{
 router.get('/matchesUserSearch', (req,res) =>{
     var result ={};
     var departFlight = {};
-    departFlight.departureTerminal = selDepT;
-    departFlight.arrivalTerminal = selArrT;
-    departFlight.cabinType = selCabClass;
-    switch(departFlight.cabinType)
-    {
-        case "Economy": 
-            departFlight.noOfEconSeatsLeft = { $gte: selNoP };
-            break;
-        case "Business": 
-            departFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
-            break;
-        case "First": 
-            departFlight.noOfFirstSeatsLeft = { $gte: selNoP };            
-            break;
+    if(selDepT !=null)
+        departFlight.departureTerminal = selDepT;
+    if(selArrT !=null)
+        departFlight.arrivalTerminal = selArrT;
+    if(selCabClass !=null){
+        departFlight.cabinType = selCabClass;
+        if(selNoP !=null)
+        {switch(selCabClass){
+            case "Economy": 
+                departFlight.noOfEconSeatsLeft = { $gte: selNoP };    
+                            break;
+            case "Business": 
+                departFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
+                            break;
+            case "First": 
+                departFlight.noOfFirstSeatsLeft = { $gte: selNoP };            
+                            break;
+        }}
     }
     if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
     {
         if(dateOperator=="lessThan")
-            departFlight.flightDate = {$lte: selectedDepDateEnd};
+            departFlight.flightDate = {$lte: selectedDepDateStart};
         else
             departFlight.flightDate = {$gte: selectedDepDateStart};
     }
     console.log(departFlight)
     Flights.find(departFlight).then(async(match) => {
-        result.departFlights = match;
+        var matchesToReturn = [];
+        //check for each match if there is a return flight for it, if yes add to matchesToBeRturned
+        for(var i =0;i<match.length;i++)
+        {
+            var flight = match[i];
+            var returnFlight = {};
+            if(selDepT !=null)
+                returnFlight.arrivalTerminal = flight.departureTerminal;
+            if(selArrT !=null)
+                returnFlight.departureTerminal = flight.arrivalTerminal;
+            if(selCabClass !=null){
+                returnFlight.cabinType = selCabClass;
+                if(selNoP !=null)
+                {switch(selCabClass){
+                    case "Economy": 
+                        returnFlight.noOfEconSeatsLeft = { $gte: selNoP };    
+                                    break;
+                    case "Business": 
+                        returnFlight.noOfBusinessSeatsLeft = { $gte: selNoP };
+                                    break;
+                    case "First": 
+                        returnFlight.noOfFirstSeatsleft = { $gte: selNoP };            
+                                    break;
+                }}
+            }
+            if(selectedDepDateStart !=null && selectedDepDateEnd !=null)
+            {
+                returnFlight.flightDate = {$gte: flight.flightDate};
+            }
+            
+            await Flights.find(returnFlight).then(match2 => {
+                var res = match2;
+                if(res.length!=0)
+                    matchesToReturn.push(flight);
+            });
+        }
+        result.departFlights = matchesToReturn;
         res.json(result);
     });
 })
@@ -316,12 +356,14 @@ router.delete('/:id', (req,res)=> {
     .catch(err => console.log(err));
 });
 router.put('/:id', async(req,res) => {
-    
-    Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
-        if (flight) {
-          return res.json({ flightNumber: "Flight Number already exists" });
+    var carryOn=true;
+    await Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
+        if (flight && req.body.didChange) {
+            carryOn=false;
+            res.json({ flightNumber: "Flight Number already exists" });
         }
     });
+    if(carryOn){
 const dateSample = new Date();
 const flightNumber = req.body.flightNumber;
 const noOfEconSeats = req.body.noOfEconSeats;
@@ -351,7 +393,8 @@ Flights.findById(req.params.id)
     flight.save();
     res.json({success: true});
 })
-.catch(err => res.status(404).json({success: false}));
+.catch;
+    }
 });
 router.post("/link",async (req,res)=> {
 Flights.findOne({ flightNumber: req.body.flightNumber }).then(flight => {
@@ -397,7 +440,6 @@ const flight= new Flights({
     noOfBusinessSeatsLeft:noOfBusinessSeats,
     seats:seatMap});
 try{
-    console.log(flight);
     await flight.save();
     res.send("ok");
 }catch(err){
@@ -405,7 +447,6 @@ try{
 }
 });
 router.get('/getFlight/:bookingNumber', async(req,res)=>{
-    console.log(req.params.bookingNumber);
     Reservations.findOne({bookingNumber:req.params.bookingNumber}).then((reservation)=>{
         res.json(reservation.flightNumber);
    });
