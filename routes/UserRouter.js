@@ -458,12 +458,10 @@ router.post('/changeReservation', async(req,res)=>{
 });
 router.get('/flightInfo/:bookingNumber', (req,res)=>{
     Reservations.findOne({bookingNumber: req.params.bookingNumber}).then(reservation=>{
-      //  res.json(reservation)
         Flights.findOne({flightNumber: reservation.flightNumber}).then(flight =>{
-          //  res.json(flight)
           Reservations.findOne({bookingNumber:reservation.linkedBookingNumber}).then(linkedReservation=>{
               Flights.findOne({flightNumber:linkedReservation.flightNumber}).then(linkedFlight=>{
-                var flightInfoObject = {bnReservation: reservation, fnFlight: flight, linkedFlight:linkedFlight};
+                var flightInfoObject = {bnReservation: reservation, fnFlight: flight, linkedFlight:linkedFlight, linkedBooking:linkedReservation};
                 res.json(flightInfoObject)
               })
           })

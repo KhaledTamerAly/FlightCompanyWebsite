@@ -304,11 +304,10 @@ const EnhancedTableToolbar = (props) => {
       >
         <DialogTitle>{"Confirm change flight"}</DialogTitle>
         <DialogContent>
-          {flightChangeOpen && <PostBookSearch bookingNumber={selected}/>}
+          {flightChangeOpen && <PostBookSearch bookingNumber={selected} user={user}/>}
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>setFlightChange(false)}>Disagree</Button>
-          {flightChangeOpen && <Button onClick={()=>setFlightChange(true)}>Agree</Button>}
+          <Button onClick={()=>{setFlightChange(false);window.location.reload()}}>Exit</Button>
         </DialogActions>
       </Dialog>
       

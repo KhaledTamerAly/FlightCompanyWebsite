@@ -57,34 +57,34 @@ function ChangeFlights(props)
             console.log(chosenSeatsS);
         }
     }
-    async function handleClick()
+    function handleClick()
+    {
+        if(isChoosingFirstFlightSeats)
         {
-            if(isChoosingFirstFlightSeats)
+            if(chosenSeatsF.length==props.flightNumSeats)
             {
-                if(chosenSeatsF.length==props.flightNumSeats)
+                setIsChoosingFFSeats(false);
+                if(!isChangingMoreThanOneFlight)
                 {
-                        setIsChoosingFFSeats(false);
-                        if(!isChangingMoreThanOneFlight)
-                        {
-                            setIsDone(true);
-                        }
+                    setIsDone(true);
                 }
-                else
-                    {
-                        setIsSelectedSeats(false);
-                    }
             }
             else
-                {
-                    //reserve axios
-                    if(chosenSeatsS.length!=props.flightNumSeats)
-                        setIsSelectedSeats(false);
-                    else
-                    {
-                        setIsDone(true);
-                        setIsSelectedSeats(false);      
-                    }
-                }
+            {
+                setIsSelectedSeats(false);
+            }
+        }
+        else
+        {
+            //reserve axios
+            if(chosenSeatsS.length!=props.flightNumSeats)
+                setIsSelectedSeats(false);
+            else
+            {
+                setIsDone(true);
+                setIsSelectedSeats(true);      
+            }
+        }
     }
     async function reserveFlights()
     {
@@ -101,8 +101,8 @@ function ChangeFlights(props)
                 cabin:props.cabinClass,
                 flightType: props.flightsToChange[0].type
             }
-                const api = {};
-                axios.post('/users/changeReservation', bodyF, {headers: api}).then((res)=> {console.log(isChangingMoreThanOneFlight);});
+            const api = {};
+            axios.post('/users/changeReservation', bodyF, {headers: api}).then((res)=> {console.log(isChangingMoreThanOneFlight);});
                 
             if(isChangingMoreThanOneFlight)
             {
@@ -119,16 +119,49 @@ function ChangeFlights(props)
                     cabin:props.cabinClass,
                     flightType: props.flightsToChange[1].type
                 }
-                    const api = {};
-                    axios.post('/users/changeReservation', bodyS, {headers: api}).then((res)=> {});
+                const api = {};
+                axios.post('/users/changeReservation', bodyS, {headers: api}).then((res)=> {});
                 }
                 setDidPay(true);
+    }
+
+    var summaryD, summaryR,summaryChosenD,summaryChosenR, summaryBookingD,summaryBookingR;
+    if(isChangingMoreThanOneFlight)
+    {
+        summaryD = props.flightsToChange[0].flightNumber;
+        summaryR = props.flightsToChange[1].flightNumber;
+        summaryChosenD = chosenSeatsF;
+        summaryChosenR = chosenSeatsS;
+        summaryBookingD = props.flightsToChange[0].bookingNumber;
+        summaryBookingR = props.flightsToChange[1].bookingNumber;
+    }
+    else
+    {
+        if(props.flightsToChange[0].type=="Departure")
+        {
+            summaryD = props.flightsToChange[0].flightNumber;
+            summaryR = props.flightsToChange[0].linkedFlight.flightNumber;
+            summaryChosenD = chosenSeatsF;
+            summaryChosenR = props.flightsToChange[0].linkedBooking.chosenSeats;
+            summaryBookingD = props.flightsToChange[0].bookingNumber;
+            summaryBookingR = props.flightsToChange[0].linkedBooking.bookingNumber;
+        }
+        else
+        {
+            summaryR = props.flightsToChange[0].flightNumber;
+            summaryD = props.flightsToChange[0].linkedFlight.flightNumber;
+            summaryChosenR = chosenSeatsF;
+            summaryChosenD = props.flightsToChange[0].linkedBooking.chosenSeats;
+            summaryBookingD = props.flightsToChange[0].linkedBooking.bookingNumber;
+            summaryBookingR = props.flightsToChange[0].bookingNumber;
+        }
     }
     return (
         <div className="App">
             {!isDoneChoosing && isChoosingFirstFlightSeats && 
                 <>
                 {!isSelectedAllSeats && <h5>Please Select more seats</h5>}
+                {console.log(props.cabinClass)}
                 <SeatMap oldSeats = {[]} cabinType = {props.cabinClass} flightNumber={props.flightsToChange[0].flightNumber} numberOfSeats ={props.flightNumSeats}  type={props.flightsToChange[0].type} func={chooseSeatsF}/>
                 </>
             } 
@@ -139,8 +172,23 @@ function ChangeFlights(props)
                 </>
             }
             
-            {isDoneChoosing &&!isChoosingFirstFlightSeats && didPay && <Summary depFlight= {props.flightsToChange[0].flightNumber} retFlight={props.flightsToChange[1]?.flightNumber??null} cabinClass={props.cabinClass} chosenSeatsD ={chosenSeatsF} chosenSeatsR={chosenSeatsS} bookingNumberD={bookingNumberF} bookingNumberR={bookingNumberS} price={props.price}/>}
-            {isDoneChoosing && !isChoosingFirstFlightSeats && !didPay && <StripeComponent price = {props.price} reserve= {reserveFlights}/>}
+            {isDoneChoosing &&!isChoosingFirstFlightSeats && didPay && <Summary depFlight= {summaryD} retFlight={summaryR} cabinClass={props.cabinClass} chosenSeatsD ={summaryChosenD} chosenSeatsR={summaryChosenR} bookingNumberD={summaryBookingD} bookingNumberR={summaryBookingR} price={props.price}/>}
+            {isDoneChoosing && !isChoosingFirstFlightSeats && !didPay && 
+            <div>
+            <StripeComponent price = {props.price+20} reserve= {reserveFlights}/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            }
             {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
             {!isDoneChoosing && isChoosingFirstFlightSeats && <Button color="primary" onClick={props.backButton}> Go Back to see summary </Button>}
             {!isDoneChoosing && !isChoosingFirstFlightSeats && <Button color="primary" onClick={()=>{setIsChoosingFFSeats(true);setChosenSeatsF([])}}> Go Back to choose first flight seats again</Button>}

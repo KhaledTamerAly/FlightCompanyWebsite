@@ -1,20 +1,16 @@
 import '../App.css';
 import React, { Component ,  useState, useEffect } from 'react';
 import Select from 'react-select';
-import Popup from 'reactjs-popup';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import CardPanel from "./CardPanel";
-import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
-import SeatComponent from './SeatsComponent';
-import Summary from './Summary';
-import ReserveFlights from './ReserveFlights';
+import {Button} from 'reactstrap';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import ChangeFlights from '../components/ChangeFlight';
 
 
 class PostBookSearch extends Component {
@@ -37,7 +33,9 @@ class PostBookSearch extends Component {
     linkedFlight: null,
     target:null,
     selectedArrivalFinal: null,
-    isChangingDepartFlight: true
+    isChangingDepartFlight: true,
+    user:null,
+    linkedBooking:null
     
   };
 
@@ -47,6 +45,7 @@ constructor(props)
     this.state = 
     {
       bookingNumber:props.bookingNumber,
+      user:props.user
     }
 }
 async updateStates() 
@@ -84,6 +83,7 @@ async updateStates()
       this.setState({selectedNumOfPass: combo.data.bnReservation.chosenSeats.length});
       this.setState({currentFlightType: combo.data.bnReservation.flightType});
       this.setState({linkedFlight: combo.data.linkedFlight});
+      this.setState({linkedBooking:combo.data.linkedBooking});
     });
 }
 async componentDidMount()
@@ -166,13 +166,65 @@ getCabin(option)
 return cabOpArr;
 
 }
-render() 
+render()
 {
   const flightPrice = 50;
   
-  console.log("Depart Flight: "+this.state.selectedDepartureFinal);
-  console.log("Return Flight: "+this.state.selectedArrivalFinal);
-  
+  var flightsToChange = [];
+  if(this.state.isStopRenderSearch)
+  {
+    if(this.state.selectedDepartureFinal && !this.state.selectedArrivalFinal)
+    {
+      flightsToChange = [{
+        flightNumber:this.state.selectedDepartureFinal,
+        bookingNumber: this.state.bookingNumber,
+        type:"Departure",
+        linkedFlight:this.state.linkedFlight,
+        linkedBooking:this.state.linkedBooking
+      }]
+    }
+    else if(!this.state.selectedDepartureFinal && this.state.selectedArrivalFinal)
+    {
+      flightsToChange = [{
+        flightNumber:this.state.selectedArrivalFinal,
+        bookingNumber: this.state.bookingNumber,
+        type:"Return",
+        linkedFlight:this.state.linkedFlight,
+        linkedBooking:this.state.linkedBooking
+      }]
+    }
+    else if(this.state.selectedDepartureFinal && this.state.selectedArrivalFinal)
+    {
+      //selected a depart flight to edit first
+      if(this.state.currentFlightType=="Departure")
+      {
+        flightsToChange = [{
+          flightNumber:this.state.selectedDepartureFinal,
+          bookingNumber: this.state.bookingNumber,
+          type:"Departure"
+        },
+        {
+          flightNumber:this.state.selectedArrivalFinal,
+          bookingNumber:this.state.linkedBooking.bookingNumber,
+          type:"Return"
+        }]
+      }
+      //selected a return flight to edit first
+      else if(this.state.currentFlightType=="Return")
+      {
+        flightsToChange = [{
+          flightNumber:this.state.selectedDepartureFinal,
+          bookingNumber: this.state.linkedBooking.bookingNumber,
+          type:"Departure"
+        },
+        {
+          flightNumber:this.state.selectedArrivalFinal,
+          bookingNumber:this.state.bookingNumber,
+          type:"Return"
+        }]
+      }
+    }
+  }
   return (
   <div className="App">
     
@@ -257,6 +309,7 @@ render()
                   //all good
                   //go to component khaled
                   this.setState({isStopRenderSearch:true});
+                  this.setState({isDoneSelectingFlights:true});
                 }
                 else
                 {
@@ -336,6 +389,7 @@ render()
                         //all good
                         //go to component khaled
                         this.setState({isStopRenderSearch:true});
+                        this.setState({isDoneSelectingFlights:true});
                       }
                       else
                       {
@@ -370,14 +424,19 @@ render()
            </div>
            }
            
-           {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights &&  
+           {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights && (flightsToChange.length!=0)&&  
               <>
-              khaled
+              {console.log(flightsToChange)}
+              <ChangeFlights flightsToChange= {flightsToChange} 
+              flightNumSeats = {this.state.selectedNumOfPass} 
+              cabinClass = {this.state.selectedCabinClass.label} 
+              userInfo={this.state.user} 
+              price={flightPrice} />
               </>
             }  
-    </div>
-    );
-  }
+  </div>
+  );
+}
 }
 
 export default PostBookSearch;
