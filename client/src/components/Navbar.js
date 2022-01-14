@@ -8,6 +8,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import {useNavigate} from 'react-router-dom';
+import AirplaneTicketIcon from '@mui/icons-material/AirplaneTicket';
+import { fontSize } from '@mui/system';
 
 export default function Navbar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -72,11 +74,13 @@ export default function Navbar(props) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-        <Button onClick={mainButton} variant="text" style={{fontSize: "30px", textAlign: "right"}} color="inherit" sx={{ flexGrow: 1 }}>
+        <IconButton onClick={mainButton} size='large' sx={{color:"whitesmoke",fontSize:"40px",fontFamily:"fantasy"}}>
+            <AirplaneTicketIcon fontSize="inherit" />
+            &nbsp;
             {'Osama Airlines'}
-          </Button>
+        </IconButton>
           {props.loggedIn && props.signUp==null &&(
-            <div>
+            <div style={{margin:"0px 0px 0px 1100px"}}>
               <IconButton
                 size="large"
                 aria-label="account of current user"
@@ -92,7 +96,7 @@ export default function Navbar(props) {
                 anchorEl={anchorEl}
                 anchorOrigin={{
                   vertical: 'top',
-                  horizontal: 'right',
+                  horizontal: 'bottom',
                 }}
                 keepMounted
                 transformOrigin={{
@@ -109,7 +113,7 @@ export default function Navbar(props) {
             </div>
           )}
           {!props.loggedIn && props.signUp==null &&(
-            <div>
+            <div style={{margin:"0px 0px 0px 951px"}}>
               <Button onClick= {signUp} sx={{ m: 1 }} variant="contained" color='warning'>Sign up</Button>
               <Button onClick= {login} sx={{ m: 1 }} variant="contained" color='warning'>Login</Button>
             </div>

@@ -200,13 +200,13 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
   const [flights, setFlights] = React.useState([]);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
+  const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
@@ -248,7 +248,7 @@ export default function EnhancedTable() {
     useEffect(()=>{axios.get('/flights').then(res =>{setFlights(res.data)})}, []);
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Paper sx={{ width: '100%', mb: 2 ,backgroundColor:'rgba(255, 255, 255, 0.5)'}}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
@@ -272,7 +272,7 @@ export default function EnhancedTable() {
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.flightNumber);
                   const labelId = `enhanced-table-checkbox-${index}`;
-
+                  var color = "Black";
                   return (
                     <TableRow
                       hover
@@ -281,6 +281,8 @@ export default function EnhancedTable() {
                       tabIndex={-1}
                       key={row.flightNumber}
                       selected={isItemSelected}
+                      
+                      
                     >
                       
                       <TableCell
@@ -288,17 +290,18 @@ export default function EnhancedTable() {
                         id={labelId}
                         scope="row"
                         padding="none"
+                        sx={{color:color}}
                       >
                         {row.flightNumber}
                       </TableCell>
-                      <TableCell align="right">{row.flightDate}</TableCell>
-                      <TableCell align="right">{row.departureTime}</TableCell>
-                      <TableCell align="right">{row.arrivalTime}</TableCell>
-                      <TableCell align="right">{row.departureTerminal}</TableCell>
-                      <TableCell align="right">{row.arrivalTerminal}</TableCell>
-                      <TableCell align="right">{row.noOfEconSeats}</TableCell>
-                      <TableCell align="right">{row.noOfBusinessSeats}</TableCell>
-                      <TableCell align="right">{row.noOfFirstSeats}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.flightDate}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.departureTime}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.arrivalTime}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.departureTerminal}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.arrivalTerminal}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.noOfEconSeats}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.noOfBusinessSeats}</TableCell>
+                      <TableCell sx={{color:color}} align="right">{row.noOfFirstSeats}</TableCell>
                     </TableRow>
                   );
                 })}

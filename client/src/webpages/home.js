@@ -9,6 +9,8 @@ import { Button} from 'reactstrap';
 import GeneralSearch from '../components/GeneralSearch.js';
 import EnhancedTable from '../components/ScheduleViewer';
 import Navbar from '../components/Navbar';
+import styles from '../css/home.module.css';
+
 
 function Home()
 {
@@ -38,18 +40,11 @@ function Home()
     }
     return (
       <>
-        <div>
+        <div className={styles.backgroundIMG}>
           <Navbar loggedIn={loggedIn}/>
-        </div>
-        <div>
             <h1>Welcome to Osama Airlines</h1>
-            <p></p>
-        </div>
-        <div>
-          <EnhancedTable />
-        </div>
-        <div>
           <GeneralSearch login={Login} isLoggedIn={location?.state?.loggedIn??loggedIn}/>
+          <EnhancedTable />
           </div>
         </>
     );

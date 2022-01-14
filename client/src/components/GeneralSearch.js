@@ -6,10 +6,12 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import CardPanel from "./CardPanel";
-import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
+import {Form,FormGroup,Label,Input} from 'reactstrap';
 import SeatComponent from './SeatsComponent';
 import Summary from './Summary';
 import ReserveFlights from './ReserveFlights';
+import styles from "../css/home.module.css";
+import Button from '@mui/material/Button';
 
 
 class GeneralSearch extends Component {
@@ -212,6 +214,7 @@ return cabOpArr;
       <div className="App">
         {!this.state.isStopRenderSearch && <div>
       {this.state.isAllFieldsSelected && <h5 style={{ color: 'red' }}>Please Select All Fields</h5>}  
+      <div className={styles.generalSearch_DD}>
       Departure Terminal<br/>
       <Select 
         value = {this.state.selectedDepartureTerminal}
@@ -226,7 +229,7 @@ return cabOpArr;
       />
       
        Cabin Class<br/>
-                  <Select 
+                  <Select
                     value = {this.state.selectedCabinClass}
                     options = {[
                       { value: 'Economy', label: 'Economy (10 Euros per seat)' },
@@ -235,36 +238,41 @@ return cabOpArr;
                     ]}
                     onChange = {(obj) => this.setState({selectedCabinClass: obj})}
                   />
+        </div>
         <br/>
+        <div className={styles.generalSearch_PD}>
         Number of Passengers (Adults): {this.state.selectedNumOfPass}
         <br/>
-        <button sign="-" selectedNumOfPass={this.state.selectedNumOfPass} onClick={this.handleNCount.bind(this)}> - </button>
-
-        <button sign="+" selectedNumOfPass={this.state.selectedNumOfPass} onClick={this.handlePCount.bind(this)}> + </button>
+        <Button  size="small" variant="contained" sign="-" selectedNumOfPass={this.state.selectedNumOfPass} onClick={this.handleNCount.bind(this)}> - </Button >
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <Button  size="small" variant="contained" sign="+" selectedNumOfPass={this.state.selectedNumOfPass} onClick={this.handlePCount.bind(this)}> + </Button >
         <br/>
         Number of Passengers (Children): {this.state.selectedNumOfPassC}
         <br/>
-        <button sign="-" selectedNumOfPassC={this.state.selectedNumOfPassC} onClick={this.handleNCountC.bind(this)}> - </button>
-
-        <button sign="+" selectedNumOfPassC={this.state.selectedNumOfPassC} onClick={this.handlePCountC.bind(this)}> + </button>
+        <Button  size="small" variant="contained" sign="-" selectedNumOfPassC={this.state.selectedNumOfPassC} onClick={this.handleNCountC.bind(this)}> - </Button >
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <Button  size="small" variant="contained" sign="+" selectedNumOfPassC={this.state.selectedNumOfPassC} onClick={this.handlePCountC.bind(this)}> + </Button >
         <br/>
 
       Departure Date <br/>
-      <DatePicker
+      <DatePicker 
                   selected={this.state.selectedDepDate}
                   onChange={(date) => this.setState({selectedDepDate: date})}
                   isClearable
                   placeholderText="Choose Departure Date"
                   dateFormat = 'yyyy/MM/dd'
+                  popperPlacement="bottom-end"
                 />
-        
-      <b>Selected Departure Flight is {this.state.selectedDepartureFinal ?? "NOT SELECTED"}</b> 
+      </div>
+      <div className={styles.generalSearch_B}>
+      {this.state.selectedDepartureFinal && <b>Selected Departure Flight is {this.state.selectedDepartureFinal ?? "NOT SELECTED"}</b>}
       <br/>
-      <b>Selected Arrival Flight is {this.state.selectedArrivalFinal ?? "NOT SELECTED"}</b>
+      {this.state.selectedDepartureFinal && <b>Selected Arrival Flight is {this.state.selectedArrivalFinal ?? "NOT SELECTED"}</b>}
       <br />
-      <button onClick={()=>window.location.reload()}>Clear</button>  
+      <Button  variant="contained" onClick={()=>window.location.reload()}>Clear</Button >  
         &nbsp;&nbsp;&nbsp;&nbsp;
-      <button onClick={this.userInput.bind(this)}>Search</button>
+      <Button  variant="contained" onClick={this.userInput.bind(this)}>Search</Button >
+      </div>
           <br/>
           Flights:
          
@@ -276,9 +284,9 @@ return cabOpArr;
                    {
               (this.state.flightToBeListed ?? []).map((option,i) =>
               <li>
-               <Popup trigger = { <button  title={option.flightNumber} 
+               <Popup trigger = { <Button   variant="contained" title={option.flightNumber} 
                 subtitle="" content={"From:  "+ option.departureTerminal+ " " + " " +"On: "+ option.flightDate}>
-                {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </button> }
+                {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </Button > }
                 position="right center">
                   <div>{ "Flight Number: " + option.flightNumber} <br/> {" Departure Time: " + option.departureTime} <br/> { "Arrival Time: " +option.arrivalTime+
                          " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
@@ -287,7 +295,7 @@ return cabOpArr;
                 </br>
                 <Button
                     id={"confirmDep"+i}
-                    type="button"
+                    variant="contained"
                     value = {option.flightNumber}
                     size="sm"
 
@@ -335,9 +343,9 @@ return cabOpArr;
               (this.state.returnFlightToBeListed ?? []).map((option,i) =>
               {
               return (<li>
-              <Popup trigger = { <button  title={option.flightNumber} 
+              <Popup trigger = { <Button   variant="contained" title={option.flightNumber} 
                 subtitle="" content={"To:  "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate}>
-                {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </button> }
+                {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </Button > }
                 position="right center">
                   <div>{ "Flight Number: " + option.flightNumber} <br/> {" Departure Time: " + option.departureTime} <br/> { "Arrival Time: " +option.arrivalTime+
                          " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50Kg"} <br/> {" Price: " + this.state.ticketPrice} 
@@ -345,7 +353,7 @@ return cabOpArr;
                 </br>
                 <Button
                     id={"confirmArr"+i}
-                    type="button"
+                    variant="contained"
                     value = {option.flightNumber}
                     size="sm"
 

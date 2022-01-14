@@ -1,0 +1,21 @@
+.backgroundIMG {
+    background-image: url(/public/plane.jpg);
+}
+.generalSearch_DD {
+    margin: 25px 1200px 10px 10px;
+}
+.generalSearch_PD {
+    margin: -200px 750px 10px 307px;
+}
+.generalSearch_B {
+    margin: 0px 750px 10px -50px;
+}
+.datePicker {
+    color: rgb(7, 20, 39);
+}
+h1 {
+    margin: 10px 0px 0px 0px;
+    color: rgb(40, 64, 136);
+    font-style: oblique;
+    font-family: sans-serif;
+}
