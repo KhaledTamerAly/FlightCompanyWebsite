@@ -44,7 +44,9 @@ function Home()
           <Navbar loggedIn={loggedIn}/>
             <h1>Welcome to Osama Airlines</h1>
           <GeneralSearch login={Login} isLoggedIn={location?.state?.loggedIn??loggedIn}/>
+          <div className={styles.flightTable}>
           <EnhancedTable />
+          </div>
           </div>
         </>
     );

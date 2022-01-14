@@ -10,8 +10,11 @@
 .generalSearch_B {
     margin: 0px 750px 10px -50px;
 }
-.datePicker {
-    color: rgb(7, 20, 39);
+.searchResults {
+    margin: -355px 0px 0px 950px;
+}
+.flightTable {
+    margin: 70px 0px 0px 0px;
 }
 h1 {
     margin: 10px 0px 0px 0px;

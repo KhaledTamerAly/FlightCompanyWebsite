@@ -21,7 +21,8 @@ import Switch from '@mui/material/Switch';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import styles from '../css/home.module.css';
 
 
 
@@ -247,6 +248,7 @@ export default function EnhancedTable(props) {
 
     useEffect(()=>{axios.get('/flights').then(res =>{setFlights(res.data)})}, []);
   return (
+    <div className= {styles.flightTable}>
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 ,backgroundColor:'rgba(255, 255, 255, 0.5)'}}>
         <EnhancedTableToolbar numSelected={selected.length} />
@@ -332,6 +334,7 @@ export default function EnhancedTable(props) {
         label="Dense padding"
       />
     </Box>
+    </div>
   );
 }
 

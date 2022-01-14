@@ -12,6 +12,8 @@ import Summary from './Summary';
 import ReserveFlights from './ReserveFlights';
 import styles from "../css/home.module.css";
 import Button from '@mui/material/Button';
+import { FixedSizeList } from 'react-window';
+import Box from '@mui/material/Box';
 
 
 class GeneralSearch extends Component {
@@ -209,7 +211,7 @@ return cabOpArr;
   }
   render() 
   {
-    
+    var flightsList = [];
     return (
       <div className="App">
         {!this.state.isStopRenderSearch && <div>
@@ -273,17 +275,19 @@ return cabOpArr;
         &nbsp;&nbsp;&nbsp;&nbsp;
       <Button  variant="contained" onClick={this.userInput.bind(this)}>Search</Button >
       </div>
-          <br/>
-          Flights:
-         
-            {(!this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
+            {this.state.flightToBeListed && (!this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
+            <div className={styles.searchResults}>
               <div>
+                Flights:
+                <br/>
                 Now Selecting Departure Flight
                 {this.state.flightToBeListed && <div>Found: {this.state.flightToBeListed.length} flights</div>}
-                 <ul>
-                   {
-              (this.state.flightToBeListed ?? []).map((option,i) =>
-              <li>
+                </div>
+              {
+              (this.state.flights ?? []).map((option,i) =>
+              {
+                
+               flightsList.push((<li>
                <Popup trigger = { <Button   variant="contained" title={option.flightNumber} 
                 subtitle="" content={"From:  "+ option.departureTerminal+ " " + " " +"On: "+ option.flightDate}>
                 {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </Button > }
@@ -330,13 +334,28 @@ return cabOpArr;
 
                 </Popup>
                 <br/>
-                </li>)
+                </li>))
                 }
-                </ul>             
-                </div>
+              )
+              }
+              <Box sx={{ width: '100%', height: 400, maxWidth: 460, bgcolor: 'rgba(47, 79, 79, 0.7);',margin:"0px 0px 20px 50px" }}
+              >
+                <FixedSizeList
+                height={400}
+                width={460}
+                itemSize={46}
+                itemCount={flightsList.length}
+                overscanCount={5}
+                >
+                {()=>{return flightsList}}
+                </FixedSizeList>
+              </Box>
+              </div>
             }
-            {(this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
-              <div>
+            {/** ///////////////////////////////////////////////////////////////////////////*/}
+            {
+            (this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
+            <div>
                 Now Selecting Return Flight
                  <ul>
                    {
@@ -368,11 +387,10 @@ return cabOpArr;
                 )
                  }
                  </ul> 
-                </div>
+            </div>
             }
         </div>}
             {this.state.isStopRenderSearch &&this.state.isDoneSelectingFlights && 
-            
               <>
                 <ReserveFlights login = {this.state.login} 
                 price = {this.state.ticketPrice} 
@@ -392,7 +410,7 @@ return cabOpArr;
                 window.location.reload();
                 }}
                 />
-                </>
+              </>
             }  
     </div>
     );
