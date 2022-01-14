@@ -43,7 +43,9 @@ class GeneralSearch extends Component {
     isDoneSelectingFlights:false,
     isStopRenderSearch: false,
     userInfo:null,
-    ticketPrice:null
+    ticketPrice:null,
+    gotDPComp:false,
+    list:[]
   };
   constructor(props) {
     super(props);
@@ -121,6 +123,7 @@ class GeneralSearch extends Component {
   }
   async componentDidMount()
   {
+    this.setState({list:[]})
   this.setState({ticketPrice:this.getRndInteger(60,99)});
   this.updateStates();
   }
@@ -283,11 +286,11 @@ return cabOpArr;
                 Now Selecting Departure Flight
                 {this.state.flightToBeListed && <div>Found: {this.state.flightToBeListed.length} flights</div>}
                 </div>
-              {
+              {!this.state.gotDPComp &&
               (this.state.flights ?? []).map((option,i) =>
               {
                 
-               flightsList.push((<li>
+               flightsList.push((<div style={{margin:"10px 0px 0px 10px"}}>
                <Popup trigger = { <Button   variant="contained" title={option.flightNumber} 
                 subtitle="" content={"From:  "+ option.departureTerminal+ " " + " " +"On: "+ option.flightDate}>
                 {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </Button > }
@@ -334,20 +337,34 @@ return cabOpArr;
 
                 </Popup>
                 <br/>
-                </li>))
+                </div>))
                 }
               )
               }
+              {!this.state.gotDPComp && this.setState({list:flightsList})}
+              {!this.state.gotDPComp && this.setState({gotDPComp:true})}
               <Box sx={{ width: '100%', height: 400, maxWidth: 460, bgcolor: 'rgba(47, 79, 79, 0.7);',margin:"0px 0px 20px 50px" }}
               >
                 <FixedSizeList
                 height={400}
                 width={460}
                 itemSize={46}
-                itemCount={flightsList.length}
+                itemCount={this.state.list.length}
                 overscanCount={5}
                 >
-                {()=>{return flightsList}}
+                {({ index, key, style })=>{
+                  
+                  return (
+                    <div key={key} style={{height: 46,
+                      left: 0,
+                      position: "absolute",
+                      right: 0,
+                      top: "10px",
+                      width: "100%"}}>
+                    {this.state.list}
+                    </div>
+                    );
+                }}
                 </FixedSizeList>
               </Box>
               </div>
