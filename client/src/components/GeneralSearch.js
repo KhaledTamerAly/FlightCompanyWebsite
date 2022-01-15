@@ -45,7 +45,8 @@ class GeneralSearch extends Component {
     userInfo:null,
     ticketPrice:null,
     gotDPComp:false,
-    list:[]
+    list:[],
+    list_2:[]
   };
   constructor(props) {
     super(props);
@@ -123,7 +124,8 @@ class GeneralSearch extends Component {
   }
   async componentDidMount()
   {
-    this.setState({list:[]})
+    this.setState({list:[]});
+    this.setState({list_2:[]});
   this.setState({ticketPrice:this.getRndInteger(60,99)});
   this.updateStates();
   }
@@ -287,7 +289,7 @@ return cabOpArr;
                 {this.state.flightToBeListed && <div>Found: {this.state.flightToBeListed.length} flights</div>}
                 </div>
               {!this.state.gotDPComp &&
-              (this.state.flights ?? []).map((option,i) =>
+              (this.state.flightToBeListed ?? []).map((option,i) =>
               {
                 
                flightsList.push((<div style={{margin:"10px 0px 0px 10px"}}>
@@ -385,43 +387,93 @@ return cabOpArr;
                 }}
                 </FixedSizeList>
               </Box>
-              </div>
+            </div>
             }
-            {/** ///////////////////////////////////////////////////////////////////////////*/}
-            {
-            (this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
-            <div>
+            {flightsList=[]}
+            {(this.state.returnFlightToBeListed && (this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights)) &&
+            <div className={styles.searchResults}>
+              <div>
+                Flights:
+                <br/>
                 Now Selecting Return Flight
-                 <ul>
-                   {
+                {this.state.returnFlightToBeListed && <div>Found: {this.state.returnFlightToBeListed.length} flights</div>}
+                 </div>
+                   {!this.state.gotRPComp &&
               (this.state.returnFlightToBeListed ?? []).map((option,i) =>
               {
-              return (<li>
-              <Popup trigger = { <Button   variant="contained" title={option.flightNumber} 
-                subtitle="" content={"To:  "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate}>
-                {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </Button > }
-                position="right center">
-                  <div>{ "Flight Number: " + option.flightNumber} <br/> {" Departure Time: " + option.departureTime} <br/> { "Arrival Time: " +option.arrivalTime+
-                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50Kg"} <br/> {" Price: " + this.state.ticketPrice} 
+                flightsList.push((<div style={{margin:"10px 0px 0px 10px"}}>
+               <Popup contentStyle={{margin:"10px 10px 10px 10px", backgroundColor: "rgb(48, 70, 192)", textAlign:"center",  color:"white"}}
+               
+               trigger = { <Button variant="contained" title={option.flightNumber} 
+                          subtitle="" 
+                          content={"From:  "+ option.departureTerminal+ " " + "\n" +"On: "+ option.flightDate}>
+                          {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ "\n" +"On: "+ (option.flightDate+"").split('T')[0] } 
+                          <br/></Button >
+                          }
+                position="left center">
+                <div style={{margin:"10px 10px 10px 10px"}}>
+                  { "Flight Number: " + option.flightNumber} 
+                  <br/> 
+                  {" Departure Time: " + (option.departureTime+"").split('T')[1]}
+                  <br/>
+                  { "Arrival Time: " +(option.arrivalTime+"").split('T')[1]}
+                  <br/>
+                  {" Trip Duration: 2 Hours"}
+                  <br/> 
+                  {" Cabin Type: " + this.getCabin(option)}
+                  <br/>
+                  {" Baggage: 50kg"}
+                  <br/> 
+                  {" Price: " + this.state.ticketPrice} 
                 <br>
                 </br>
                 <Button
-                    id={"confirmArr"+i}
+                    color='warning'
+                    sx={{margin:"10px 0px 10px 0px"}}
+                    id={"confirmDep"+i}
                     variant="contained"
                     value = {option.flightNumber}
                     size="sm"
 
                     onClick = {(event) => {this.setState({selectedArrivalFinal: option.flightNumber }); this.setState({isDoneSelectingFlights:true}); this.setState({isStopRenderSearch:true})}}
+                
                 >
                 <b>Select Return Flight</b> 
                 </Button>
                   </div>
 
                 </Popup>
-                </li>);}
-                )
-                 }
-                 </ul> 
+                <br/>
+                </div>))
+                }
+              )
+              }
+              {!this.state.gotRPComp && this.setState({list_2:flightsList})}
+              {!this.state.gotRPComp && this.setState({gotRPComp:true})}
+              <Box sx={{ width: '100%', height: 400, maxWidth: 460, bgcolor: 'rgba(47, 79, 79, 0.0)',margin:"0px 0px 20px 50px" }}
+              >
+                <FixedSizeList
+                height={400}
+                width={460}
+                itemSize={46}
+                itemCount={this.state.list_2.length}
+                overscanCount={5}
+                >
+                {({ index, key, style })=>{
+                  
+                  return (
+                    <div key={key} style={{height: 46,
+                      left: 0,
+                      position: "absolute",
+                      right: 0,
+                      top: "10px",
+                      width: "100%"}}>
+                    {this.state.list_2}
+                    </div>
+                    );
+                }}
+                </FixedSizeList>
+              </Box>
             </div>
             }
         </div>}
