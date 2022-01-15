@@ -276,7 +276,7 @@ return cabOpArr;
       <br />
       <Button  variant="contained" onClick={()=>window.location.reload()}>Clear</Button >  
         &nbsp;&nbsp;&nbsp;&nbsp;
-      <Button  variant="contained" onClick={this.userInput.bind(this)}>Search</Button >
+      <Button  color='warning' variant="contained" onClick={this.userInput.bind(this)}>Search</Button >
       </div>
             {this.state.flightToBeListed && (!this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
             <div className={styles.searchResults}>
@@ -291,16 +291,34 @@ return cabOpArr;
               {
                 
                flightsList.push((<div style={{margin:"10px 0px 0px 10px"}}>
-               <Popup trigger = { <Button   variant="contained" title={option.flightNumber} 
-                subtitle="" content={"From:  "+ option.departureTerminal+ " " + " " +"On: "+ option.flightDate}>
-                {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ " " + " " +"On: "+ option.flightDate } <br/> Press for more details </Button > }
-                position="right center">
-                  <div>{ "Flight Number: " + option.flightNumber} <br/> {" Departure Time: " + option.departureTime} <br/> { "Arrival Time: " +option.arrivalTime+
-                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(option) + " Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
-
+               <Popup contentStyle={{margin:"10px 10px 10px 10px", backgroundColor: "rgb(48, 70, 192)", textAlign:"center",  color:"white"}}
+               
+               trigger = { <Button variant="contained" title={option.flightNumber} 
+                          subtitle="" 
+                          content={"From:  "+ option.departureTerminal+ " " + "\n" +"On: "+ option.flightDate}>
+                          {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ "\n" +"On: "+ (option.flightDate+"").split('T')[0] } 
+                          <br/></Button >
+                          }
+                position="left center">
+                <div style={{margin:"10px 10px 10px 10px"}}>
+                  { "Flight Number: " + option.flightNumber} 
+                  <br/> 
+                  {" Departure Time: " + (option.departureTime+"").split('T')[1]}
+                  <br/>
+                  { "Arrival Time: " +(option.arrivalTime+"").split('T')[1]}
+                  <br/>
+                  {" Trip Duration: 2 Hours"}
+                  <br/> 
+                  {" Cabin Type: " + this.getCabin(option)}
+                  <br/>
+                  {" Baggage: 50kg"}
+                  <br/> 
+                  {" Price: " + this.state.ticketPrice} 
                 <br>
                 </br>
                 <Button
+                    color='warning'
+                    sx={{margin:"10px 0px 10px 0px"}}
                     id={"confirmDep"+i}
                     variant="contained"
                     value = {option.flightNumber}
@@ -343,7 +361,7 @@ return cabOpArr;
               }
               {!this.state.gotDPComp && this.setState({list:flightsList})}
               {!this.state.gotDPComp && this.setState({gotDPComp:true})}
-              <Box sx={{ width: '100%', height: 400, maxWidth: 460, bgcolor: 'rgba(47, 79, 79, 0.7);',margin:"0px 0px 20px 50px" }}
+              <Box sx={{ width: '100%', height: 400, maxWidth: 460, bgcolor: 'rgba(47, 79, 79, 0.0)',margin:"0px 0px 20px 50px" }}
               >
                 <FixedSizeList
                 height={400}
