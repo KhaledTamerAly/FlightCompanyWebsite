@@ -241,10 +241,12 @@ router.get('/flightDetails/:username', async(req,res) => {
 });
 router.delete('/:bookingNumber', async(req,res)=> 
 {
-    Reservations.findOneAndDelete(req.params.bookingNumber).then((reservation)=>
+    console.log(req.params.bookingNumber)
+    Reservations.findOneAndDelete({bookingNumber:req.params.bookingNumber}).then((reservation)=>
     {
+        console.log(reservation);
         console.log('Deleted reservation ' + reservation.bookingNumber +' successfully');
-        Reservations.findOneAndDelete(reservation.linkedBookingNumber).then(async(reservation1)=>
+        Reservations.findOneAndDelete({bookingNumber:reservation.linkedBookingNumber}).then(async(reservation1)=>
         {    
             console.log('Deleted reservation ' + reservation1.bookingNumber +' successfully');
             

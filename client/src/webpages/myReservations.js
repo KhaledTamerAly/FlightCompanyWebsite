@@ -213,6 +213,7 @@ const EnhancedTableToolbar = (props) => {
 
   function deleteReservation(bookingNumber)
     {
+      console.log(bookingNumber)
         var url = "/users/" + bookingNumber;
          axios
              .delete(url)
@@ -447,7 +448,6 @@ const location  = useLocation();
       }
     }, []);
     
-
   return (
     <div className={styles.backgroundIMG}>
         <Navbar loggedIn={true} />
@@ -540,6 +540,15 @@ const location  = useLocation();
             />
         </Paper>
         </Box>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <br/>
         <br/>
         <br/>

@@ -104,4 +104,27 @@ router.get('/',(req,res)=>{
 - *Clicking on a checkbox will turn it green* (as in chosen), and number of seats you can choose will decrease.
 - *You can also uncheck a box* (to unchoose seat). You cannot choose more than number of seats you chose. (ReqID:20)
 - *Pressing confirm seats will lead you to seat map of return flight*. Choose seats similarly as above. (ReqID:21,22)
+- ADDED IN SPRINT 3: After selecting your seats, you will be asked for your payement info. Enter them and press pay.(ReqID: 23)
 - Pressing confirm seats will finally reserve seats and flights and *now a summary for entire flights and its details are revealed* as accordions. (ReqID:24)
+- ADDED IN SPRINT 3: A confirmation email will be sent to you, one fore each flight.(ReqID: 25)
+- ----------------------------------------------Sprint 3----------------------------------------------------------------
+- In **home page**, you can sign up by pressing the orange sign up button which will lead you to **sign up page**.
+- In **sign up page**, you can enter all your info then press the submit button or login instead to **login page**.
+- Once signed up, you will be prompted to login then redirected to your home page.
+- If you already have an account, in **home page** press login button to go to **login page**.
+- If a wrong username or password were given, a red message will appear.
+- To change your password, press on the top right person icon, select My Information in the menu that appears. You will be redirected to **My Information page**. (Can edit any attribute you have).
+- Click on change password button. You will go to **Change Password page**, before writing your new password you will have to write your old one first.
+- After confirming your new password just press change button.
+- In **My Reservations page**, you will see all your reservations and selecting any of them will reveal a number of different options:
+                    1. Delete
+                    2. Email itinerary
+                    3. Change flight
+                    4. Change Seats on the flight
+- To change seat on the plane, select seat icon then a seat map will appear and change seat normally.
+- To change a flight, select magnifying glass search button. Select cabin class and date. If you selected a return flight then we will search for a return flight, same case for departure.
+- After selecting a flight, if it's a return and new flight is after old depart flight then continue normally to saving seats. If it's before, then you will be prompted to choose another departure flight that is before new selected return flight.
+- After done changing all flights, you will be asked to pay. If new price is less than old price paid you will get a refund, if greater then you will pay the difference.
+- You will get a summary of your entire itinerary after payement.
+- Last option we didn't cover is emailing your itinerary, after selecting a reservation press on paper icon then you will receieve email for your itinerary.
+------------------------------------------------------------------------------------------------------------------------
