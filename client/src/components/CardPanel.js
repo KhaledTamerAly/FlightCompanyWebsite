@@ -18,7 +18,7 @@ function CardPanel(props)
     return(
     <div>
       <Card>
-        <CardBody>
+        <CardBody style={{backgroundColor:"linen"}}>
           <CardTitle tag="h5">
             {props.title}
           </CardTitle>
@@ -30,8 +30,12 @@ function CardPanel(props)
           <CardText>
             {props.content}
           </CardText>
+          <div style={{margin:"10px -100px 10px 10px"}}>
       <Button color="primary" type="button" onClick={goToUpdateFlight}> Update </Button>
+      </div>
+      <div style={{margin:"-48px 100px 10px 10px"}}>
       <DeleteButton i = {props.i} idOfFlight = {props.idOfFlight} onDelete={props.deleteFlight} />
+      </div >
         </CardBody>
       </Card>
     </div>

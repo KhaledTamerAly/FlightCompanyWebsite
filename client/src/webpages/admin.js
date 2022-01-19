@@ -2,6 +2,7 @@ import React from "react";
 import Search from '../components/Search'
 import {Button} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
+import styles from '../css/admin.module.css';
 
 function Admin()
 {
@@ -27,16 +28,8 @@ function Admin()
           window.location.reload();
     }
     return (
-        <>
-        <div>
-        <Button
-                id="backToHome"
-                type="button"
-                color="primary"
-                onClick = {goToHome}
-            >
-            Sign out
-            </Button>
+        <div className={styles.backgroundIMG}>
+        <div className={styles.buttons}>
             <Button
                 id="addFlight"
                 type="button"
@@ -45,11 +38,20 @@ function Admin()
             >
             Add new flight
             </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Button
+                id="backToHome"
+                type="button"
+                color="danger"
+                onClick = {goToHome}
+            >
+            Sign out
+            </Button>
         </div>
         <div>
             <Search />
         </div>
-        </>
+        </div>
     );
 }
 

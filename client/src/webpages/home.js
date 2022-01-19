@@ -21,6 +21,8 @@ function Home()
   useEffect(()=>{
     if(localStorage.getItem('username')==null)
       setIsLoggedIn(false);
+    else if(localStorage.getItem('username')=='administrator')
+      navigate('/admin');
     else{
       setUsername(localStorage.getItem('username'));
       setIsLoggedIn(true);

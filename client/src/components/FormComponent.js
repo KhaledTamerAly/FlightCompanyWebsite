@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom'
+import styles from '../css/admin.module.css';
 
 function FormComponent (props){
 
@@ -75,7 +76,10 @@ function FormComponent (props){
   
 }
   
-    return (<Form noValidate onSubmit={onSubmit}>
+    return (
+      <div className={styles.backgroundIMG} style={{color:"white"}}>
+    <Form noValidate onSubmit={onSubmit}>
+      <div className={styles.flightInfo}>
         <FormGroup>
           <Label for="flightNumber">
             Flight Number
@@ -118,6 +122,8 @@ function FormComponent (props){
             type="arrivalTerminal"
           />
         </FormGroup>
+        </div>
+        <div className={styles.flightDateInfo}>
         <FormGroup>
           <Label for="flightDate">
           Flight Date
@@ -157,6 +163,8 @@ function FormComponent (props){
             type="time"
           />
         </FormGroup>
+        </div>
+        <div className={styles.flightSeats}>
         <FormGroup>
           <Label for="noOfEconSeats">
             Number of Economy class seats (must be a number)
@@ -206,9 +214,36 @@ function FormComponent (props){
             type="noOfFirstSeats"
           />
         </FormGroup>
+        </div>
+        <div style={{margin:"0px 670px 0px 670px"}}>
         <Button color="primary" type="button" onClick={goToAdmin}> Go back </Button>
+        &nbsp;&nbsp;
         <Button  color= "success" type="submit"> Submit </Button>
-        </Form>);
+        </div>
+        </Form>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        <br/>
+        <br/>
+        </div>
+        );
 }
 
 export default FormComponent;

@@ -1,0 +1,27 @@
+.buttons {
+    margin: 0px 10px 10px 1250px;
+}
+.backgroundIMG {
+    background-image: url(/public/admin.jpg);
+    background-size: 120% 100%;
+    background-repeat: no-repeat;
+}
+.menus {
+    margin: 0px 1100px 0px 100px;
+    color: white;
+}
+.color {
+    color: black;
+}
+.searchResults {
+    margin: -775px 0px 0px 900px;
+}
+.flightInfo {
+    margin: 0px 900px 0px 200px;
+}
+.flightDateInfo {
+    margin: -250px 200px 0px 900px;
+}
+.flightSeats {
+    margin: 100px 500px 0px 500px;
+}

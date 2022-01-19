@@ -22,7 +22,7 @@ function DeleteButton(props)
         Delete
     </Button>
     <UncontrolledPopover
-            placement="right"
+            placement="left"
             target={"UncontrolledPopover" + props.i}
             trigger="legacy"
     >
@@ -50,6 +50,7 @@ function DeleteButton(props)
             Delete, I am Sure.
             </Button>
             </div>
+            &nbsp;
     </UncontrolledPopover>    
     </div>
     );

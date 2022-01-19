@@ -67,7 +67,6 @@ export default function Navbar(props) {
       else
         goToHomepage();
     }
-    
   return (
 
     
@@ -118,6 +117,7 @@ export default function Navbar(props) {
               <Button onClick= {login} sx={{ m: 1 }} variant="contained" color='warning'>Login</Button>
             </div>
           )}
+          {console.log(localStorage.getItem('username'))}
         </Toolbar>
       </AppBar>
     </Box>

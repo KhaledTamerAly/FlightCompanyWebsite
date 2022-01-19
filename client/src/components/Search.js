@@ -6,7 +6,12 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import CardPanel from "./CardPanel";
-import {Form,FormGroup,Label,Input,Button} from 'reactstrap';
+import {Form,FormGroup,Label,Input} from 'reactstrap';
+import styles from '../css/admin.module.css';
+import Button from '@mui/material/Button';
+import { FixedSizeList } from 'react-window';
+import Box from '@mui/material/Box';
+import { Paper } from '@mui/material';
 
 
 class Search extends Component {
@@ -24,7 +29,9 @@ class Search extends Component {
     selectedDepFlightNumber:null,
     flightToBeListed: [],
     arrivalTime : null,
-    departureTime : null
+    departureTime : null,
+    gotFComp: false,
+    list: []
   };
 
 
@@ -83,9 +90,11 @@ async updateStates() {
 
 componentDidMount()
 {
+  this.setState({list:[]})
     this.updateStates();
 }
 async userInput(event) {
+  this.setState({gotFComp:false});
     var matches = [];
     var selArrT, selDepT,selDepD, selRetD, selArrFN, selDepFN, selDepTime, selArrTime;
     selArrT =this.state.selectedArrivalTerminal;
@@ -126,18 +135,20 @@ async userInput(event) {
 }
 
   render() {
-    
+    var flightsList = [];
     return (
       <div className="App">
-
+        <div className={styles.menus}>
       Departure Terminal<br/>
       <Select 
+      className={styles.color}
         value = {this.state.selectedDepartureTerminal}
         options = {this.state.departureTerminalOptions}
         onChange = {(obj) => this.setState({selectedDepartureTerminal: obj})}
       />
       Arrival Terminal <br/>
       <Select 
+      className={styles.color}
         value = {this.state.selectedArrivalTerminal}
         options = {this.state.arrivalTerminalOptions}
         onChange = {(obj) => this.setState({selectedArrivalTerminal: obj}) }
@@ -145,6 +156,7 @@ async userInput(event) {
       Departing Flight Number<br/>
 
       <Select 
+      className={styles.color}
         value = {this.state.selectedDepFlightNumber}
         options = {this.state.flightNumberOptions}
         onChange = {(obj) => this.setState({selectedDepFlightNumber: obj})}
@@ -193,14 +205,62 @@ async userInput(event) {
       <br/>
       <b>Selected Arrival Terminal is {this.state.selectedArrivalTerminal?.label ?? "NOT SELECTED"}</b>
       <br />
-      <button onClick={this.userInput.bind(this)}>Search</button>  
-          <br/>
+      <br />
+      <Button variant='contained' color='warning' onClick={this.userInput.bind(this)}>Search</Button>  
+      <br/>
           Flights:
-          <ul>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      </div>
             {
-              (this.state.flightToBeListed ?? []).map((option,i) => <li><CardPanel i = {i} idOfFlight = {option._id} deleteFlight = {()=> {this.updateStates(); window.location.reload();}} title={option.flightNumber} subtitle="" content={"From:  "+ option.departureTerminal+ " "+ "To: "+option.arrivalTerminal + " " +"On: "+ option.flightDate} /></li>)
+              (this.state.flightToBeListed ?? []).map((option,i) => 
+              {
+              flightsList.push(
+                <CardPanel i = {i} idOfFlight = {option._id} deleteFlight = {()=> {this.updateStates(); window.location.reload();}} title={option.flightNumber} subtitle="" content={"From:  "+ option.departureTerminal+ " "+ "To: "+option.arrivalTerminal + " " +"On: "+ option.flightDate} />
+              )
             }
-          </ul>
+              )
+            }
+            <div className={styles.searchResults}>
+          <Box sx={{ width: '100%', height: 550, maxWidth: 460, bgcolor: 'rgba(47, 79, 79, 0.0)',margin:"0px 0px 20px 50px" }}
+              >
+                <FixedSizeList
+                height={550}
+                width={460}
+                itemSize={46}
+                itemCount={flightsList.length}
+                overscanCount={5}
+                >
+                {({ index, key, style })=>{
+                  
+                  return (
+                    <div key={key} style={{height: 46,
+                      left: 0,
+                      position: "absolute",
+                      right: 0,
+                      top: "10px",
+                      width: "100%"}}>
+                    {flightsList}
+                    </div>
+                    );
+                }}
+                </FixedSizeList>
+              </Box>
+              </div>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
     </div>
     );
   }
