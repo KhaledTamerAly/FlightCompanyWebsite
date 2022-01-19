@@ -8,7 +8,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
-import { Paper } from '@mui/material';
+
 function SeatMap(props) 
 {
     const [flightSeats,setFlightSeats] = useState([]);
@@ -44,7 +44,7 @@ useEffect(async()=>
         }
     }
     return (
-        <div>
+        <div className='App'>
             <h3>Select your prefered seats in your {props.type} flight with Flight Number: {props.flightNumber}</h3>
             <h4>You have {numberOfSeatsToReservre} seats to reserve</h4>
                 {(flightSeats??[]).map((row, i) =>{

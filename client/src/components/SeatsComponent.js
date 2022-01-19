@@ -131,7 +131,7 @@ function SeatComponent(props)
             });
     }
     return (
-        <div>
+        <div className="App">
             {isLoggedIn && <>
                 {!isDoneChoosing && isChoosingDepSeats && 
                 <>
@@ -147,12 +147,15 @@ function SeatComponent(props)
                 </>
                 }
                 
-                {isDoneChoosing &&!isChoosingDepSeats && didPay && <div className={styles.summaryReserve}><Summary depFlight= {props.depFlight} retFlight={props.retFlight} cabinClass={props.cabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/></div>}
+                {isDoneChoosing &&!isChoosingDepSeats && didPay && <Summary depFlight= {props.depFlight} retFlight={props.retFlight} cabinClass={props.cabinClass} chosenSeatsD ={chosenSeatsDep} chosenSeatsR={chosenSeatsRet} bookingNumberD={bookingNumberD} bookingNumberR={bookingNumberR} price={props.price}/>}
+                
                 {isDoneChoosing && !isChoosingDepSeats && !didPay && <StripeComponent price = {props.price} reserve= {reserveFlights}/>}
                 {!isDoneChoosing && <Button color="success" onClick={handleClick}> Confirm Seats </Button>}
+                &nbsp;&nbsp;
+                &nbsp;&nbsp;
                 {isDoneChoosing && <Button color="primary" onClick={exit}> Go Back to Home Page </Button>}
-                {!isDoneChoosing && isChoosingDepSeats && <Button color="primary" onClick={props.backButton}> Go Back to see summary </Button>}
-                {!isDoneChoosing && !isChoosingDepSeats && <Button color="primary" onClick={()=>{setIsChoosingDep(true);setChosenSeatsDep([])}}> Go Back to choose Departure Seats Again</Button>}
+                {!isDoneChoosing && isChoosingDepSeats && <Button color="primary" onClick={props.backButton}> See summary </Button>}
+                {!isDoneChoosing && !isChoosingDepSeats && <Button color="primary" onClick={()=>{setIsChoosingDep(true);setChosenSeatsDep([])}}> Change Departure Seats</Button>}
                 </>
             }
             {!isLoggedIn && <>

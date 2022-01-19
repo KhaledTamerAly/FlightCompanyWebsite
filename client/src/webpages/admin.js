@@ -2,7 +2,10 @@ import React from "react";
 import Search from '../components/Search'
 import {Button} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
+import AirplaneTicketIcon from '@mui/icons-material/AirplaneTicket';
+import { fontSize } from '@mui/system';
 import styles from '../css/admin.module.css';
+import IconButton from '@mui/material/IconButton';
 
 function Admin()
 {
@@ -29,6 +32,11 @@ function Admin()
     }
     return (
         <div className={styles.backgroundIMG}>
+            <IconButton onClick={()=>{navigate('/admin')}} size='large' sx={{color:"whitesmoke",fontSize:"40px",fontFamily:"fantasy"}}>
+            <AirplaneTicketIcon fontSize="inherit" />
+            &nbsp;
+            {'Osama Airlines'}
+        </IconButton>
         <div className={styles.buttons}>
             <Button
                 id="addFlight"

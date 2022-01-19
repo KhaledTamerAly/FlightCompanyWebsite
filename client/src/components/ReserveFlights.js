@@ -2,8 +2,17 @@ import React, { Component ,  useState, useEffect } from 'react';
 import SeatComponent from './SeatsComponent';
 import Summary from './Summary';
 import { Button,UncontrolledPopover,PopoverBody,PopoverHeader } from 'reactstrap';
-import styles from '../css/home.module.css'
+import styles from '../css/home.module.css';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
 
 function ReserveFlights(props)
@@ -19,7 +28,7 @@ function ReserveFlights(props)
         priceOfSeat = 20;
 
     return (
-        <div>
+        <div className='App'>
             { !isDoneConfirm && 
 
             <div className={styles.summaryReserve}>
@@ -61,7 +70,16 @@ function ReserveFlights(props)
                 </div>
             }
             { isDoneConfirm && 
-                <SeatComponent login = {()=>{props.login()}} 
+            <Dialog
+            open={isDoneConfirm}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={()=>setIsDone(false)}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>{"____________Confirm Flight Reservation______________"}</DialogTitle>
+            <DialogContent>
+              {isDoneConfirm && <SeatComponent login = {()=>{props.login()}} 
                 depFlight= {props.depFlight} 
                 retFlight={props.retFlight} 
                 flightNumSeats ={props.flightNumSeats} 
@@ -72,7 +90,12 @@ function ReserveFlights(props)
                 
                 backButton ={()=>{setIsDone(false)}}
                 
-                />
+                />}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={()=>{setIsDone(false); window.location.reload()}}>Exit</Button>
+            </DialogActions>
+          </Dialog>
             }
          </div>
          );
