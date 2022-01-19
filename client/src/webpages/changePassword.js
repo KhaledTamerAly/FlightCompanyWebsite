@@ -3,6 +3,7 @@ import {useEffect} from 'react';
 import PasswordForm from '../components/PasswordForm';
 import Navbar from '../components/Navbar';
 import {useNavigate} from 'react-router-dom';
+import styles from '../css/home.module.css';
 
 export default function ChangePassword() {
   const navigate = useNavigate();
@@ -15,10 +16,25 @@ export default function ChangePassword() {
   });
 
   return (
-      <div>
+      <div className={styles.backgroundIMG}>
           <Navbar loggedIn={true} />
           <div></div>
           <PasswordForm />
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
         </ div>
   );
 }

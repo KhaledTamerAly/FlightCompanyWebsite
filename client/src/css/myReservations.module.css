@@ -1,0 +1,5 @@
+.backgroundIMG {
+    background-image: url(/public/back_travel.jpg);
+    background-size: 100% auto;
+    background-position: 150px -85px;
+}

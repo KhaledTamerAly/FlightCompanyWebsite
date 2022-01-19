@@ -39,6 +39,7 @@ import SeatChange from "../components/SeatChange";
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
 import ChangeFlights from '../components/ChangeFlight';
 import PostBookSearch from '../components/PostBookSearch';
+import styles from '../css/myReservations.module.css';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -325,7 +326,7 @@ const EnhancedTableToolbar = (props) => {
         onClose={()=>setFlightChange(false)}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Confirm change flight"}</DialogTitle>
+        <DialogTitle>{"_______________Confirm change flight_______________"}</DialogTitle>
         <DialogContent>
           {flightChangeOpen && <PostBookSearch bookingNumber={selected} user={user}/>}
         </DialogContent>
@@ -448,14 +449,14 @@ const location  = useLocation();
     
 
   return (
-    <div>
+    <div className={styles.backgroundIMG}>
         <Navbar loggedIn={true} />
-        <Box sx={{ width: '100%' }}>
-        <Paper sx={{ width: '100%', mb: 2 }}>
+        <Box sx={{ margin:"150px 100px 0px 100px" }}>
+        <Paper sx={{ width: '100%', mb: 2 }} style={{backgroundColor:"rgba(255,165,0, 0.8)"}}>
             <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
             <TableContainer>
             <Table
-                sx={{ minWidth: 750 }}
+                sx={{ minWidth: 750 ,backgroundColor:"rgba(65, 94, 182,0.8)"}}
                 aria-labelledby="tableTitle"
                 size={dense ? 'small' : 'medium'}
             >
@@ -488,7 +489,7 @@ const location  = useLocation();
                         >
                         <TableCell padding="checkbox">
                             <Checkbox
-                            color="primary"
+                            color="info"
                             checked={isItemSelected}
                             inputProps={{
                                 'aria-labelledby': labelId,
@@ -528,6 +529,7 @@ const location  = useLocation();
             </Table>
             </TableContainer>
             <TablePagination
+            sx={{backgroundColor:"rgba(65, 94, 182,0.8)"}}
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={myReservations.length}
@@ -537,8 +539,10 @@ const location  = useLocation();
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </Paper>
-        
         </Box>
+        <br/>
+        <br/>
+        <br/>
     </div>
   );
 }

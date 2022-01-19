@@ -16,6 +16,9 @@
 .flightTable {
     margin: 70px 0px 0px 0px;
 }
+.summaryReserve {
+    margin: 50px 400px 10px 400px;
+}
 h1 {
     margin: 10px 0px 0px 0px;
     color: rgb(40, 64, 136);

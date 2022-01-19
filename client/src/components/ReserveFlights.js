@@ -2,6 +2,7 @@ import React, { Component ,  useState, useEffect } from 'react';
 import SeatComponent from './SeatsComponent';
 import Summary from './Summary';
 import { Button,UncontrolledPopover,PopoverBody,PopoverHeader } from 'reactstrap';
+import styles from '../css/home.module.css'
 
 
 
@@ -21,13 +22,12 @@ function ReserveFlights(props)
         <div>
             { !isDoneConfirm && 
 
-            <>
+            <div className={styles.summaryReserve}>
                 <Summary depFlight= {props.depFlight} retFlight={props.retFlight} cabinClass={props.cabinClass} 
                 chosenSeatsD ={[]} chosenSeatsR={[]} 
                 bookingNumberD={""} bookingNumberR={""} price = {(priceOfSeat*props.flightNumSeats)+props.price}/>
-
                 <div className="text-center">
-                <Button
+                <Button style = {{margin:"20px 0px 0px 150px"}}
                         id={"UncontrolledPopover"}
                         type="button"
                         color="success"
@@ -35,7 +35,7 @@ function ReserveFlights(props)
                     Choose Seats
                 </Button>
                 <UncontrolledPopover
-                        placement="right"
+                        placement="bottom"
                         target={"UncontrolledPopover"}
                         trigger="legacy"
                 >
@@ -46,7 +46,7 @@ function ReserveFlights(props)
                         Click outside this popup to return.
                     </PopoverBody>
                         <div className="text-center">
-                        <Button
+                        <Button style={{margin:"0px 0px 10px 0px"}}
                             id="deleteConfirm"
                             type="button"
                             color="success"
@@ -57,9 +57,8 @@ function ReserveFlights(props)
                         </div>
                 </UncontrolledPopover>    
                 </div>
-                
-                <Button onClick={()=>props.backButton()}>Go Back to Search</Button>
-                </>
+                <Button style = {{margin:"-67px 0px 0px -150px"}} onClick={()=>props.backButton()}>Go Back to Search</Button>
+                </div>
             }
             { isDoneConfirm && 
                 <SeatComponent login = {()=>{props.login()}} 

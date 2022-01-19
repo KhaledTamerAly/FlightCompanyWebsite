@@ -37,7 +37,7 @@ function Summary(props)
   return (
     <div>
       <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-        <AccordionSummary
+        <AccordionSummary sx = {{backgroundColor:"orange"}}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
@@ -47,8 +47,8 @@ function Summary(props)
           </Typography>
           <Typography sx={{ color: 'text.secondary' }}>Flight Number: {flights?.depFlight.flightNumber ?? ""} Booking Number:{props.bookingNumberD}</Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
+        <AccordionDetails sx={{backgroundColor:"rgb(65, 94, 182)"}}>
+          <Typography sx={{color:"whitesmoke"}}>
           Departure Date:{flights?.depFlight.flightDate?? ""}
             <br></br>
             <br></br>
@@ -63,24 +63,23 @@ function Summary(props)
             <br></br>
             Price:{props.price}
             <br></br>
-            <br></br>
           </Typography>
         </AccordionDetails>
       </Accordion>
+      <br/>
       <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-        <AccordionSummary
+        <AccordionSummary sx = {{backgroundColor:"orange"}}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2bh-content"
           id="panel2bh-header"
         >
           <Typography sx={{ width: '33%', flexShrink: 0 }}>Return Flight</Typography>
           <Typography sx={{ color: 'text.secondary' }}>
-          Flight Number: {flights?.retFlight.flightNumber?? ""}
-             Booking Number:{props.bookingNumberR}
+          Flight Number: {flights?.retFlight.flightNumber?? ""} Booking Number:{props.bookingNumberR}
           </Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
+        <AccordionDetails sx={{backgroundColor:"rgb(65, 94, 182)"}}>
+          <Typography sx={{color:"whitesmoke"}}>
           Departure Date:{flights?.retFlight.flightDate?? ""}
             <br></br>
             <br></br>
@@ -94,7 +93,6 @@ function Summary(props)
             <br></br>
             <br></br>
             Price:{props.price}
-            <br></br>
             <br></br>
           </Typography>
         </AccordionDetails>

@@ -4,13 +4,13 @@ import Select from 'react-select';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import {Button} from 'reactstrap';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import ChangeFlights from '../components/ChangeFlight';
+import Button from '@mui/material/Button';
 
 
 class PostBookSearch extends Component {
@@ -233,7 +233,6 @@ render()
   }
   return (
   <div className="App">
-    
     {!this.state.isStopRenderSearch && <div>
       <br/>
       Departure Terminal
@@ -259,9 +258,11 @@ render()
       placeholderText="Choose Departure Date"
       dateFormat = 'yyyy/MM/dd'
       />
-      <button onClick={()=>window.location.reload()}>Clear</button>  
+      <div style={{margin:"10px 0px 0px 0px"}}>
+      <Button variant="contained"onClick={()=>window.location.reload()}>Clear</Button>  
         &nbsp;&nbsp;&nbsp;&nbsp;
-      <button onClick={this.userInput.bind(this)}>Search</button>
+      <Button color='warning' variant="contained" onClick={this.userInput.bind(this)}>Search</Button>
+      </div>
           <br/>
       Flights:
       {this.state.isChangingDepartFlight && (!this.state.departureHasBeenChosen && !this.state.isDoneSelectingFlights) &&
@@ -271,13 +272,15 @@ render()
         <ul>
           {
           (this.state.flightToBeListed ?? []).map((option,i) =>
-            <li>
-            <button id={"confirmDep"+i}
-            onClick={()=> {this.setState({triggerDialogue: true});this.setState({target:option});}} title={option.flightNumber}
-            subtitle="" > From: {option.departureTerminal} To:{option.arrivalTerminal}
-            Flight Number: {option.flightNumber} Departure Time: {option.flightDate} Arrival Time: {option.arrivalTime} Price: {this.state.ticketPrice} <br/> Press for more details 
-            </button>
-            </li>
+            <div style={{margin:"5px 0px 0px 0px"}}>
+              <Button id={"confirmDep"+i} variant="contained" title={option.flightNumber} 
+              onClick={()=> {this.setState({triggerDialogue: true});this.setState({target:option});}}
+                          subtitle="" 
+                          content={"From:  "+ option.departureTerminal+ " " + "\n" +"On: "+ option.flightDate}>
+                          {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ "\n" +"On: "+ (option.flightDate+"").split('T')[0] } 
+                          <br/>
+                </Button >
+            </div>
           )
           }
         </ul>
@@ -291,8 +294,8 @@ render()
           <DialogTitle>{"Confirm change flight"}</DialogTitle>
           <DialogContent>
             <DialogContentText id={"confirmDep"+this.state.target.flightNumber}>
-              { "Flight Number: " + this.state.target.flightNumber} <br/> {" Departure Time: " + this.state.target.flightDate} <br/> { "Arrival Time: " +this.state.target.arrivalTime+
-                         " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(this.state.target) + " Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
+              { "Flight Number: " + this.state.target.flightNumber} <br/> {" Departure Time: " + (this.state.target.departureTime+"").split('T')[1]} <br/> { "Arrival Time: " +(this.state.target.departureTime+"").split('T')[1]}
+                         <br/>{"Trip Duration: 2 Hours"} <br/> {" Cabin Type: " + this.getCabin(this.state.target)} <br/>{"Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -355,12 +358,15 @@ render()
               <ul>
                 {
                 (this.state.returnFlightToBeListed ?? []).map((option,i) =>
-                <li>
-                <button id={"confirmDep"+i}
-                onClick={()=> {this.setState({triggerDialogue: true});this.setState({target:option})}} 
-                title={option.flightNumber}
-                subtitle="" > From: {option.departureTerminal} To:{option.arrivalTerminal} Flight Number: {option.flightNumber} Departure Time: {option.flightDate} Arrival Time: {option.arrivalTime} Price: {this.state.ticketPrice} <br/> Press for more details </button>
-                </li>)
+                <div style={{margin:"5px 0px 0px -5px"}}>
+                <Button id={"confirmDep"+i} variant="contained" title={option.flightNumber} 
+               onClick={()=> {this.setState({triggerDialogue: true});this.setState({target:option})}}
+                          subtitle="" 
+                          content={"From:  "+ option.departureTerminal+ " " + "\n" +"On: "+ option.flightDate}>
+                          {"From:  "+ option.departureTerminal+ " " + " " +"To: "+ option.arrivalTerminal+ "\n" +"On: "+ (option.flightDate+"").split('T')[0] } 
+                          <br/>
+                </Button >
+                </div>)
                 }
               </ul>
               {this.state.target && 
@@ -372,10 +378,10 @@ render()
               >
                 <DialogTitle>{"Confirm change flight"}</DialogTitle>
                 <DialogContent>
-                  <DialogContentText id={"confirmDep"+this.state.target.flightNumber}>
-                  { "Flight Number: " + this.state.target.flightNumber} <br/> {" Departure Time: " + this.state.target.flightDate} <br/> { "Arrival Time: " +this.state.target.arrivalTime+
-                       " Trip Duration: "} <br/> {" Cabin Type: " + this.getCabin(this.state.target) + " Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
-                  </DialogContentText>
+                <DialogContentText id={"confirmDep"+this.state.target.flightNumber}>
+              { "Flight Number: " + this.state.target.flightNumber} <br/> {" Departure Time: " + (this.state.target.departureTime+"").split('T')[1]} <br/> { "Arrival Time: " +(this.state.target.departureTime+"").split('T')[1]}
+                         <br/>{"Trip Duration: 2 Hours"} <br/> {" Cabin Type: " + this.getCabin(this.state.target)} <br/>{"Baggage: 50kg"}<br/> {" Price: " + this.state.ticketPrice} 
+            </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={()=>this.setState({triggerDialogue: false})} >Back</Button>
