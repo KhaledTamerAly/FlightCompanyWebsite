@@ -20,13 +20,6 @@ app.use('/users',userRouter);
 const Flights = require('./tables/Flights');
 app.use('/flights',flightRouter.router);
 
-
-
-//Routes
-app.get('/', (req,res)=>{
-    Flights.find({}).then((flight)=>res.json(flight));
-});
-
 if (process.env.NODE_ENV === 'production') {
     // Set static folder
     app.use(express.static('client/build'));
