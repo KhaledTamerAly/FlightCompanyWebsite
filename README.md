@@ -1,4 +1,4 @@
-# Osama
+# Flight Company Website
 link for website: https://airlinecompany.herokuapp.com/
 
 ACL Project
